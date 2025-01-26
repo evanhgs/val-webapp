@@ -1,9 +1,8 @@
-from flask import app, Blueprints, render_template
+from flask import Blueprint, render_template
 
-auth_bp = Blueprints('auth', __name__, url_prefix='/auth')
+auth_bp = Blueprint('auth_bp', __name__, url_prefix='/auth')
 
 @auth_bp.route('/')
 @auth_bp.route('/register')
-@app.route('/register')
 def register():
-    render_template('register.html')
+    return render_template('register.html')
