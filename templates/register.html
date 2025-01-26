@@ -1,13 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8" />
+        <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{% block title %}Register{% endblock %}</title>
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}" />
     </head>
 
 <body>
-    <h1>Register !</h1>
+    <div class="container">
+        <div class="form-container">
+            <h1 class="logo">Valenstagram</h1>
+            <p class="subtitle">Inscrivez-vous pour voir les photos et vidéos de vos ami(e)s.</p>
+            <div class="divider">
+            </div>
+            <form action="/register" method="POST">
+                <input type="text" name="email_or_phone" placeholder="Votre e-mail" required>
+                <input type="password" name="password" placeholder="Mot de passe" required>
+                <input type="text" name="full_name" placeholder="Nom complet" required>
+                <input type="text" name="username" placeholder="Nom de profil" required>
+                <button type="submit" class="submit-button">Suivant</button>
+            </form>
+            <p class="terms">
+                En vous inscrivant, vous acceptez nos <a href="#">Conditions générales</a> et notre <a href="#">Politique de confidentialité</a>.
+            </p>
+        </div>
+        <div class="login-link">
+            Vous avez un compte ? <a href="/auth/login">Connectez-vous</a>
+        </div>
+    </div>
 </body>
 </html>
 
