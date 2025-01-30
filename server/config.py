@@ -1,7 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 import os 
 import dotenv
-import timedelta
 
 dotenv.load_dotenv()
 
