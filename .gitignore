@@ -5,6 +5,8 @@
 server/.venv/
 *.pyc
 __pycache__
+# env file
+server/.env
 
 # client 
 # Logs

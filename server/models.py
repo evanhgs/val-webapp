@@ -1,10 +1,10 @@
-from flask_sqlalchemy import SQLAlchemy
+from .config import db
 from flask_bcrypt import Bcrypt
 from flask_login import UserMixin
 
-db = SQLAlchemy()
 bcrypt = Bcrypt()
 
+# Rework on this table
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
