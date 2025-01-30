@@ -1,10 +1,13 @@
-from flask import Flask, send_from_directory
+from main import create_app
+from config import DevelopmentConfig, ProductionConfig
+from flask import send_from_directory
 
 
-app = Flask(__name__, static_folder='../client/dist', static_url_path='/')
+# parametre à changer selon le choix
+app = create_app(DevelopmentConfig)
 
 
-
+# les blueprints des routes ici :
 @app.route('/')
 def home():
     return send_from_directory(app.static_folder, "index.html")
@@ -19,7 +22,5 @@ def not_found(e):
 
 
 
-
 if __name__ == '__main__':
-
-    app.run(debug=True)
+    app.run()

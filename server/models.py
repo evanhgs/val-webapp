@@ -1,4 +1,4 @@
-from .config import db
+from config import db
 from flask_bcrypt import Bcrypt
 from flask_login import UserMixin
 
