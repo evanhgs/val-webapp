@@ -9,6 +9,8 @@ __pycache__
 server/.env
 # db instance
 *.db
+# migrations folder
+server/migrations
 
 # client 
 # Logs
