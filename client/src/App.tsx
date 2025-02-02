@@ -1,12 +1,16 @@
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Login from "./components/auth/Login";
+import "./index.css"
 
-function App() {
-
+const App: React.FC = () => {
   return (
-    <div>
-      <h1>App</h1>
-      <p>To log in <a href="pages/login.tsx">here!</a></p>
-    </div>
-  )
-}
+    <Router>
+      <Routes>
+        <Route path="/" element={<Login />} />
+      </Routes>
+    </Router>
+  );
+};
 
 export default App;

@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 
 auth_bp = Blueprint('auth_bp', __name__, url_prefix='/auth')
 
@@ -24,7 +24,14 @@ React redirige vers la page d"accueil.
 """
 @auth_bp.route('/login', methods=['POST'])
 def login():
-    return
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
+    if username == 'jeans' and password == 'password':
+        return jsonify({"message": "Login successful"}), 200
+    else:
+        return jsonify({"message": "Invalid credentials"}), 401
 
 """
 Vérification de l"utilisateur connecté
