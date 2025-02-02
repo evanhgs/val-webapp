@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_cors import CORS
 import os 
 import dotenv
 
@@ -7,6 +8,7 @@ dotenv.load_dotenv()
 
 db = SQLAlchemy()
 mig = Migrate()
+cors = CORS()
 
 class Config():
     SECRET_KEY_APP = os.environ.get('SECRET_KEY_APP')
