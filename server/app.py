@@ -14,7 +14,7 @@ app = create_app(DevelopmentConfig)
 def serve_react(path):
     if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
         return send_from_directory(app.static_folder, path)
-    return send_from_directory(app.static_folder, "index.html")
+    return send_from_directory(app.static_folder, "index.html") # TO DO : faire une page exprès pour les erreurs 404
 
 
 if __name__ == '__main__':
