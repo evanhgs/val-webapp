@@ -1,25 +1,20 @@
-from main import create_app
-from config import DevelopmentConfig, ProductionConfig
+import os
+from server.main import create_app
+from server.config import DevelopmentConfig, ProductionConfig
 from flask import send_from_directory
+
 
 
 # parametre à changer selon le choix
 app = create_app(DevelopmentConfig)
 
 
-# les blueprints des routes ici :
-@app.route('/')
-def home():
-    return send_from_directory(app.static_folder, "index.html")
-
+@app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve_react(path):
-    return send_from_directory(app.static_folder, path)
-
-@app.errorhandler(404)
-def not_found(e):
+    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
     return send_from_directory(app.static_folder, "index.html")
-
 
 
 if __name__ == '__main__':
