@@ -26,11 +26,14 @@ def register():
     email = data.get('email')
     password = data.get('password')
 
+    if User.query.filter_by(username=username).first() or User.query.filter_by(email=email).first():
+        return jsonify({"message": "username or email already exists."}), 400
+
     try:
         new_user = User(
             username=username,
             email=email,
-            password=generate_password_hash(password)
+            password_hash=generate_password_hash(password)
         )
         db.session.add(new_user)
         db.session.commit()
@@ -38,7 +41,7 @@ def register():
     
     except Exception as e:
         db.session.rollback()
-        return jsonify({"message": "an error occurred."}), 500
+        return jsonify({"message": f"an error occurred: {str(e)}"}), 500
     
     
 
