@@ -5,10 +5,14 @@
 server/.venv/
 *.pyc
 __pycache__
+
 # env file
 server/.env
+client/.env
+
 # db instance
 *.db
+
 # migrations folder
 server/migrations
 
@@ -26,6 +30,7 @@ client/node_modules
 client/dist
 client/dist-ssr
 *.local
+
 
 # Editor directories and files
 .vscode/*
