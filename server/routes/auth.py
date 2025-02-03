@@ -1,4 +1,7 @@
 from flask import Blueprint, jsonify, request
+from werkzeug.security import generate_password_hash, check_password_hash
+from server.models import User
+from server.config import db
 import jwt 
 import datetime
 import dotenv
@@ -18,7 +21,26 @@ React redirige vers la page de connexion.
 """
 @auth_bp.route('/register', methods=['POST'])
 def register():
-    return 
+    data = request.get_json()
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
+
+    try:
+        new_user = User(
+            username=username,
+            email=email,
+            password=generate_password_hash(password)
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify({"message": "account created successfully."}), 201
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": "an error occurred."}), 500
+    
+    
 
 """
 Connexion
@@ -34,7 +56,8 @@ def login():
     username = data.get('username')
     password = data.get('password')
 
-    if username == 'jeans' and password == 'password':
+    user = User.query.filter_by(username=username).first()
+    if user and check_password_hash(user.password_hash, password):
         token = jwt.encode({
             'username': username,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
