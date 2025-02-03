@@ -23,9 +23,10 @@ const Login: React.FC = () => {
         throw new Error('Network response error');
       }
 
+      // résultat du token JWT généré par flask
       const result = await response.json();
-      console.log('success: ', result);
-
+      //console.log('success: ', result);
+      // stockage du token qui se mettra dans le header pour chaque requête
       localStorage.setItem('token', result.token);
 
     } catch (error) {

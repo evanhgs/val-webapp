@@ -89,7 +89,7 @@ def logout():
     return
 
 """
-Route protégée pour le JWT 
+Route de lecture de l'entête pour décoder le token JWT
 """
 @auth_bp.route('/protected', methods=['GET'])
 def protected():
