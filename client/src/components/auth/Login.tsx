@@ -26,6 +26,8 @@ const Login: React.FC = () => {
       const result = await response.json();
       console.log('success: ', result);
 
+      localStorage.setItem('token', result.token);
+
     } catch (error) {
       console.error('Error: ', error);
       setError('Failed to login, please check our credentials and try again.');

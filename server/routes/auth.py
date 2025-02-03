@@ -1,7 +1,13 @@
 from flask import Blueprint, jsonify, request
+import jwt 
+import datetime
+import dotenv
+import os
+dotenv.load_dotenv()
 
 auth_bp = Blueprint('auth_bp', __name__, url_prefix='/auth')
 
+secret_key = os.environ.get('SECRET_KEY_JWT')
 
 """
 Inscription
@@ -29,7 +35,11 @@ def login():
     password = data.get('password')
 
     if username == 'jeans' and password == 'password':
-        return jsonify({"message": "Login successful"}), 200
+        token = jwt.encode({
+            'username': username,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+        }, secret_key, algorithm='HS256')
+        return jsonify({"token": token}), 200
     else:
         return jsonify({"message": "Invalid credentials"}), 401
 
@@ -51,3 +61,17 @@ Déconnexion
 @auth_bp.route('/logout', methods=['GET'])
 def logout():
     return
+
+"""
+Route protégée pour le JWT 
+"""
+@auth_bp.route('/protected', methods=['GET'])
+def protected():
+    token = request.headers.get('Authorization').split()[1]
+    try:
+        data = jwt.decode(token, secret_key, algorithms=['HS256'])
+        return jsonify({"message": "Protected route accessed", "data": data}), 200
+    except jwt.ExpiredSignatureError:
+        return jsonify({"message": "Token has expired"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"message": "Invalid token"}), 401
