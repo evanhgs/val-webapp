@@ -5,6 +5,7 @@ import { AuthContext } from '../components/AuthContext';
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -15,7 +16,7 @@ const Register: React.FC = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(`${process.env.api_server_ip}/auth/register`, {username, password});
+      const response = await axios.post('http://127.0.0.1:5000/auth/register', {username, email, password});
       login(response.data.token);
       navigate("/");
 
@@ -47,7 +48,7 @@ const Register: React.FC = () => {
 
         {/* Formulaire d'inscription */}
         <div className="bg-gray-900 p-8 rounded-lg shadow-lg w-80 text-white">
-          <h1 className="text-3xl font-bold text-center mb-6">Valenstagram - Inscription</h1>
+          <h1 className="text-3xl font-bold text-center mb-6">Inscription</h1>
           <form onSubmit={handleSubmit} >
             <input
               type="text"
@@ -56,6 +57,15 @@ const Register: React.FC = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
+
+            <input
+              type="text"
+              placeholder="Adresse mail"
+              className="w-full p-3 rounded bg-gray-800 text-white focus:outline-none mb-3"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+
             <input
               type="password"
               placeholder="Mot de passe"
