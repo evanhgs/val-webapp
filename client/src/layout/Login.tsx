@@ -8,7 +8,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const { login } = useContext(AuthContext);
+  const { login } = useContext(AuthContext) || {};
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -18,8 +18,12 @@ const Login: React.FC = () => {
     try {
       const response = await axios.post('http://127.0.0.1:5000/auth/login', {username, password});
       console.log(response.data.token);
-      login(response.data.token);
-      navigate("/");
+      if (login) {
+        login(response.data.token);
+        navigate("/");
+      } else {
+        setError('Login function is not available')
+      }
 
     } catch (error) {
       console.error('Error: ', error);

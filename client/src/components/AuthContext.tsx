@@ -1,6 +1,6 @@
 /* cette page gère l'état de connexion global */
 
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState } from 'react';
 
 interface AuthContextType {
   user: any;
