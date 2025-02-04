@@ -1,40 +1,29 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { AuthContext } from '../components/AuthContext';
 
-const Login: React.FC = () => {
+const Register: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const data = {username, password};
-
     try {
-      const response = await fetch(`${process.env.api_server_ip}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response error');
-      }
-
-      // résultat du token JWT généré par flask
-      const result = await response.json();
-      //console.log('success: ', result);
-      // stockage du token qui se mettra dans le header pour chaque requête
-      localStorage.setItem('token', result.token);
+      const response = await axios.post(`${process.env.api_server_ip}/auth/register`, {username, password});
+      login(response.data.token);
+      navigate("/");
 
     } catch (error) {
       console.error('Error: ', error);
-      setError('Failed to login, please check our credentials and try again.');
+      setError('Failed to register, please check your details and try again.');
     }
   };
-
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-black">
@@ -56,9 +45,9 @@ const Login: React.FC = () => {
           </div>
         </div>
 
-        {/* Formulaire de connexion */}
+        {/* Formulaire d'inscription */}
         <div className="bg-gray-900 p-8 rounded-lg shadow-lg w-80 text-white">
-          <h1 className="text-3xl font-bold text-center mb-6">Valenstagram</h1>
+          <h1 className="text-3xl font-bold text-center mb-6">Valenstagram - Inscription</h1>
           <form onSubmit={handleSubmit} >
             <input
               type="text"
@@ -78,29 +67,26 @@ const Login: React.FC = () => {
               type="submit"
               className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded"
             >
-              Se connecter
+              S'inscrire
             </button>
             {error && <p className='text-red-500 mt-3'>{error}</p>}
           </form>
           <div className="text-center my-4">OU</div>
           <button className="w-full flex items-center justify-center bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 rounded">
-            <span className="mr-2">🔵</span> Se connecter avec Facebook
+            <span className="mr-2">🔵</span> S'inscrire avec Facebook
           </button>
-          <p className="text-center text-sm mt-4">
-            Mot de passe oublié ?
-          </p>
         </div>
       </div>
 
-      {/* Lien inscription */}
+      {/* Lien connexion */}
       <div className="mt-4 bg-gray-800 p-4 rounded-lg w-80 text-center text-white">
-        Vous n'avez pas de compte ?{" "}
-        <a href="/register" className="text-blue-400 hover:underline">
-          Inscrivez-vous
+        Vous avez déjà un compte ?{" "}
+        <a href="/login" className="text-blue-400 hover:underline">
+          Connectez-vous
         </a>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Register;
