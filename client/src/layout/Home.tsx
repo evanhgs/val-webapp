@@ -5,6 +5,7 @@ import { Header } from "../components/Header";
 import { Stories } from "../components/Stories";
 import { Feed } from "../components/Feed";
 import { Suggestions } from "../components/Suggestions";
+import { Logout } from "../components/Logout"; 
 
 
 const Home = () => {
@@ -25,6 +26,7 @@ const Home = () => {
             <div className="w-[300px] hidden lg:block">
               <Suggestions />
               <Footer />
+              <Logout />
             </div>
           </div>
         </div>

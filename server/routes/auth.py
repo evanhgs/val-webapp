@@ -78,15 +78,18 @@ React met à jour l"état global (ex : setUser(userData)).
 """
 @auth_bp.route('/user', methods=['GET'])
 def user():
-    return
+    user = get_current_user()
+    
+    if not user:
+        return jsonify({"message": "Unauthorized"}), 401
+    
+    return jsonify({
+        "username": user.username,
+        "email": user.email,
+        "id": user.id
+    }), 200
 
 
-"""
-Déconnexion
-"""
-@auth_bp.route('/logout', methods=['GET'])
-def logout():
-    return
 
 """
 Route de lecture de l'entête pour décoder le token JWT
@@ -101,3 +104,29 @@ def protected():
         return jsonify({"message": "Token has expired"}), 401
     except jwt.InvalidTokenError:
         return jsonify({"message": "Invalid token"}), 401
+    
+
+
+"""
+DEBUGGING
+curl -X POST http://127.0.0.1:5000/auth/login -H "Content-Type: application/json" -d '{"username": "jean", "password": "password"}'
+curl -X GET http://127.0.0.1:5000/auth/user -H "Authorization: Bearer TOKEN"
+"""
+def get_current_user():
+    token = request.headers.get('Authorization')
+    
+    if not token:
+        return None      
+    try:
+        token = token.split()[1] 
+        data = jwt.decode(token, secret_key, algorithms=['HS256'])
+        user = User.query.filter_by(username=data['username']).first()
+        return user
+    except jwt.ExpiredSignatureError:
+        return None  
+    except jwt.InvalidTokenError:
+        return None 
+
+
+# TODO: refactor function for jwt decoding 
+# TODO: randomize the user id 
