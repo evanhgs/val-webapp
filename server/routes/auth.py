@@ -72,9 +72,9 @@ def login():
 """
 Vérification de l"utilisateur connecté
 Lors du chargement de la page, React envoie GET /auth/user.
-Flask vérifie si une session existe avec current_user.is_authenticated.
+Flask vérifie si une session existe avec current_user.
 Si oui, Flask retourne les infos de l"utilisateur, sinon il envoie 401 Unauthorized.
-React met à jour l"état global (ex : setUser(userData)).
+React met à jour l'état global (ex : setUser(userData)).
 """
 @auth_bp.route('/user', methods=['GET'])
 def user():

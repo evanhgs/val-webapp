@@ -2,7 +2,7 @@ from flask import Flask
 from server.config import db, mig, cors
 
 def create_app(config_class):
-    app = Flask(__name__, static_folder='../client/dist', static_url_path='/')
+    app = Flask(__name__, static_folder='template', static_url_path='/')
     app.config.from_object(config_class)
     db.init_app(app)
 
@@ -17,6 +17,7 @@ def create_app(config_class):
 
     # les blueprints : 
     from server.routes.auth import auth_bp
+    from server.routes.user import user_bp
     
     app.register_blueprint(auth_bp)
 
