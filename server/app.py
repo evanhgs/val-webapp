@@ -7,12 +7,9 @@ from flask import send_from_directory, render_template
 app = create_app(DevelopmentConfig)
 
 
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def catch_all(path):
-    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
-        return render_template("api.html")
-    return render_template("api.html")
+@app.route('/')
+def index():
+    return render_template("index.html")
 
 
 if __name__ == '__main__':
