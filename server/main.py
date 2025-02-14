@@ -2,7 +2,7 @@ from flask import Flask
 from server.config import db, mig, cors
 
 def create_app(config_class):
-    app = Flask(__name__, static_folder='template', static_url_path='/')
+    app = Flask(__name__)
     app.config.from_object(config_class)
     db.init_app(app)
 
