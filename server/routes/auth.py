@@ -91,20 +91,6 @@ def user():
 
 
 
-"""
-Route de lecture de l'entête pour décoder le token JWT
-"""
-@auth_bp.route('/protected', methods=['GET'])
-def protected():
-    token = request.headers.get('Authorization').split()[1]
-    try:
-        data = jwt.decode(token, secret_key, algorithms=['HS256'])
-        return jsonify({"message": "Protected route accessed", "data": data}), 200
-    except jwt.ExpiredSignatureError:
-        return jsonify({"message": "Token has expired"}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({"message": "Invalid token"}), 401
-    
 
 
 """
@@ -112,21 +98,29 @@ DEBUGGING
 curl -X POST http://127.0.0.1:5000/auth/login -H "Content-Type: application/json" -d '{"username": "jean", "password": "password"}'
 curl -X GET http://127.0.0.1:5000/auth/user -H "Authorization: Bearer TOKEN"
 """
+
+
 def get_current_user():
-    token = request.headers.get('Authorization')
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or " " not in auth_header:
+        return jsonify({"message": "Unauthorized"}), 401
     
-    if not token:
-        return None      
+    token = auth_header.split()[1]
+    data = decode_jwt(token)
+    if not data:
+        return None
+       
+    return User.query.filter_by(username=data['username']).first()
+    
+
+def decode_jwt(token):
     try:
-        token = token.split()[1] 
-        data = jwt.decode(token, secret_key, algorithms=['HS256'])
-        user = User.query.filter_by(username=data['username']).first()
-        return user
+        return jwt.decode(token, secret_key, algorithms=['HS256'])
     except jwt.ExpiredSignatureError:
-        return None  
+        return None
     except jwt.InvalidTokenError:
-        return None 
+        return None
 
 
-# TODO: refactor function for jwt decoding 
+
 # TODO: randomize the user id 
