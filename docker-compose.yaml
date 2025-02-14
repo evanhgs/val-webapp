@@ -1,0 +1,18 @@
+services:
+  backend:
+    build: ./server
+    ports:
+      - "5000:5000"
+    volumes:
+      - sqlite_data:/instance/valenstagram.db
+    depends_on:
+      - frontend
+
+  frontend:
+    build: ./client
+    ports:
+      - "5173:5173"
+
+volumes:
+  sqlite_data:
+
