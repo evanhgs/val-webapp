@@ -61,8 +61,9 @@ def login():
 
     user = User.query.filter_by(username=username).first()
     if user and check_password_hash(user.password_hash, password):
+        user_id = user.id
         token = jwt.encode({
-            'username': username,
+            'id': user_id,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
         }, secret_key, algorithm='HS256')
         return jsonify({"token": token}), 200
@@ -72,15 +73,15 @@ def login():
 """
 Vérification de l"utilisateur connecté
 Lors du chargement de la page, React envoie GET /auth/user.
-Flask vérifie si une session existe avec current_user.
-Si oui, Flask retourne les infos de l"utilisateur, sinon il envoie 401 Unauthorized.
+Objectif est de récupérer le username avec le token JWT 
 React met à jour l'état global (ex : setUser(userData)).
 """
 @auth_bp.route('/user', methods=['GET'])
 def user():
-    user = get_current_user()
+    user_id = get_user_id_from_jwt()
+    user = User.query.filter_by(id=user_id).first()
     
-    if not user:
+    if not user_id:
         return jsonify({"message": "Unauthorized"}), 401
     
     return jsonify({
@@ -91,28 +92,19 @@ def user():
 
 
 
-
-
-"""
-DEBUGGING
-curl -X POST http://127.0.0.1:5000/auth/login -H "Content-Type: application/json" -d '{"username": "jean", "password": "password"}'
-curl -X GET http://127.0.0.1:5000/auth/user -H "Authorization: Bearer TOKEN"
-"""
-
-
-def get_current_user():
+"""Retourne un user id pour un token JWT en paramètre"""
+def get_user_id_from_jwt():
     auth_header = request.headers.get('Authorization')
     if not auth_header or " " not in auth_header:
         return jsonify({"message": "Unauthorized"}), 401
-    
     token = auth_header.split()[1]
     data = decode_jwt(token)
     if not data:
         return None
-       
-    return User.query.filter_by(username=data['username']).first()
+    return data['id']
     
 
+"""Retourne les valeurs décodées du token JWT"""
 def decode_jwt(token):
     try:
         return jwt.decode(token, secret_key, algorithms=['HS256'])
@@ -124,3 +116,11 @@ def decode_jwt(token):
 
 
 # TODO: randomize the user id 
+
+
+
+"""
+DEBUGGING
+curl -X POST http://127.0.0.1:5000/auth/login -H "Content-Type: application/json" -d '{"username": "jean", "password": "password"}'
+curl -X GET http://127.0.0.1:5000/auth/user -H "Authorization: Bearer TOKEN"
+"""
