@@ -113,14 +113,3 @@ def decode_jwt(token):
     except jwt.InvalidTokenError:
         return None
 
-
-
-# TODO: randomize the user id 
-
-
-
-"""
-DEBUGGING
-curl -X POST http://127.0.0.1:5000/auth/login -H "Content-Type: application/json" -d '{"username": "jean", "password": "password"}'
-curl -X GET http://127.0.0.1:5000/auth/user -H "Authorization: Bearer TOKEN"
-"""
