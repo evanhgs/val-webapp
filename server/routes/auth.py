@@ -70,26 +70,6 @@ def login():
     else:
         return jsonify({"message": "Invalid credentials"}), 401
 
-"""
-Vérification de l"utilisateur connecté
-Lors du chargement de la page, React envoie le token jwt à GET /auth/user.
-Objectif est de récupérer le username avec le token JWT 
-React met à jour l'état global (ex : setUser(userData)).
-"""
-@auth_bp.route('/user', methods=['GET'])
-def user():
-    user_id = get_user_id_from_jwt()
-    user = User.query.filter_by(id=user_id).first()
-    
-    if not user_id:
-        return jsonify({"message": "Unauthorized"}), 401
-    
-    return jsonify({
-        "username": user.username,
-        "email": user.email,
-        "id": user.id
-    }), 200
-
 
 
 """Retourne un user id pour un token JWT en paramètre"""
