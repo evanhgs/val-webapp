@@ -49,7 +49,7 @@ def register():
 Connexion
 L"utilisateur entre son email/mot de passe et clique sur "Se connecter".
 React envoie une requête POST /auth/login.
-Flask vérifie les identifiants et utilise login_user(user) pour enregistrer la session.
+Flask vérifie les identifiants et génère le token jwt à partir de l'id pour enregistrer la session.
 Flask renvoie une réponse 200 OK et React stocke l"état utilisateur.
 React redirige vers la page d"accueil.
 """
@@ -72,7 +72,7 @@ def login():
 
 """
 Vérification de l"utilisateur connecté
-Lors du chargement de la page, React envoie GET /auth/user.
+Lors du chargement de la page, React envoie le token jwt à GET /auth/user.
 Objectif est de récupérer le username avec le token JWT 
 React met à jour l'état global (ex : setUser(userData)).
 """
@@ -96,7 +96,7 @@ def user():
 def get_user_id_from_jwt():
     auth_header = request.headers.get('Authorization')
     if not auth_header or " " not in auth_header:
-        return jsonify({"message": "Unauthorized"}), 401
+        return None
     token = auth_header.split()[1]
     data = decode_jwt(token)
     if not data:
