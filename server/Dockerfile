@@ -7,9 +7,9 @@ COPY . .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-RUN cp .env.test .env || true
+RUN cp .env.test .env 
 
-RUN flask db upgrade || true 
+RUN flask db upgrade 
 
 EXPOSE 5000
 

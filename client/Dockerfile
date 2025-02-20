@@ -2,12 +2,10 @@ FROM node:18-alpine
 
 WORKDIR /client
 
-COPY package.json package-lock.json ./
+COPY . .
 
 RUN npm install
 
-COPY . .
-
 EXPOSE 5173
 
-CMD ["npx", "run", "dev", "--", "--host"]
+CMD ["npx", "vite", "--host"]
