@@ -1,0 +1,19 @@
+services:
+  backend:
+    container_name: valentanstagram-server
+    build: ./server
+    ports:
+      - "5000:5000"
+    volumes:
+      - sqlite_data:/server/valenstagram.db
+
+  frontend:
+    container_name: valentanstagram-front
+    build: ./client
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+volumes:
+  sqlite_data:
+
