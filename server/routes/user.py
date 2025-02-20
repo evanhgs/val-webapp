@@ -24,7 +24,7 @@ def profile():
         "username": user.username,
         "email": user.email,
         "bio": user.bio,
-        # "profile_picture": user.profile_picture,  # TODO: afficher les photos à partir d'une base de donnée
+        "profile_picture": user.profile_picture,
         "created_at": user.created_at,  
     }), 200
 
@@ -72,12 +72,54 @@ def edit_profile():
                 'username': user.username,
                 'email': user.email,
                 'bio': user.bio
-            }
-        }), 200
+            }}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({'message': f'An error occurred: {str(e)}'}), 500
 
+
+
+UPLOAD_FOLDER = "server/public/upload/profile_pictures"
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+"""
+Upload the user profile
+"""
+@user_bp.route('/upload-profile-picture', methods=['POST'])
+def upload_profile_picture():
+    user_id = get_user_id_from_jwt()
+    if not user_id:
+        return jsonify({'message': 'Unauthorized'}), 401
+
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+
+    if 'file' not in request.files:
+        return jsonify({'message': 'No file found'}), 404
+
+    file = request.files['file']
+    
+    if file.filename == '':
+        return jsonify({'message': 'No selected file'}), 400
+
+    if file and allowed_file(file.filename):
+        filename = secure_filename(f"user_{user_id}.{file.filename.rsplit('.', 1)[1].lower()}")
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
+
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+        file.save(filepath)
+
+        user.profile_picture = filepath
+        db.session.commit()
+
+        return jsonify({'message': 'Profile picture uploaded successfully', 'profile_picture': filepath}), 200
+
+    return jsonify({'message': 'Invalid file type'}), 400
 
 
 """
