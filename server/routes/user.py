@@ -1,6 +1,10 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, send_from_directory
 from server.models import User
+from server.config import db
 from server.routes.auth import get_user_id_from_jwt
+from werkzeug.utils import secure_filename
+import os 
+import uuid 
 
 user_bp = Blueprint('user_bp', __name__, url_prefix='/user')
 
@@ -9,7 +13,7 @@ user_bp = Blueprint('user_bp', __name__, url_prefix='/user')
 """ 
 Profil 
 L'utilisateur est connecté et clique sur 'Profil'.
-React envoie une requête GET /user/profile.
+React envoie une requête POST /user/profile.
 Objectif est de récupérer le username, email, photo de profil, bio, date de création à partir du token JWT 
 """
 @user_bp.route('/profile', methods=['POST'])
@@ -79,7 +83,7 @@ def edit_profile():
 
 
 
-UPLOAD_FOLDER = "server/public/upload/profile_pictures"
+UPLOAD_FOLDER = "/public/upload/profile_pictures"
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -107,7 +111,8 @@ def upload_profile_picture():
         return jsonify({'message': 'No selected file'}), 400
 
     if file and allowed_file(file.filename):
-        filename = secure_filename(f"user_{user_id}.{file.filename.rsplit('.', 1)[1].lower()}")
+        ext = file.filename.rsplit('.', 1)[1].lower()
+        filename = secure_filename(f"user_{user_id}_{uuid.uuid4().hex}.{ext}")
         filepath = os.path.join(UPLOAD_FOLDER, filename)
 
         os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -120,6 +125,13 @@ def upload_profile_picture():
         return jsonify({'message': 'Profile picture uploaded successfully', 'profile_picture': filepath}), 200
 
     return jsonify({'message': 'Invalid file type'}), 400
+
+
+
+@user_bp.route('/profile-picture/<filename>', methods=['GET'])
+def get_profile_picture(filename):
+    return send_from_directory(UPLOAD_FOLDER, filename)
+
 
 
 """

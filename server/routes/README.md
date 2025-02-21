@@ -16,9 +16,9 @@ The routes are divided into logical modules for better organization:
 
 ### Register
 
-`http://127.0.0.1:5000/auth/register`
+`POST http://127.0.0.1:5000/auth/register`
 
-```bash
+```json
 {
     "username" : "test",
     "email" : "test@gmail.com",
@@ -28,7 +28,7 @@ The routes are divided into logical modules for better organization:
 
 It returns code **201** :
 
-```bash
+```json
 {
     "message": "account created successfully."
 }
@@ -36,9 +36,9 @@ It returns code **201** :
 
 ### Login
 
-`http://127.0.0.1:5000/auth/login`
+`POST http://127.0.0.1:5000/auth/login`
 
-```bash
+```json
 {
     "username" : "test",
     "password" : "password"
@@ -47,7 +47,7 @@ It returns code **201** :
 
 It returns code **200** :
 
-```bash
+```json
 {
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRkYzcwNDEzLTEwOTQtNGY4Zi04Y2ZhLTg3YzhlYzkzMDNlYSIsImV4cCI6MTc0MDE2NjA4OX0.zc2DpJ8J07vy6WPZNeOkmc26dnLfZQQwSbuodxwss5s"
 }
@@ -57,13 +57,13 @@ It returns code **200** :
 
 ### Profile
 
-`http://127.0.0.1:5000/user/profile`
+`POST http://127.0.0.1:5000/user/profile`
 
-In header, you need to add `Authorization` with the token you get from login.`
+In header, you need to add `Authorization` (OAuth 2.0) with the HS256 algo get from login.`
 
 It returns code **200** :
 
-```bash
+```json
 {
     "bio": null,
     "created_at": "Fri, 21 Feb 2025 18:16:21 GMT",
@@ -75,7 +75,28 @@ It returns code **200** :
 
 ### Update Profile
 
-`http://127.0.0.1:5000/user/edit-profile`
+`POST http://127.0.0.1:5000/user/edit-profile`
+
+```json
+{
+    "username" : "test2"
+    "bio" : "I am a developer"
+}
+```
+
+It returns code **200** :
+
+```json
+{
+    "message": "Profile updated successfully",
+    "user": {
+        "bio": "I am a developer",
+        "email": "test@gmail.com",
+        "id": "28ff42af-b87c-4e4c-8051-3365547674d2",
+        "username": "test2"
+    }
+}
+```
 
 ### Upload Profile Picture
 
