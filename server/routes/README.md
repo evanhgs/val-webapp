@@ -69,7 +69,9 @@ It returns code **200** :
     "created_at": "Fri, 21 Feb 2025 18:16:21 GMT",
     "email": "test@gmail.com",
     "profile_picture": "default.jpg",
-    "username": "test"
+    "username": "test",
+    "website": null,
+    "gender": null
 }
 ```
 
@@ -93,7 +95,9 @@ It returns code **200** :
         "bio": "I am a developer",
         "email": "test@gmail.com",
         "id": "28ff42af-b87c-4e4c-8051-3365547674d2",
-        "username": "test2"
+        "username": "test2",
+        "website": null,
+        "gender": null
     }
 }
 ```

@@ -28,6 +28,8 @@ def profile():
         "username": user.username,
         "email": user.email,
         "bio": user.bio,
+        "website": user.website,
+        "gender": user.gender,
         "profile_picture": user.profile_picture,
         "created_at": user.created_at,  
     }), 200
@@ -50,6 +52,8 @@ def edit_profile():
     new_username = data.get('username')
     new_email = data.get('email')
     new_bio = data.get('bio')
+    new_website = data.get('website')
+    new_gender = data.get('gender')
 
     # si la valeur n'est pas nulle et si elle est différente de celle de base
     # si la requete ne renvoie rien alors ça veut dire que c'est possible de changer
@@ -63,9 +67,15 @@ def edit_profile():
             return jsonify({'message': 'Email already in use'}), 400
         user.email = new_email
 
-    # on accepte la bio vide mais on ne peut pas la modifier si elle est absente
+    # on accepte ces infos vide mais on ne peut pas la modifier si elle est absente
     if new_bio is not None: 
         user.bio = new_bio
+
+    if new_website is not None:
+        user.website = new_website
+    
+    if new_gender is not None:
+        user.gender = new_gender
 
     try:
         db.session.commit()
@@ -75,7 +85,9 @@ def edit_profile():
                 'id': user.id,
                 'username': user.username,
                 'email': user.email,
-                'bio': user.bio
+                'bio': user.bio,
+                'website': user.website,
+                'gender': user.gender
             }}), 200
     except Exception as e:
         db.session.rollback()
