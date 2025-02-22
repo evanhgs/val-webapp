@@ -39,8 +39,12 @@ const EditProfileForm = ({ userData, setIsEditing }: any) => {
             name="username"
             value={formData.username}
             onChange={handleChange}
+            maxLength={20}
             className="w-full p-2 rounded-md bg-gray-800 text-white"
           />
+          <p className="text-gray-500 text-sm">
+            {formData.username.length} / 20
+          </p>
         </div>
 
         {/* Website */}
@@ -51,8 +55,12 @@ const EditProfileForm = ({ userData, setIsEditing }: any) => {
             name="website"
             value={formData.website}
             onChange={handleChange}
+            maxLength={32}
             className="w-full p-2 rounded-md bg-gray-800 text-white"
           />
+          <p className="text-gray-500 text-sm">
+            {formData.website.length} / 20
+          </p>
         </div>
 
         {/* Bio */}
@@ -62,8 +70,12 @@ const EditProfileForm = ({ userData, setIsEditing }: any) => {
             name="bio"
             value={formData.bio}
             onChange={handleChange}
+            maxLength={100}
             className="w-full p-2 rounded-md bg-gray-800 text-white h-20"
           />
+          <p className="text-gray-500 text-sm">
+            {formData.bio.length} / 100
+          </p>
         </div>
 
         {/* Gender */}
