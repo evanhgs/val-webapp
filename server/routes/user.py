@@ -55,6 +55,17 @@ def edit_profile():
     new_website = data.get('website')
     new_gender = data.get('gender')
 
+    # protection contre l'abus directement vers l'api
+    if len(new_username) > 20:
+        return jsonify({"error": "Username too long (max 20 chars)"}), 400
+    if len(new_bio) > 50:
+        return jsonify({"error": "Bio too long (max 50 chars)"}), 400
+    if len(new_website) > 32:
+        return jsonify({"error": "Website URL too long (max 32 chars)"}), 400
+    if len(new_gender) > 32:
+        return jsonify({"error": "Gender URL too long (max 32 chars)"}), 400
+    
+
     # si la valeur n'est pas nulle et si elle est différente de celle de base
     # si la requete ne renvoie rien alors ça veut dire que c'est possible de changer
     if new_username and new_username != user.username:
