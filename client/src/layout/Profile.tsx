@@ -1,8 +1,10 @@
-import { Header } from "../components/Header";
 import  { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../components/AuthContext";
+import { Footer } from "../components/FooterComp";
+import { Logout } from "../components/Logout";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import EditProfileForm from "./EditProfileForm";
 
 
 const Profile = () => {
@@ -14,10 +16,11 @@ const Profile = () => {
     profile_picture: "",
   });
   const [error, setError] = useState<string | null>(null);
-
+  const [userData, setUserData] = useState<any | null>(null);
   const { user } = useContext(AuthContext) || {};
   const token = user?.token;
   const navigate = useNavigate();
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -34,6 +37,7 @@ const Profile = () => {
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
+        setUserData(response.data);
         setProfile({
           username: response.data.username,
           email: response.data.email,
@@ -49,28 +53,99 @@ const Profile = () => {
     fetchProfile();
   }, [token, navigate]);
 
+  if (error) {
+    return (
+      <div className="text-white text-center mt-10">
+        <p>{error}</p>
+        <p>Essayez de vous reconnecter</p>
+        < Logout />
+      </div>
+    );
+  }
+
+  if (!userData){
+    return (
+      <div className="text-white text-center mt-10">
+        <p>Chargement...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-black text-white">
-      <Header />
-      <div className="mt-16 p-6 max-w-2xl mx-auto text-center">
-        {error ? (
-          <p className="text-red-500">{error}</p>
-        ) : (
-          <>
-            <img
-              src={profile.profile_picture}
-              alt="Profile"
-              className="rounded-full w-32 h-32 mx-auto border-4 border-gray-600 shadow-lg"
-            />
-            <h1 className="text-3xl font-bold mt-4">{profile.username}</h1>
-            <p className="text-gray-400">{profile.email}</p>
-            <p className="mt-2 italic text-gray-300">{profile.bio}</p>
-            <p className="mt-4 text-sm text-gray-500">
-              Membre depuis : {profile.created_at}
-            </p>
-          </>
-        )}
+      
+      {/* Mode edition */}
+      {isEditing ? (
+        <EditProfileForm userData={userData} setIsEditing={setIsEditing} />
+      ) : (
+        <div className="max-w-4xl mx-auto mt-10 p-4">
+        <div className="flex items-center space-x-10">
+
+          <img
+            src={userData.profile_picture || "default-profile.png"}
+            alt="Profile"
+            className="w-28 h-28 rounded-full border-2 border-gray-600"
+          />
+
+          {/* Infos du profil */}
+          <div>
+            <div className="flex items-center space-x-4">
+              <h2 className="text-xl font-bold">{userData.username}</h2>
+              <button 
+                onClick={() => setIsEditing(true)}
+                className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm cursor-pointer">
+                Modifier le profil
+              </button>
+              <button className="text-gray-400 text-xl cursor-pointer">⚙️</button>
+            </div>
+
+            {/* Stats à changer pour la prochaine implémentation */}
+            <div className="flex space-x-6 mt-3 text-gray-300">
+              <span>
+                <strong>1</strong> posts
+              </span>
+              <span>
+                <strong>10k</strong> abonnés
+              </span>
+              <span>
+                <strong>1</strong> abonnements
+              </span>
+            </div>
+
+            {/* Nom affiché */}
+            <p className="mt-2">{userData.bio || "Vous n'avez pas de bio !"}</p>
+          </div>
+        </div>
+
+        {/* Stories Highlights */}
+        <div className="mt-10 flex space-x-6">
+          <div className="flex flex-col items-center">
+            <div className="w-16 h-16 border-2 border-gray-600 flex items-center justify-center rounded-full">
+              <span className="text-2xl">➕</span>
+            </div>
+            <p className="text-sm mt-2">Nouveau</p>
+          </div>
+        </div>
+
+        {/* Navigation Posts */}
+        <div className="border-t border-gray-700 mt-10 flex justify-center space-x-10 py-2">
+          <span className="text-white font-bold p-2 hover:border hover:border-white rounded-lg cursor-pointer">📷 POSTS</span>
+          <span className="text-gray-500 p-2 hover:border hover:border-white rounded-lg cursor-pointer">🔖 SAVED</span>
+          <span className="text-gray-500 p-2 hover:border hover:border-white rounded-lg cursor-pointer">🏷️ TAGGED</span>
+        </div>
+
+        {/* Section Share Photos */}
+        <div className="text-center mt-10">
+          <h3 className="text-xl font-bold mt-2">Partage tes photos</h3>
+          <p className="text-gray-400 mt-2">
+            Quand tu partages des photos et vidéos, elles apparaissent sur ton profil.
+          </p>
+          <button className="text-blue-500 mt-3 cursor-pointer">Partager ta première photo</button>
+        </div>
       </div>
+      )}.
+      
+      <Footer />
     </div>
   );
 };

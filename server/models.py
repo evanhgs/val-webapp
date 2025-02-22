@@ -1,6 +1,13 @@
 from server.config import db
 from datetime import datetime
+from sqlalchemy import Enum
 import uuid
+import enum
+
+class GenderEnum(enum.Enum):
+    MALE = "male"
+    FEMALE = "female" 
+    OTHER = "other"
 
 """ 
 Table User
@@ -11,6 +18,8 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
     bio = db.Column(db.Text, nullable=True)
+    website = db.Column(db.String(32), nullable=True)
+    gender = db.Column(Enum(GenderEnum), nullable=True)
     profile_picture = db.Column(db.String(255), nullable=True, default='default.jpg')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 

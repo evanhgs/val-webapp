@@ -11,7 +11,7 @@ export const Logout: React.FC = () => {
 
     return (
     <div>
-        <button onClick={handleLogout} className="cursor-pointer">LOGOUT</button>
+        <button onClick={handleLogout} className="cursor-pointer">Se déconnecter</button>
     </div>
     );
 

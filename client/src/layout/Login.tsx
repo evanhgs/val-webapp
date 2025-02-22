@@ -22,12 +22,12 @@ const Login: React.FC = () => {
         login(response.data.token);
         navigate("/");
       } else {
-        setError('Login function is not available')
+        setError('La fonction de connexion n\'est pas disponible.');
       }
 
     } catch (error) {
       console.error('Error: ', error);
-      setError('Failed to login, please check our credentials and try again.');
+      setError('Nom d\'utilisateur ou mot de passe incorrect.');
     }
   };
 

@@ -1,0 +1,95 @@
+import React, { useState } from "react";
+import axios from "axios";
+
+
+const EditProfileForm = ({ userData, setIsEditing }: any) => {
+  const [formData, setFormData] = useState({
+    username: userData.username,
+    bio: userData.bio || "",
+    website: userData.website || "",
+    gender: userData.gender || "Autre",
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await axios.post("http://127.0.0.1:5000/user/edit-profile", formData, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      alert("Profil mis à jour !");
+      setIsEditing(false); 
+    } catch (error) {
+      console.error("Echec de la mise à jour du profil: ", error);
+    }
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto mt-10 p-6 bg-gray-900 rounded-md">
+      <h2 className="text-xl font-bold text-white mb-4">Modifier le profil</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Username */}
+        <div>
+          <label className="text-gray-400">Nom d'utilisateur</label>
+          <input
+            type="text"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            className="w-full p-2 rounded-md bg-gray-800 text-white"
+          />
+        </div>
+
+        {/* Website */}
+        <div>
+          <label className="text-gray-400">Site web</label>
+          <input
+            type="text"
+            name="website"
+            value={formData.website}
+            onChange={handleChange}
+            className="w-full p-2 rounded-md bg-gray-800 text-white"
+          />
+        </div>
+
+        {/* Bio */}
+        <div>
+          <label className="text-gray-400">Bio</label>
+          <textarea
+            name="bio"
+            value={formData.bio}
+            onChange={handleChange}
+            className="w-full p-2 rounded-md bg-gray-800 text-white h-20"
+          />
+        </div>
+
+        {/* Gender */}
+        <div>
+          <label className="text-gray-400">Genre</label>
+          <select
+            name="gender"
+            value={formData.gender}
+            onChange={handleChange}
+            className="w-full p-2 rounded-md bg-gray-800 text-white"
+          >
+            <option>Je préfère ne pas le dire</option>
+            <option>Homme</option>
+            <option>Femme</option>
+            <option>Autre</option>
+          </select>
+        </div>
+
+
+        {/* Submit */}
+        <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded-md">
+          Confirmer
+        </button>
+      </form>
+    </div>
+  );
+};
+
+export default EditProfileForm;

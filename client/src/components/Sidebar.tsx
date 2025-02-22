@@ -14,7 +14,7 @@ export const Sidebar: React.FC = () => {
           </NavLink>
         </li>
         <li className="flex items-center space-x-3 p-2 hover:border hover:border-white rounded-lg cursor-pointer">
-          <span role="img" aria-label="search">🔍</span> <span>Search</span>
+          <span role="img" aria-label="search">🔍</span> <span>Chercher</span>
         </li>
         <li className="flex items-center space-x-3 p-2 hover:border hover:border-white rounded-lg cursor-pointer">
           <span role="img" aria-label="search">🧭</span> <span>Explorer</span>
@@ -29,15 +29,15 @@ export const Sidebar: React.FC = () => {
           <span role="img" aria-label="notifications">❤️</span> <span>Notifications</span>
         </li>
         <li className="flex items-center space-x-3 p-2 hover:border hover:border-white rounded-lg cursor-pointer">
-          <span role="img" aria-label="notifications">➕</span> <span>Create</span>
+          <span role="img" aria-label="notifications">➕</span> <span>Créer</span>
         </li>
         <li>
         <NavLink to="/profile" className="flex items-center space-x-3 p-2 hover:border hover:border-white rounded-lg cursor-pointer">
-          <span role="img" aria-label="profile">👤</span> <span>Profile</span>
+          <span role="img" aria-label="profile">👤</span> <span>Profil</span>
           </NavLink>
         </li>
         <li className="flex items-center space-x-3 p-2 hover:border hover:border-white rounded-lg cursor-pointer">
-          <span role="img" aria-label="profile">⚙️</span> <span>Settings</span>
+          <span role="img" aria-label="profile">⚙️</span> <span>Paramètres</span>
         </li>
       </ul>
     </div>
