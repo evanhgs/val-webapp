@@ -17,7 +17,7 @@ const Login: React.FC = () => {
     // ${process.env.api_server_ip}
     try {
       const response = await axios.post('http://127.0.0.1:5000/auth/login', {username, password});
-      console.log(response.data.token);
+      //console.log(response.data.token);
       if (login) {
         login(response.data.token);
         navigate("/");
