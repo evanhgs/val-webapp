@@ -1,12 +1,12 @@
 from server.config import db
 from datetime import datetime
-
+import uuid
 
 """ 
 Table User
 """
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
@@ -28,7 +28,7 @@ class Post(db.Model):
     caption = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)
     likes = db.relationship('Like', backref='post', lazy=True)
     comments = db.relationship('Comment', backref='post', lazy=True)
 
@@ -39,7 +39,7 @@ m'entions j'aime
 """
 class Like(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -55,7 +55,7 @@ class Comment(db.Model):
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
 
 
@@ -65,8 +65,8 @@ les abonnements
 """
 class Follow(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    follower_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    followed_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    follower_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)
+    followed_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     db.UniqueConstraint(follower_id, followed_id, name='unique_follow')
@@ -78,8 +78,8 @@ les notifs(likes, comments, follows)
 """
 class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # À qui appartient la notif
-    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # Qui a généré la notif
+    user_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)  # À qui appartient la notif
+    sender_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)  # Qui a généré la notif
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=True)  # Optionnel (si lié à un post)
     type = db.Column(db.String(50), nullable=False)  # Ex: "like", "comment", "follow"
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -92,8 +92,8 @@ Groups implementation to see later
 """
 class Conversation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user1_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # Premier utilisateur
-    user2_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # Deuxième utilisateur
+    user1_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)  # Premier utilisateur
+    user2_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)  # Deuxième utilisateur
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     messages = db.relationship('Message', backref='conversation', lazy=True)
@@ -108,7 +108,7 @@ messages envoyés à l'utilisateur
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     conversation_id = db.Column(db.Integer, db.ForeignKey('conversation.id'), nullable=False)
-    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  
+    sender_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)  
     content = db.Column(db.Text, nullable=False)  
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     is_read = db.Column(db.Boolean, default=False) 

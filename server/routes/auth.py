@@ -49,7 +49,7 @@ def register():
 Connexion
 L"utilisateur entre son email/mot de passe et clique sur "Se connecter".
 React envoie une requête POST /auth/login.
-Flask vérifie les identifiants et utilise login_user(user) pour enregistrer la session.
+Flask vérifie les identifiants et génère le token jwt à partir de l'id pour enregistrer la session.
 Flask renvoie une réponse 200 OK et React stocke l"état utilisateur.
 React redirige vers la page d"accueil.
 """
@@ -61,72 +61,35 @@ def login():
 
     user = User.query.filter_by(username=username).first()
     if user and check_password_hash(user.password_hash, password):
+        user_id = user.id
         token = jwt.encode({
-            'username': username,
+            'id': user_id,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
         }, secret_key, algorithm='HS256')
         return jsonify({"token": token}), 200
     else:
         return jsonify({"message": "Invalid credentials"}), 401
 
-"""
-Vérification de l"utilisateur connecté
-Lors du chargement de la page, React envoie GET /auth/user.
-Flask vérifie si une session existe avec current_user.is_authenticated.
-Si oui, Flask retourne les infos de l"utilisateur, sinon il envoie 401 Unauthorized.
-React met à jour l"état global (ex : setUser(userData)).
-"""
-@auth_bp.route('/user', methods=['GET'])
-def user():
-    user = get_current_user()
+
+
+"""Retourne un user id pour un token JWT en paramètre"""
+def get_user_id_from_jwt():
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or " " not in auth_header:
+        return None
+    token = auth_header.split()[1]
+    data = decode_jwt(token)
+    if not data:
+        return None
+    return data['id']
     
-    if not user:
-        return jsonify({"message": "Unauthorized"}), 401
-    
-    return jsonify({
-        "username": user.username,
-        "email": user.email,
-        "id": user.id
-    }), 200
 
-
-
-"""
-Route de lecture de l'entête pour décoder le token JWT
-"""
-@auth_bp.route('/protected', methods=['GET'])
-def protected():
-    token = request.headers.get('Authorization').split()[1]
+"""Retourne les valeurs décodées du token JWT"""
+def decode_jwt(token):
     try:
-        data = jwt.decode(token, secret_key, algorithms=['HS256'])
-        return jsonify({"message": "Protected route accessed", "data": data}), 200
+        return jwt.decode(token, secret_key, algorithms=['HS256'])
     except jwt.ExpiredSignatureError:
-        return jsonify({"message": "Token has expired"}), 401
+        return None
     except jwt.InvalidTokenError:
-        return jsonify({"message": "Invalid token"}), 401
-    
+        return None
 
-
-"""
-DEBUGGING
-curl -X POST http://127.0.0.1:5000/auth/login -H "Content-Type: application/json" -d '{"username": "jean", "password": "password"}'
-curl -X GET http://127.0.0.1:5000/auth/user -H "Authorization: Bearer TOKEN"
-"""
-def get_current_user():
-    token = request.headers.get('Authorization')
-    
-    if not token:
-        return None      
-    try:
-        token = token.split()[1] 
-        data = jwt.decode(token, secret_key, algorithms=['HS256'])
-        user = User.query.filter_by(username=data['username']).first()
-        return user
-    except jwt.ExpiredSignatureError:
-        return None  
-    except jwt.InvalidTokenError:
-        return None 
-
-
-# TODO: refactor function for jwt decoding 
-# TODO: randomize the user id 
