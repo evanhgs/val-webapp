@@ -2,15 +2,18 @@ from server.config import db
 from datetime import datetime
 import uuid
 
+
 """ 
 Table User
 """
 class User(db.Model):
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
+    username = db.Column(db.String(20), unique=True, nullable=False)
+    email = db.Column(db.String(60), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
     bio = db.Column(db.Text, nullable=True)
+    website = db.Column(db.String(32), nullable=True)
+    gender = db.Column(db.String(32), nullable=True)
     profile_picture = db.Column(db.String(255), nullable=True, default='default.jpg')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 

@@ -17,17 +17,17 @@ const Login: React.FC = () => {
     // ${process.env.api_server_ip}
     try {
       const response = await axios.post('http://127.0.0.1:5000/auth/login', {username, password});
-      console.log(response.data.token);
+      //console.log(response.data.token);
       if (login) {
         login(response.data.token);
         navigate("/");
       } else {
-        setError('Login function is not available')
+        setError('La fonction de connexion n\'est pas disponible.');
       }
 
     } catch (error) {
       console.error('Error: ', error);
-      setError('Failed to login, please check our credentials and try again.');
+      setError('Nom d\'utilisateur ou mot de passe incorrect.');
     }
   };
 
