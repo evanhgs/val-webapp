@@ -5,6 +5,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./layout/Home";
 import Login from "./layout/Login";
 import Register from "./layout/Register";
+import Layout from "./layout/Layout";
+import Profile from "./layout/Profile"
 import "/src/index.css";
 
 const App: React.FC = () => {
@@ -16,7 +18,10 @@ const App: React.FC = () => {
           <Route path="/register" element={<Register />} />
 
           <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<Home />} />
+            <Route element={<Layout/>}>
+              <Route path="/" element={<Home />} />
+              <Route path="/profile" element={<Profile /> } />
+            </Route>
           </Route>
         </Routes>
       </Router>
