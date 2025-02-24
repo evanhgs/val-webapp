@@ -21,6 +21,7 @@ const Profile = () => {
   const token = user?.token;
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
+  const [newProfilePicture, setNewProfilePicture] = useState<File | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -53,11 +54,48 @@ const Profile = () => {
     fetchProfile();
   }, [token, navigate]);
 
+  // chargement de la photo
+  const handleProfilePictureChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      setNewProfilePicture(event.target.files[0]);
+    }
+  };
+
+  //  uploader la photo
+  const handleUpload = async () => {
+    if (!newProfilePicture) {
+      setError("Aucune image sélectionnée.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", newProfilePicture);
+
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:5000/user/upload-profile-picture",
+        formData,
+        { headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" } }
+      );
+      setProfile((prevProfile) => ({
+        ...prevProfile,
+        profile_picture: response.data.profile_picture,
+      }));
+      setNewProfilePicture(null);
+      alert("Image de profil mise à jour avec succès !");
+    } catch (error) {
+      setError("Erreur lors de l'upload de la photo.");
+      console.error(error);
+    }
+  };
+
+
+
   if (error) {
     return (
       <div className="text-white text-center mt-10">
         <p>{error}</p>
-        <p>Essayez de vous reconnecter</p>
+        <p>Si vous rencontrez plusieurs erreur à la suite essayez de vous reconnecter</p>
         < Logout />
       </div>
     );
@@ -96,8 +134,24 @@ const Profile = () => {
                 className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm cursor-pointer">
                 Modifier le profil
               </button>
+              
+
+              {/* Modifier la photo de profil */}
+              <button 
+                className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm cursor-pointer">
+                Changer la photo de profil
+              </button>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleProfilePictureChange}
+                className="mt-2 text-sm text-white"
+              />
+
               <button className="text-gray-400 text-xl cursor-pointer">⚙️</button>
             </div>
+
+
 
             {/* Stats à changer pour la prochaine implémentation */}
             <div className="flex space-x-6 mt-3 text-gray-300">
@@ -143,7 +197,7 @@ const Profile = () => {
           <button className="text-blue-500 mt-3 cursor-pointer">Partager ta première photo</button>
         </div>
       </div>
-      )}.
+      )}
       
       <Footer />
     </div>
