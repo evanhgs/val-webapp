@@ -3,11 +3,11 @@ import { Sidebar } from "../components/Sidebar";
 
 const Layout = () => {
   return (
-    <div className="flex bg-black min-h-screen text-white">
+    <div className="flex flex-wrap bg-black min-h-screen text-white">
       <Sidebar />
 
       {/* Contenu principal dynamique */}
-      <div className="flex flex-col flex-grow">
+      <div className="flex flex-col flex-grow margin-x-40">
         <Outlet /> 
       </div>
     </div>

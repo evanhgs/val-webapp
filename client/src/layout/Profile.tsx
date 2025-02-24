@@ -110,7 +110,7 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="flex-col md:flex-row min-h-screen bg-black text-white flex-grow ml-[250px]">
       
       {/* Mode edition */}
       {isEditing ? (
@@ -129,9 +129,9 @@ const Profile = () => {
           <div>
             <div className="flex items-center space-x-4">
               <h2 className="text-xl font-bold">{userData.username}</h2>
-              <button 
+              <button   
                 onClick={() => setIsEditing(true)}
-                className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm cursor-pointer">
+                className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm cursor-pointer hover::bg-gray-700 transition">
                 Modifier le profil
               </button>
               
