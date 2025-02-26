@@ -21,7 +21,6 @@ const Profile = () => {
   const token = user?.token;
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
-  const [newProfilePicture, setNewProfilePicture] = useState<File | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -54,42 +53,6 @@ const Profile = () => {
     fetchProfile();
   }, [token, navigate]);
 
-  // chargement de la photo
-  const handleProfilePictureChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      setNewProfilePicture(event.target.files[0]);
-    }
-  };
-
-  //  uploader la photo
-  const handleUpload = async () => {
-    if (!newProfilePicture) {
-      setError("Aucune image sélectionnée.");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("file", newProfilePicture);
-
-    try {
-      const response = await axios.post(
-        "http://127.0.0.1:5000/user/upload-profile-picture",
-        formData,
-        { headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" } }
-      );
-      setProfile((prevProfile) => ({
-        ...prevProfile,
-        profile_picture: response.data.profile_picture,
-      }));
-      setNewProfilePicture(null);
-      alert("Image de profil mise à jour avec succès !");
-    } catch (error) {
-      setError("Erreur lors de l'upload de la photo.");
-      console.error(error);
-    }
-  };
-
-
 
   if (error) {
     return (
@@ -112,7 +75,7 @@ const Profile = () => {
   return (
     <div className="flex-col md:flex-row min-h-screen bg-black text-white flex-grow ml-[250px]">
       
-      {/* Mode edition */}
+      {/* page de profil */}
       {isEditing ? (
         <EditProfileForm userData={userData} setIsEditing={setIsEditing} />
       ) : (
@@ -129,6 +92,8 @@ const Profile = () => {
           <div>
             <div className="flex items-center space-x-4">
               <h2 className="text-xl font-bold">{userData.username}</h2>
+
+              {/* Modifier le profil */}
               <button   
                 onClick={() => setIsEditing(true)}
                 className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm cursor-pointer hover::bg-gray-700 transition">
@@ -136,17 +101,11 @@ const Profile = () => {
               </button>
               
 
-              {/* Modifier la photo de profil */}
+              {/* Button d'upload de photo */}
               <button 
                 className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm cursor-pointer">
                 Changer la photo de profil
               </button>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleProfilePictureChange}
-                className="mt-2 text-sm text-white"
-              />
 
               <button className="text-gray-400 text-xl cursor-pointer">⚙️</button>
             </div>
@@ -166,7 +125,7 @@ const Profile = () => {
               </span>
             </div>
 
-            {/* Nom affiché */}
+            {/* bio affichée*/}
             <p className="mt-2">{userData.bio || "Vous n'avez pas de bio !"}</p>
           </div>
         </div>
