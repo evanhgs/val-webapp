@@ -4,11 +4,13 @@ import { Footer } from "../components/FooterComp";
 import { Logout } from "../components/Logout";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import EditProfileForm from "./EditProfileForm";
+import EditProfileForm from "../components/EditProfileForm";
+import { uploadButton, UploadFile } from "../components/UploadFile";
 
 
 const Profile = () => {
-  const [profile, setProfile] = useState({
+  {/* typage du form pour la structure de l'état (mis à vide => ts)*/}
+  const [profile, setProfile] = useState({ 
     username: "",
     email: "",
     bio: "",
@@ -20,8 +22,11 @@ const Profile = () => {
   const { user } = useContext(AuthContext) || {};
   const token = user?.token;
   const navigate = useNavigate();
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(false); {/* pour le form du profil */}
+  const [isUploading, setIsUploading] = useState(false); {/* pour l'upload de la pp */}
 
+
+  {/** premier hook ajoutat les info de l'affichage du profil */}
   useEffect(() => {
     const fetchProfile = async () => {
 
@@ -52,6 +57,15 @@ const Profile = () => {
     };
     fetchProfile();
   }, [token, navigate]);
+
+
+  {/**deuxieme hook gérant le bouton d'upload d'image */}
+  useEffect(() => {
+    if (isUploading) {
+      console.log("upload photo profil...");
+      setIsUploading(false);
+    }
+  }, [isUploading]);
 
 
   if (error) {
@@ -103,9 +117,10 @@ const Profile = () => {
 
               {/* Button d'upload de photo */}
               <button 
+                onClick={() => setIsUploading(true)}
                 className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm cursor-pointer">
                 Changer la photo de profil
-              </button>
+              </button> 
 
               <button className="text-gray-400 text-xl cursor-pointer">⚙️</button>
             </div>
