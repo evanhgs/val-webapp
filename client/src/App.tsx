@@ -7,7 +7,6 @@ import Login from "./layout/Login";
 import Register from "./layout/Register";
 import Layout from "./layout/Layout";
 import Profile from "./layout/Profile"
-import "/src/index.css";
 
 const App: React.FC = () => {
   return (

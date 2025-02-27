@@ -8,4 +8,4 @@ RUN npm install
 
 EXPOSE 5173
 
-CMD ["npx", "vite", "--host"]
+CMD ["npm", "run", "dev"]
