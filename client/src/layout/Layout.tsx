@@ -1,6 +1,8 @@
 import { Outlet } from "react-router-dom";
 import { Sidebar } from "../components/Sidebar";
 
+
+
 const Layout = () => {
   return (
     <div className="flex flex-wrap bg-black min-h-screen text-white">

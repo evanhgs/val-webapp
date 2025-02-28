@@ -5,7 +5,7 @@ import { Logout } from "../components/Logout";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import EditProfileForm from "../components/EditProfileForm";
-import { uploadButton, UploadFile } from "../components/UploadFile";
+import { uploadButton } from "../components/UploadFile";
 
 
 const Profile = () => {
@@ -110,7 +110,7 @@ const Profile = () => {
               {/* Modifier le profil */}
               <button   
                 onClick={() => setIsEditing(true)}
-                className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm cursor-pointer hover::bg-gray-700 transition">
+                className="bg-gray-800 text-white px-3 py-1 rounded-full text-sm cursor-pointer hover::bg-gray-700 transition">
                 Modifier le profil
               </button>
               
