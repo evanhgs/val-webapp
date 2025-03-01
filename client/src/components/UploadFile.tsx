@@ -1,7 +1,15 @@
 import { useState } from 'react';
 import axios from 'axios';
+import config from '../config';
 
-const UploadButton = ({userData, setIsUploading}: any ) => {
+// Typage des données utilisateur et des props du composant
+interface UserData { profile_picture: string}
+interface UploadButtonProps {
+    userData: UserData;
+    setIsUploading: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const UploadButton: React.FC<UploadButtonProps> = ({userData, setIsUploading}) => {
     
     const [error, setError ] = useState<string>('');
     const [profilePicture, setProfilePicture] = useState<string>(
@@ -17,7 +25,7 @@ const UploadButton = ({userData, setIsUploading}: any ) => {
                 const formData = new FormData();
                 formData.append("profile_picture", file);
 
-                await axios.post("http://localhost:5000/user/upload-profile-picture", formData, {
+                await axios.post(`${config.serverUrl}/user/upload-profile-picture`, formData, {
                     headers: { Authorization: `Bearer ${localStorage.getItem("token")}`, "Content-Type": "multipart/form-data" },
                 });
                 setIsUploading(false);

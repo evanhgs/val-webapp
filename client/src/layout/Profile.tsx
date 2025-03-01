@@ -5,8 +5,8 @@ import { Logout } from "../components/Logout";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import EditProfileForm from "../components/EditProfileForm";
-import uploadButton from "../components/UploadFile";
 import UploadButton from "../components/UploadFile";
+import config from '../config';
 
 
 const Profile = () => {
@@ -39,7 +39,7 @@ const Profile = () => {
         }
 
         const response = await axios.post(
-          "http://127.0.0.1:5000/user/profile",
+          `${config.serverUrl}/user/profile`,
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -58,15 +58,6 @@ const Profile = () => {
     };
     fetchProfile();
   }, [token, navigate]);
-
-
-  {/**deuxieme hook gérant le bouton d'upload d'image */}
-  useEffect(() => {
-    if (isUploading) {
-      console.log("upload photo profil...");
-      <UploadButton />
-    }
-  }, [isUploading]);
 
 
   if (error) {

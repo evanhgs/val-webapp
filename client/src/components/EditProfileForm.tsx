@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import config from '../config';
 
 
 const EditProfileForm = ({ userData, setIsEditing }: any) => {
@@ -17,7 +18,7 @@ const EditProfileForm = ({ userData, setIsEditing }: any) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post("http://127.0.0.1:5000/user/edit-profile", formData, {
+      await axios.post(`${config.serverUrl}/user/edit-profile`, formData, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       alert("Profil mis à jour !");

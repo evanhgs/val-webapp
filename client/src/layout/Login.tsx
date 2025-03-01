@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from '../components/AuthContext';
+import config from '../config';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -16,7 +17,7 @@ const Login: React.FC = () => {
 
     // ${process.env.api_server_ip}
     try {
-      const response = await axios.post('http://127.0.0.1:5000/auth/login', {username, password});
+      const response = await axios.post(`${config.serverUrl}/auth/login`, { username, password });
       //console.log(response.data.token);
       if (login) {
         login(response.data.token);
