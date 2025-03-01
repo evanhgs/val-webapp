@@ -12,8 +12,7 @@ export const Sidebar: React.FC = () => {
 
 
   return (
-    <>
-      <div className='fixed left-0 top-0 h-screen w-[250px] bg-black text-white p-4 transition-transform duration-300 md:overflow-y-scroll'>
+      <div className='fixed left-0 top-0 h-screen w-[350px] bg-black text-white p-4 transition-transform duration-300 overflow-y-auto'>
         <ul className="space-y-4">
 
           <li>
@@ -23,15 +22,13 @@ export const Sidebar: React.FC = () => {
           </li>
 
           <li>
-              {isSearch ? ( <Search /> ) : (
-                <div>
-                  <button
-                    className="flex items-center space-x-3 p-2 hover:border hover:border-white rounded-lg cursor-pointer"
-                    onClick={() => setIsSearch(true)}> 
-                    <span role="img" aria-label="search">🔍</span> <span>Chercher</span>
-                  </button>
-                </div>
-              ) }
+            <div
+              className="flex items-center space-x-3 p-2 hover:border hover:border-white rounded-lg cursor-pointer"
+              onClick={() => setIsSearch(true)}>
+              <span role="img" aria-label="search">🔍</span> <span>Chercher</span>
+            </div>
+            {isSearch ? ( <Search setIsSearch={setIsSearch}/> ) : null }
+            
           </li>
 
           <li className="flex items-center space-x-3 p-2 hover:border hover:border-white rounded-lg cursor-pointer">
@@ -59,7 +56,5 @@ export const Sidebar: React.FC = () => {
           </li>
         </ul>
       </div>
-      
-    </>
   );
 };

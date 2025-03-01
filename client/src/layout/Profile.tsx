@@ -5,7 +5,7 @@ import { Logout } from "../components/Logout";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import EditProfileForm from "../components/EditProfileForm";
-import { uploadButton } from "../components/UploadFile";
+import uploadButton from "../components/UploadFile";
 
 
 const Profile = () => {
