@@ -106,51 +106,40 @@ def edit_profile():
 
 
 
-UPLOAD_FOLDER = "/public/upload/profile_pictures"
+UPLOAD_FOLDER = "public/uploads/"
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 """
 Upload the user profile
+Les photos sont stockées sur le serveur et l'object est d'enregistrer le path des photos sur la base de donnée
 """
 @user_bp.route('/upload-profile-picture', methods=['POST'])
 def upload_profile_picture():
-    user_id = get_user_id_from_jwt()
-    if not user_id:
-        return jsonify({'message': 'Unauthorized'}), 401
-
-    user = User.query.get(user_id)
-    if not user:
-        return jsonify({'message': 'User not found'}), 404
-
-    if 'file' not in request.files:
-        return jsonify({'message': 'No file found'}), 404
-
-    file = request.files['file']
-    
-    if file.filename == '':
-        return jsonify({'message': 'No selected file'}), 400
-
-    if file and allowed_file(file.filename):
-        ext = file.filename.rsplit('.', 1)[1].lower()
-        filename = secure_filename(f"user_{user_id}_{uuid.uuid4().hex}.{ext}")
-        filepath = os.path.join(UPLOAD_FOLDER, filename)
-
-        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-        file.save(filepath)
-
-        user.profile_picture = filepath
-        db.session.commit()
-
-        return jsonify({'message': 'Profile picture uploaded successfully', 'profile_picture': filepath}), 200
-
-    return jsonify({'message': 'Invalid file type'}), 400
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return jsonify({'message': 'File not found' }), 404
+        file = request.files.get('file')
+        if not file:
+            return jsonify({'message': 'File not selected' }), 404
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(UPLOAD_FOLDER, filename)
+            if not filepath.startswith(UPLOAD_FOLDER):  # Protection contre les attaques path traversal
+                return jsonify({'message': 'Invalid file path' }), 400
+            file.save(filepath)
+            return jsonify({'message': 'File uploaded with success' }), 200
 
 
 
+"""
+Récupération des photos de profil dans le path
+"""
 @user_bp.route('/profile-picture/<filename>', methods=['GET'])
 def get_profile_picture(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
