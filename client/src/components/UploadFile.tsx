@@ -1,5 +1,5 @@
-{/* ce composant est un simple bouton qui permet d'ajouter une image pour la photo de profil */}
 import { useState } from 'react';
+import axios from 'axios';
 
 const UploadButton = ({userData, setIsUploading}: any ) => {
     
@@ -8,19 +8,39 @@ const UploadButton = ({userData, setIsUploading}: any ) => {
         userData.profile_picture || "",
     );
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>)=> {
+    const handleChange = async (e: React.ChangeEvent<HTMLInputElement>)=> {
         const file = e.target.files?.[0];
         if (file) {
             console.log(file.name);
             setProfilePicture(URL.createObjectURL(file));
-            setIsUploading(false);
+            try {
+                const formData = new FormData();
+                formData.append("profile_picture", file);
+
+                await axios.post("http://localhost:5000/user/upload-profile-picture", formData, {
+                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}`, "Content-Type": "multipart/form-data" },
+                });
+                setIsUploading(false);
+            } catch (error) {
+                setError("Erreur de l'upload de la photo de profil")
+            }
         } else {
             setError('Aucune image sélectionnée')
         }
     }
 
     return (
-        <>
+        <div className="max-w-2xl mx-auto mt-10 p-6 bg-gray-900 rounded-md">
+            <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold text-white">Modifier la photo de profil</h2>
+                <button
+                className="p-2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                onClick={() => setIsUploading(false)}>
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+                </button>
+            </div>
             <p>Veuillez choisir votre nouvelle photo de profil en cliquant sur le bouton.</p>
             <input 
                 type='file' 
@@ -28,21 +48,8 @@ const UploadButton = ({userData, setIsUploading}: any ) => {
                 onChange={handleChange}
             />
             {error && <p className='text-red-500'>{error}</p>}
-        </>
+        </div>
     );
 }
 
 export default UploadButton 
-
-
-
-
-
-{ /**  requete à faire coté serveur 
-    const response = await axios.post(
-        "http://127.0.0.1:5000/user/upload-profile-picture",
-        formData,
-        { headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" } }
-      );
-      
-      */}

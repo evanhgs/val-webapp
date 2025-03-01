@@ -6,6 +6,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import EditProfileForm from "../components/EditProfileForm";
 import uploadButton from "../components/UploadFile";
+import UploadButton from "../components/UploadFile";
 
 
 const Profile = () => {
@@ -63,7 +64,7 @@ const Profile = () => {
   useEffect(() => {
     if (isUploading) {
       console.log("upload photo profil...");
-      setIsUploading(false);
+      <UploadButton />
     }
   }, [isUploading]);
 
@@ -92,7 +93,8 @@ const Profile = () => {
       {/* page de profil */}
       {isEditing ? (
         <EditProfileForm userData={userData} setIsEditing={setIsEditing} />
-      ) : (
+      ) : isUploading ? ( <UploadButton userData={userData} setIsUploading={setIsUploading} /> ) : (
+        
         <div className="max-w-4xl mx-auto mt-10 p-4">
         <div className="flex items-center space-x-10">
 
@@ -110,7 +112,7 @@ const Profile = () => {
               {/* Modifier le profil */}
               <button   
                 onClick={() => setIsEditing(true)}
-                className="bg-gray-800 text-white px-3 py-1 rounded-full text-sm cursor-pointer hover::bg-gray-700 transition">
+                className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm cursor-pointer">
                 Modifier le profil
               </button>
               

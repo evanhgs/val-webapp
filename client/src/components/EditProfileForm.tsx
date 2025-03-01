@@ -29,7 +29,17 @@ const EditProfileForm = ({ userData, setIsEditing }: any) => {
 
   return (
     <div className="max-w-2xl mx-auto mt-10 p-6 bg-gray-900 rounded-md">
-      <h2 className="text-xl font-bold text-white mb-4">Modifier le profil</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold text-white">Modifier le profil</h2>
+        <button
+          className="p-2 text-gray-500 hover:text-gray-700 focus:outline-none"
+          onClick={() => setIsEditing(false)}>
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+      
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Username */}
         <div>
