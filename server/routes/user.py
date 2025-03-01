@@ -106,54 +106,62 @@ def edit_profile():
 
 
 
-UPLOAD_FOLDER = "/public/upload/profile_pictures"
+UPLOAD_FOLDER = "public/uploads/"
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 """
-Upload the user profile
+Route pour upload une photo de profil.
+
+Cette route accepte uniquement les requêtes POST. Elle vérifie d'abord si un fichier a été envoyé
+dans la requête. Si aucun fichier n'est trouvé, elle retourne un message d'erreur avec le code 404.
+Ensuite, elle vérifie si le fichier est valide et s'il est autorisé (en utilisant la fonction allowed_file).
+Si le fichier est valide, il est sauvegardé dans le dossier UPLOAD_FOLDER après avoir sécurisé son nom
+de fichier avec secure_filename. Une protection contre les attaques de type path traversal est également
+mise en place pour s'assurer que le chemin du fichier est valide. Si tout se passe bien, un message de
+succès est retourné avec l'URL du fichier uploadé.
+
+De plus la route doit assigner l'image à la personne, donc elle prend le nom du fichier et le modifie pour avoir un id unique
+ensuite on modifie le profile_picture de l'utilisateur pour mettre le meme que celui du fichier uploadé. 
+Returns:
+    Response: Un objet JSON contenant un message et, en cas de succès, l'URL du fichier uploadé.
 """
 @user_bp.route('/upload-profile-picture', methods=['POST'])
 def upload_profile_picture():
-    user_id = get_user_id_from_jwt()
-    if not user_id:
-        return jsonify({'message': 'Unauthorized'}), 401
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return jsonify({'message': 'File not found' }), 404
+        
+        file = request.files.get('file')
+        if not file:
+            return jsonify({'message': 'File not selected' }), 404
+        
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(UPLOAD_FOLDER, filename)
 
-    user = User.query.get(user_id)
-    if not user:
-        return jsonify({'message': 'User not found'}), 404
-
-    if 'file' not in request.files:
-        return jsonify({'message': 'No file found'}), 404
-
-    file = request.files['file']
-    
-    if file.filename == '':
-        return jsonify({'message': 'No selected file'}), 400
-
-    if file and allowed_file(file.filename):
-        ext = file.filename.rsplit('.', 1)[1].lower()
-        filename = secure_filename(f"user_{user_id}_{uuid.uuid4().hex}.{ext}")
-        filepath = os.path.join(UPLOAD_FOLDER, filename)
-
-        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-        file.save(filepath)
-
-        user.profile_picture = filepath
-        db.session.commit()
-
-        return jsonify({'message': 'Profile picture uploaded successfully', 'profile_picture': filepath}), 200
-
-    return jsonify({'message': 'Invalid file type'}), 400
+            if not filepath.startswith(UPLOAD_FOLDER):  
+                return jsonify({'message': 'Invalid file path' }), 400
+            
+            file.save(filepath)
+            return jsonify({
+                'message': 'File uploaded successfully',
+                'file_url': f'/profile-picture/{filename}'
+            }), 200
 
 
 
+"""
+Récupération des photos de profil dans le path
+"""
 @user_bp.route('/profile-picture/<filename>', methods=['GET'])
 def get_profile_picture(filename):
-    return send_from_directory(UPLOAD_FOLDER, filename)
+    return send_from_directory(UPLOAD_FOLDER, filename, as_attachment=False)
 
 
 

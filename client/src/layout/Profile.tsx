@@ -90,7 +90,7 @@ const Profile = () => {
         <div className="flex items-center space-x-10">
 
           <img
-            src={userData.profile_picture || "default-profile.png"}
+            src={`${config.serverUrl}/user/profile-picture/${userData.profile_picture}` || `${config.serverUrl}/user/profile-picture/default.jpg`}
             alt="Profile"
             className="w-28 h-28 rounded-full border-2 border-gray-600"
           />
