@@ -116,24 +116,43 @@ def allowed_file(filename):
 
 
 """
-Upload the user profile
-Les photos sont stockées sur le serveur et l'object est d'enregistrer le path des photos sur la base de donnée
+Route pour upload une photo de profil.
+
+Cette route accepte uniquement les requêtes POST. Elle vérifie d'abord si un fichier a été envoyé
+dans la requête. Si aucun fichier n'est trouvé, elle retourne un message d'erreur avec le code 404.
+Ensuite, elle vérifie si le fichier est valide et s'il est autorisé (en utilisant la fonction allowed_file).
+Si le fichier est valide, il est sauvegardé dans le dossier UPLOAD_FOLDER après avoir sécurisé son nom
+de fichier avec secure_filename. Une protection contre les attaques de type path traversal est également
+mise en place pour s'assurer que le chemin du fichier est valide. Si tout se passe bien, un message de
+succès est retourné avec l'URL du fichier uploadé.
+
+De plus la route doit assigner l'image à la personne, donc elle prend le nom du fichier et le modifie pour avoir un id unique
+ensuite on modifie le profile_picture de l'utilisateur pour mettre le meme que celui du fichier uploadé. 
+Returns:
+    Response: Un objet JSON contenant un message et, en cas de succès, l'URL du fichier uploadé.
 """
 @user_bp.route('/upload-profile-picture', methods=['POST'])
 def upload_profile_picture():
     if request.method == 'POST':
         if 'file' not in request.files:
             return jsonify({'message': 'File not found' }), 404
+        
         file = request.files.get('file')
         if not file:
             return jsonify({'message': 'File not selected' }), 404
+        
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             filepath = os.path.join(UPLOAD_FOLDER, filename)
-            if not filepath.startswith(UPLOAD_FOLDER):  # Protection contre les attaques path traversal
+
+            if not filepath.startswith(UPLOAD_FOLDER):  
                 return jsonify({'message': 'Invalid file path' }), 400
+            
             file.save(filepath)
-            return jsonify({'message': 'File uploaded with success' }), 200
+            return jsonify({
+                'message': 'File uploaded successfully',
+                'file_url': f'/profile-picture/{filename}'
+            }), 200
 
 
 
@@ -142,7 +161,7 @@ Récupération des photos de profil dans le path
 """
 @user_bp.route('/profile-picture/<filename>', methods=['GET'])
 def get_profile_picture(filename):
-    return send_from_directory(UPLOAD_FOLDER, filename)
+    return send_from_directory(UPLOAD_FOLDER, filename, as_attachment=False)
 
 
 
