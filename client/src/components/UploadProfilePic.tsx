@@ -10,23 +10,28 @@ interface UploadButtonProps {
 }
 
 const UploadButton: React.FC<UploadButtonProps> = ({userData, setIsUploading}) => {
-    
-    const [error, setError ] = useState<string>('');
-    const [profilePicture, setProfilePicture] = useState<string>(
-        userData.profile_picture || "",
-    );
 
+    // états locaux des composants, stockage de variable temporaire
+    const [error, setError ] = useState<string>('');
+    const [profilePicture, setProfilePicture] = useState<string>(userData.profile_picture || "",);
+
+    // s'execute quand un fichier est sélectionné dans (input type=file)
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>)=> {
         const file = e.target.files?.[0];
         if (file) {
-            console.log(file.name);
-            setProfilePicture(URL.createObjectURL(file));
+            setProfilePicture(URL.createObjectURL(file)); // création d'une url temp pour l'aperçu
             try {
-                const formData = new FormData();
-                formData.append("profile_picture", file);
+                const formData = new FormData(); // form precook pour envoyer des medias (??)
+                formData.append("file", file); // coté serveur on attend "file" comme nom /!\
 
                 await axios.post(`${config.serverUrl}/user/upload-profile-picture`, formData, {
-                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}`, "Content-Type": "multipart/form-data" },
+                    headers: { 
+                        Authorization: `Bearer ${localStorage.getItem("token")}`, 
+                        "Content-Type": "multipart/form-data" }, // indique bien qu'on envoie un média (combinaison de texte) : merci google
+                }).then(response => {
+                    console.log(response.data);
+                }).catch(error => {
+                    console.log(error);
                 });
                 setIsUploading(false);
             } catch (error) {
