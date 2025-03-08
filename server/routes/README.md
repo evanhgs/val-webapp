@@ -104,4 +104,36 @@ It returns code **200** :
 
 ### Upload Profile Picture
 
-`http://127.0.0.1:5000/user/upload-profile-picture`
+`POST http://127.0.0.1:5000/user/upload-profile-picture`
+
+With `Content-Type` as `multipart/form-data`
+And `Authorization` (OAuth 2.0) with the HS256 algo get from login.
+
+```json
+const formData = new FormData(); 
+formData.append("file", file);
+{ }
+```
+
+It returns code **200** :
+
+```json
+{
+    "file_url": "/user/profile-picture/amazing_picture.jpg",
+    "message": "File uploaded successfully"
+}
+```
+
+### Get profile picture from path
+
+`GET http://127.0.0.1:5000/user/profile-picture/<filename>`
+
+`<filename>` is the name of the picture you want to get.
+
+It returns code **200** and the media of the filename.:
+
+![alt text](image.png)
+
+*Example of a picture when you search /default.jpg*
+
+### Follow
