@@ -134,6 +134,14 @@ Returns:
 @user_bp.route('/upload-profile-picture', methods=['POST'])
 def upload_profile_picture():
     if request.method == 'POST':
+        user_id = get_user_id_from_jwt()
+        if not user_id:
+            return jsonify({'message' : 'Not authorized'}), 401
+        
+        user = User.query.filter_by(id=user_id).first()
+        if not user:
+            return jsonify({'message': 'User not found'}), 404
+
         if 'file' not in request.files:
             return jsonify({'message': 'File not found' }), 404
         
@@ -145,13 +153,22 @@ def upload_profile_picture():
             filename = secure_filename(file.filename)
             filepath = os.path.join(UPLOAD_FOLDER, filename)
 
-            if not filepath.startswith(UPLOAD_FOLDER):  
+            if not filepath.startswith(UPLOAD_FOLDER):  # ça permet d'éviter les attaques par chemin truc bidule
                 return jsonify({'message': 'Invalid file path' }), 400
             
+
+            # une fois l'auth vérifiée on assigne la photo uploadée a l'utilisateur et on update son profil
             file.save(filepath)
+            try:
+                user.profile_picture = filename
+                db.session.commit()
+            except: 
+                db.session.rollback()
+                return jsonify({'message': 'An error occurred while updating profile picture'}), 500
+            
             return jsonify({
                 'message': 'File uploaded successfully',
-                'file_url': f'/profile-picture/{filename}'
+                'file_url': f'/user/profile-picture/{filename}'
             }), 200
 
 

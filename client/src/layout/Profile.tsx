@@ -5,7 +5,7 @@ import { Logout } from "../components/Logout";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import EditProfileForm from "../components/EditProfileForm";
-import UploadButton from "../components/UploadFile";
+import UploadButton from "../components/UploadProfilePic";
 import config from '../config';
 
 
@@ -15,6 +15,7 @@ const Profile = () => {
     username: "",
     email: "",
     bio: "",
+    website: "",
     created_at: "",
     profile_picture: "",
   });
@@ -48,6 +49,7 @@ const Profile = () => {
           username: response.data.username,
           email: response.data.email,
           bio: response.data.bio || "Aucune bio disponible.",
+          website: response.data.website || "",
           created_at: new Date(response.data.created_at).toLocaleDateString(),
           profile_picture: response.data.profile_picture || "default.jpg",
         });
@@ -135,6 +137,8 @@ const Profile = () => {
 
             {/* bio affichée*/}
             <p className="mt-2">{userData.bio || "Vous n'avez pas de bio !"}</p>
+            <div className="my-4"></div>
+            <p className="text-sm">{userData.website || ""}</p>
           </div>
         </div>
 
