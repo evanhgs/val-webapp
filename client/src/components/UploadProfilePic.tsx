@@ -30,9 +30,11 @@ const UploadButton: React.FC<UploadButtonProps> = ({userData, setIsUploading}) =
                         "Content-Type": "multipart/form-data" }, // indique bien qu'on envoie un média (combinaison de texte) : merci google
                 }).then(response => {
                     console.log(response.data);
+
                 }).catch(error => {
                     console.log(error);
                 });
+                
                 setIsUploading(false);
             } catch (error) {
                 setError("Erreur de l'upload de la photo de profil")

@@ -24,8 +24,9 @@ const Profile = () => {
   const { user } = useContext(AuthContext) || {};
   const token = user?.token;
   const navigate = useNavigate();
-  const [isEditing, setIsEditing] = useState(false); {/* pour le form du profil */}
-  const [isUploading, setIsUploading] = useState(false); {/* pour l'upload de la pp */}
+  const [isEditing, setIsEditing] = useState(false); // pour le form du profil 
+  const [isUploading, setIsUploading] = useState(false); // pour l'upload de la pp 
+
 
 
   {/** premier hook ajoutat les info de l'affichage du profil */}
@@ -86,7 +87,11 @@ const Profile = () => {
       {/* page de profil */}
       {isEditing ? (
         <EditProfileForm userData={userData} setIsEditing={setIsEditing} />
-      ) : isUploading ? ( <UploadButton userData={userData} setIsUploading={setIsUploading} /> ) : (
+      ) : isUploading ? ( 
+          <UploadButton 
+            userData={userData} 
+            setIsUploading={setIsUploading} 
+          /> ) : (
         
         <div className="max-w-4xl mx-auto mt-10 p-4">
         <div className="flex items-center space-x-10">
