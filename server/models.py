@@ -26,7 +26,7 @@ Table Post
 Publications
 """
 class Post(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     image_url = db.Column(db.String(255), nullable=False)
     caption = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -41,7 +41,7 @@ Table Like
 m'entions j'aime
 """
 class Like(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -54,7 +54,7 @@ Table Comment
 commentaires d'un post
 """
 class Comment(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -67,12 +67,13 @@ Table Follow
 les abonnements
 """
 class Follow(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     follower_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)
     followed_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    db.UniqueConstraint(follower_id, followed_id, name='unique_follow')
+    db.UniqueConstraint(follower_id, followed_id, name='unique_follow') # Une seule relation entre deux utilisateurs
+
 
 
 """
@@ -80,7 +81,7 @@ Table Notification
 les notifs(likes, comments, follows)
 """
 class Notification(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)  # À qui appartient la notif
     sender_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)  # Qui a généré la notif
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=True)  # Optionnel (si lié à un post)
@@ -94,7 +95,7 @@ discussions entre utilisateurs (entre deux personnes)
 Groups implementation to see later
 """
 class Conversation(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     user1_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)  # Premier utilisateur
     user2_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)  # Deuxième utilisateur
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -109,7 +110,7 @@ Table Message
 messages envoyés à l'utilisateur
 """
 class Message(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     conversation_id = db.Column(db.Integer, db.ForeignKey('conversation.id'), nullable=False)
     sender_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)  
     content = db.Column(db.Text, nullable=False)  

@@ -1,10 +1,9 @@
 from flask import Blueprint, jsonify, request, send_from_directory
-from server.models import User
+from server.models import User, Follow
 from server.config import db
 from server.routes.auth import get_user_id_from_jwt
 from werkzeug.utils import secure_filename
 import os 
-import uuid 
 
 user_bp = Blueprint('user_bp', __name__, url_prefix='/user')
 
@@ -183,6 +182,78 @@ def get_profile_picture(filename):
 
 
 """
-to do next
-Follow,Followed, Unfollow
+Abonnement d'un utilisateur
+récupération de l'id de l'utilisateur connecté + l'id de l'utilisateur à suivre
+on vérifie si l'utilisateur connecté est déjà abonné à l'utilisateur à suivre
+si c'est le cas on retourne un message d'erreur, sinon on crée un nouvel abonnement
 """
+@user_bp.route('/follow', methods=['POST'])
+def follow():
+    data = request.get_json()
+
+    username_other = data.get('username_other') # username de l'utilisateur à suivre
+    if not data or 'username_other' not in data:
+        return jsonify({'message': 'Missing username_other field'}), 404
+    
+    user_id = get_user_id_from_jwt() # id de l'utilisateur connecté
+    if not user_id:
+        return jsonify({'message': 'Unauthorized'}), 401
+
+    user_other = User.query.filter_by(username=username_other).first()
+    if not user_other:  
+        return jsonify({'message': 'User not found'}), 404
+    
+    user_id_other = user_other.id
+    
+    if Follow.query.filter_by(follower_id=user_id, followed_id=user_id_other).first():
+        return jsonify({'message': 'Already following'}), 400
+    
+    try:
+        new_follow = Follow(follower_id=user_id, followed_id=user_id_other)
+        db.session.add(new_follow)
+        db.session.commit()
+        return jsonify({
+            'message': 'Followed successfully', 
+            'follow': {
+                'id': new_follow.id,
+                'follow_id': new_follow.follower_id,
+                'followed_id': new_follow.followed_id,
+                'created_at': new_follow.created_at
+                }
+            }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': f'An error occurred: {str(e)}'}), 500
+
+
+
+
+"""
+Désabonnement d'un utilisateur
+"""
+@user_bp.route('/unfollow')
+def unfollow():
+    return
+
+"""
+Supprimer un abonné
+"""
+@user_bp.route('/remove-follower')
+def remove_follower():
+    return
+
+
+"""
+Affiche les utilisateurs qui sont abonnés
+"""
+@user_bp.route('/get-follow')
+def get_follow():
+    return
+
+"""
+Affiche les abonnements
+"""
+@user_bp.route('/get-followed')
+def followed():
+    return
+
