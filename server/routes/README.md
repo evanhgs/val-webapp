@@ -132,8 +132,33 @@ It returns code **200** :
 
 It returns code **200** and the media of the filename.:
 
-![alt text](image.png)
+![example picture](/server/public/uploads/default.jpg)
 
 *Example of a picture when you search /default.jpg*
 
-### Follow
+### Follow a user
+
+`POST http://127.0.0.1:5000/user/follow`
+
+In header, you need to add `Authorization` (OAuth 2.0) with the HS256 algo get from login.
+
+```json
+{
+   "username_other" : "test2"
+}
+```
+
+It returns code **200** :
+
+```json
+{
+    "follow": {
+        "created_at": "Sun, 09 Mar 2025 01:17:17 GMT",
+        "follow_id": "28ff42af-b87c-4e4c-8051-3365547674d2",
+        "followed_id": "5c46a94e-c991-46ab-b14b-3f98fb220879",
+        "id": "136f869b-344c-4c11-a1b1-149b15dae898"
+    },
+    "message": "Followed successfully"
+}
+```
+
