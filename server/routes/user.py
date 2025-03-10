@@ -233,7 +233,45 @@ Désabonnement d'un utilisateur
 """
 @user_bp.route('/unfollow')
 def unfollow():
-    return
+    data = request.get_json()
+
+    username_other = data.get('username_other') # username de l'utilisateur à suivre
+    if not data or 'username_other' not in data:
+        return jsonify({'message': 'Missing username_other field'}), 404
+    
+    user_id = get_user_id_from_jwt() # id de l'utilisateur connecté
+    if not user_id:
+        return jsonify({'message': 'Unauthorized'}), 401
+
+    user_other = User.query.filter_by(username=username_other).first()
+    if not user_other:  
+        return jsonify({'message': 'User not found'}), 404
+    
+    user_id_other = user_other.id
+    
+    follow_query = Follow.query.filter_by(follower_id=user_id, followed_id=user_id_other).first()
+
+    if follow_query:
+        try:
+            db.session.delete(follow_query)
+            db.session.commit()
+            return jsonify({
+                'message': 'Unfollow successfully',
+                'users' : {
+                    'ex-follower-id': follow_query.follower_id,
+                    'ex-followed-id': follow_query.followedd_id,
+                    }
+                }), 200
+
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'message': f'An error occurred: {str(e)}'}), 500
+    else:
+        return jsonify({'message': 'Follow query not found'}), 404
+    
+
+
+
 
 """
 Supprimer un abonné
