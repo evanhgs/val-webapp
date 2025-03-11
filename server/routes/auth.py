@@ -69,6 +69,18 @@ def login():
         return jsonify({"token": token}), 200
     else:
         return jsonify({"message": "Invalid credentials"}), 401
+    
+
+"""
+retourne un boolean pour la vérification de token
+// TODO: mettre une limitation de requete évidemment
+"""
+@auth_bp.route('/token', methods=['POST'])
+def token():
+    data = request.get_json()
+    token = data.get('token')
+
+    return # a finir !!!!!
 
 
 
