@@ -187,7 +187,7 @@ récupération de l'id de l'utilisateur connecté + l'id de l'utilisateur à sui
 on vérifie si l'utilisateur connecté est déjà abonné à l'utilisateur à suivre
 si c'est le cas on retourne un message d'erreur, sinon on crée un nouvel abonnement
 """
-@user_bp.route('/follow', methods=['POST'])
+@user_bp.route('/follow', methods=['GET','POST'])
 def follow():
     data = request.get_json()
 
@@ -231,7 +231,7 @@ def follow():
 """
 Désabonnement d'un utilisateur
 """
-@user_bp.route('/unfollow')
+@user_bp.route('/unfollow', methods=['GET', 'POST'])
 def unfollow():
     data = request.get_json()
 
@@ -259,7 +259,7 @@ def unfollow():
                 'message': 'Unfollow successfully',
                 'users' : {
                     'ex-follower-id': follow_query.follower_id,
-                    'ex-followed-id': follow_query.followedd_id,
+                    'ex-followed-id': follow_query.followed_id,
                     }
                 }), 200
 
@@ -271,22 +271,37 @@ def unfollow():
     
 
 
-
-
 """
-Supprimer un abonné
-"""
-@user_bp.route('/remove-follower')
-def remove_follower():
-    return
+Récupère la liste des utilisateurs qui suivent l'utilisateur spécifié
 
-
+Args:
+    user_id: L'ID de l'utilisateur dont vous souhaitez récupérer les followers
+    
+Returns:
+    Une liste d'objets User représentant les followers
 """
-Affiche les utilisateurs qui sont abonnés
-"""
-@user_bp.route('/get-follow')
-def get_follow():
-    return
+@user_bp.route('/get-follow/<user_id>', methods=['GET', 'POST'])
+def get_user_followers(user_id):
+    try:
+        followers = db.session.query(
+            User.id, 
+            User.username,
+            User.profile_picture,
+            Follow.created_at.label('followed_at')).join(Follow, User.id == Follow.follower_id).filter(Follow.followed_id == user_id).order_by(Follow.created_at.desc()).all()
+         
+        result = [{
+            'id': follower.id,
+            'username': follower.username,
+            'profile_picture': follower.profile_picture,
+            'followed_at': follower.followed_at.isoformat()
+        } for follower in followers]
+        
+        return jsonify({
+            'followers': result,
+            'count': len(result)
+        }), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 """
 Affiche les abonnements
@@ -295,3 +310,12 @@ Affiche les abonnements
 def followed():
     return
 
+
+
+
+"""
+Supprimer un abonné
+"""
+@user_bp.route('/remove-follower')
+def remove_follower():
+    return

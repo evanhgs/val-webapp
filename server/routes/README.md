@@ -16,7 +16,7 @@ The routes are divided into logical modules for better organization:
 
 ### Register
 
-`POST http://127.0.0.1:5000/auth/register`
+`POST : http://127.0.0.1:5000/auth/register`
 
 ```json
 {
@@ -36,7 +36,7 @@ It returns code **201** :
 
 ### Login
 
-`POST http://127.0.0.1:5000/auth/login`
+`POST : http://127.0.0.1:5000/auth/login`
 
 ```json
 {
@@ -57,7 +57,7 @@ It returns code **200** :
 
 ### Profile
 
-`POST http://127.0.0.1:5000/user/profile`
+`POST : http://127.0.0.1:5000/user/profile`
 
 In header, you need to add `Authorization` (OAuth 2.0) with the HS256 algo get from login.`
 
@@ -77,7 +77,7 @@ It returns code **200** :
 
 ### Update Profile
 
-`POST http://127.0.0.1:5000/user/edit-profile`
+`POST : http://127.0.0.1:5000/user/edit-profile`
 
 ```json
 {
@@ -104,7 +104,7 @@ It returns code **200** :
 
 ### Upload Profile Picture
 
-`POST http://127.0.0.1:5000/user/upload-profile-picture`
+`POST : http://127.0.0.1:5000/user/upload-profile-picture`
 
 With `Content-Type` as `multipart/form-data`
 And `Authorization` (OAuth 2.0) with the HS256 algo get from login.
@@ -138,7 +138,7 @@ It returns code **200** and the media of the filename.:
 
 ### Follow a user
 
-`POST http://127.0.0.1:5000/user/follow`
+`GET / POST :  http://127.0.0.1:5000/user/follow`
 
 In header, you need to add `Authorization` (OAuth 2.0) with the HS256 algo get from login.
 
@@ -159,6 +159,52 @@ It returns code **200** :
         "id": "136f869b-344c-4c11-a1b1-149b15dae898"
     },
     "message": "Followed successfully"
+}
+```
+
+### Unfollow a user
+
+`GET / POST :  http://127.0.0.1:5000/user/unfollow`
+
+In header, you need to add `Authorization` (OAuth 2.0) with the HS256 algo get from login.
+
+```json
+{
+   "username_other" : "test2"
+}
+```
+
+It returns code **200** :
+
+```json
+{
+    "message": "Unfollow successfully",
+    "users": {
+        "ex-followed-id": "5c46a94e-c991-46ab-b14b-3f98fb220879",
+        "ex-follower-id": "28ff42af-b87c-4e4c-8051-3365547674d2"
+    }
+}
+```
+
+### Get followers of a user
+
+`GET / POST : http://127.0.0.1:5000/user/get-follow/<user_id>`
+
+Switch `<user_id>` with the id of the user you want to get the followers.
+
+It returns code **200** :
+
+```json
+{
+    "count": 1,
+    "followers": [
+        {
+            "followed_at": "2025-03-12T22:04:20.106989",
+            "id": "28ff42af-b87c-4e4c-8051-3365547674d2",
+            "profile_picture": "cesar-couto-VlThqxlFaE0-unsplash.jpg",
+            "username": "test"
+        }
+    ]
 }
 ```
 
