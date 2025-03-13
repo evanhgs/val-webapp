@@ -69,6 +69,19 @@ def login():
         return jsonify({"token": token}), 200
     else:
         return jsonify({"message": "Invalid credentials"}), 401
+    
+
+"""Vérification du token JWT"""
+@auth_bp.route('/token', methods=['POST'])
+def token():
+    data = request.get_json()
+    token = data.get('token')
+    user_id = decode_jwt(token)
+
+    if user_id:
+        return jsonify({"valid": True}), 200
+    else:
+        return jsonify({"valid": False}), 401
 
 
 

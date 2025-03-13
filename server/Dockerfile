@@ -1,13 +1,15 @@
 
 FROM python:3.9-slim
 
+ENV SECRET_KEY_APP='!CHANGEME!'
+ENV SECRET_KEY_JWT='!CHANGEME!'
+ENV DB_URI='sqlite:///valenstagram.db'
+
 WORKDIR /server
 
 COPY . .
 
 RUN pip install --no-cache-dir -r requirements.txt
-
-RUN cp .env.test .env 
 
 RUN flask db upgrade 
 

@@ -9,9 +9,9 @@ import { Logout } from "../components/Logout";
 const Home = () => {
   return (
     <div className="flex flex-col flex-grow ml-[250px]">
-      <Header />
       <div className="mt-16 p-4 flex justify-center">
         <div className="max-w-[900px] w-full flex">
+          <Header />
           <div className="flex-grow">
             <div className="mb-8">
               <Stories /> 

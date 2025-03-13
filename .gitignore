@@ -13,6 +13,9 @@ client/.env
 # db instance
 *.db
 
+# uploaded images
+server/public/uploads
+
 # migrations folder
 server/migrations
 

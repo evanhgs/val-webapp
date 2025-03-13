@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from '../components/AuthContext';
+import config from '../config';
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -16,7 +17,7 @@ const Register: React.FC = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://127.0.0.1:5000/auth/register', {username, email, password});
+      const response = await axios.post(`${config.serverUrl}/auth/register`, { username, email, password });
       if (login) {
         login(response.data.token);
         navigate("/");

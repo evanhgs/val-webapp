@@ -6,8 +6,7 @@ import Home from "./layout/Home";
 import Login from "./layout/Login";
 import Register from "./layout/Register";
 import Layout from "./layout/Layout";
-import Profile from "./layout/Profile"
-import "/src/index.css";
+import Profile from "./layout/Profile";
 
 const App: React.FC = () => {
   return (

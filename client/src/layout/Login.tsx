@@ -2,32 +2,36 @@ import React, { useContext, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from '../components/AuthContext';
+import config from '../config';
+import PhoneCarousel from '../components/Carousel';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-
-  const { login } = useContext(AuthContext) || {};
+  const { login } = useContext(AuthContext) || {}; // stock le token dans le storage *mauvais typage
   const navigate = useNavigate();
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
 
-    // ${process.env.api_server_ip}
     try {
-      const response = await axios.post('http://127.0.0.1:5000/auth/login', {username, password});
-      //console.log(response.data.token);
-      if (login) {
-        login(response.data.token);
-        navigate("/");
+      if (username && password) {
+        const response = await axios.post(`${config.serverUrl}/auth/login`, { username, password });
+        if (login){
+          login(response.data.token);
+          navigate("/")
+        } else {
+          setError("Nom d'utilisateur ou mot de passe incorrect.");
+        } 
       } else {
-        setError('La fonction de connexion n\'est pas disponible.');
+        setError('Veuillez remplir tous les champs.');
       }
-
     } catch (error) {
       console.error('Error: ', error);
-      setError('Nom d\'utilisateur ou mot de passe incorrect.');
+      setError("Une erreur s'est produite lors de la connexion.");
     }
   };
 
@@ -36,26 +40,13 @@ const Login: React.FC = () => {
     <div className="flex flex-col items-center justify-center min-h-screen bg-black">
       {/* Conteneur principal */}
       <div className="flex flex-col md:flex-row items-center space-y-10 md:space-y-0 md:space-x-10">
-        {/* Section Mobile Mockup */}
-        <div className="relative hidden md:block">
-          <img
-            src="src/assets/iphone-login-pic.jpg" 
-            alt="Phone Mockup"
-            className="max-w-xs"
-          />
-          <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-[220px]">
-            <img
-              src="src/assets/Likes_Social_pagina.png"
-              alt="Instagram feed"
-              className="rounded-lg"
-            />
-          </div>
-        </div>
+        {/* Carousel de téléphone */}
+        <PhoneCarousel />
 
         {/* Formulaire de connexion */}
         <div className="bg-gray-900 p-8 rounded-lg shadow-lg w-80 text-white">
           <h1 className="text-3xl font-bold text-center mb-6">Connexion</h1>
-          <form onSubmit={handleSubmit} >
+          <form onSubmit={handleSubmit}>
             <input
               type="text"
               placeholder="Nom d'utilisateur"
@@ -72,28 +63,26 @@ const Login: React.FC = () => {
             />
             <button
               type="submit"
-              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded"
+              className="w-full bg-blue-600 text-white p-3 rounded font-bold hover:bg-blue-700"
             >
               Se connecter
             </button>
-            {error && <p className='text-red-500 mt-3'>{error}</p>}
           </form>
-          <div className="text-center my-4">OU</div>
-          <button className="w-full flex items-center justify-center bg-blue-800 hover:bg-blue-900 text-white font-bold py-2 rounded">
-            <span className="mr-2">🔵</span> Se connecter avec Facebook
-          </button>
-          <p className="text-center text-sm mt-4">
-            Mot de passe oublié ?
-          </p>
+          
+          {error && <p className="text-red-500 text-center mt-3">{error}</p>}
+          
+          <div className="mt-6 text-center">
+            <p>
+              Vous n'avez pas de compte ?{" "}
+              <span
+                onClick={() => navigate("/register")}
+                className="text-blue-500 cursor-pointer"
+              >
+                S'inscrire
+              </span>
+            </p>
+          </div>
         </div>
-      </div>
-
-      {/* Lien inscription */}
-      <div className="mt-4 bg-gray-800 p-4 rounded-lg w-80 text-center text-white">
-        Vous n'avez pas de compte ?{" "}
-        <a href="/register" className="text-blue-400 hover:underline">
-          Inscrivez-vous
-        </a>
       </div>
     </div>
   );

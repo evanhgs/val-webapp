@@ -4,14 +4,18 @@ import { Footer } from "../components/FooterComp";
 import { Logout } from "../components/Logout";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import EditProfileForm from "./EditProfileForm";
+import EditProfileForm from "../components/EditProfileForm";
+import UploadButton from "../components/UploadProfilePic";
+import config from '../config';
 
 
 const Profile = () => {
-  const [profile, setProfile] = useState({
+  {/* typage du form pour la structure de l'état (mis à vide => ts)*/}
+  const [profile, setProfile] = useState({ 
     username: "",
     email: "",
     bio: "",
+    website: "",
     created_at: "",
     profile_picture: "",
   });
@@ -20,8 +24,12 @@ const Profile = () => {
   const { user } = useContext(AuthContext) || {};
   const token = user?.token;
   const navigate = useNavigate();
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(false); // pour le form du profil 
+  const [isUploading, setIsUploading] = useState(false); // pour l'upload de la pp 
 
+
+
+  {/** premier hook ajoutat les info de l'affichage du profil */}
   useEffect(() => {
     const fetchProfile = async () => {
 
@@ -33,7 +41,7 @@ const Profile = () => {
         }
 
         const response = await axios.post(
-          "http://127.0.0.1:5000/user/profile",
+          `${config.serverUrl}/user/profile`,
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -42,6 +50,7 @@ const Profile = () => {
           username: response.data.username,
           email: response.data.email,
           bio: response.data.bio || "Aucune bio disponible.",
+          website: response.data.website || "",
           created_at: new Date(response.data.created_at).toLocaleDateString(),
           profile_picture: response.data.profile_picture || "default.jpg",
         });
@@ -53,11 +62,12 @@ const Profile = () => {
     fetchProfile();
   }, [token, navigate]);
 
+
   if (error) {
     return (
       <div className="text-white text-center mt-10">
         <p>{error}</p>
-        <p>Essayez de vous reconnecter</p>
+        <p>Si vous rencontrez plusieurs erreur à la suite essayez de vous reconnecter</p>
         < Logout />
       </div>
     );
@@ -72,17 +82,22 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="flex-col md:flex-row min-h-screen bg-black text-white flex-grow ml-[250px]">
       
-      {/* Mode edition */}
+      {/* page de profil */}
       {isEditing ? (
         <EditProfileForm userData={userData} setIsEditing={setIsEditing} />
-      ) : (
+      ) : isUploading ? ( 
+          <UploadButton 
+            userData={userData} 
+            setIsUploading={setIsUploading} 
+          /> ) : (
+        
         <div className="max-w-4xl mx-auto mt-10 p-4">
         <div className="flex items-center space-x-10">
 
           <img
-            src={userData.profile_picture || "default-profile.png"}
+            src={`${config.serverUrl}/user/profile-picture/${userData.profile_picture}` || `${config.serverUrl}/user/profile-picture/default.jpg`}
             alt="Profile"
             className="w-28 h-28 rounded-full border-2 border-gray-600"
           />
@@ -91,13 +106,26 @@ const Profile = () => {
           <div>
             <div className="flex items-center space-x-4">
               <h2 className="text-xl font-bold">{userData.username}</h2>
-              <button 
+
+              {/* Modifier le profil */}
+              <button   
                 onClick={() => setIsEditing(true)}
                 className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm cursor-pointer">
                 Modifier le profil
               </button>
+              
+
+              {/* Button d'upload de photo */}
+              <button 
+                onClick={() => setIsUploading(true)}
+                className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm cursor-pointer">
+                Changer la photo de profil
+              </button> 
+
               <button className="text-gray-400 text-xl cursor-pointer">⚙️</button>
             </div>
+
+
 
             {/* Stats à changer pour la prochaine implémentation */}
             <div className="flex space-x-6 mt-3 text-gray-300">
@@ -112,8 +140,10 @@ const Profile = () => {
               </span>
             </div>
 
-            {/* Nom affiché */}
+            {/* bio affichée*/}
             <p className="mt-2">{userData.bio || "Vous n'avez pas de bio !"}</p>
+            <div className="my-4"></div>
+            <p className="text-sm">{userData.website || ""}</p>
           </div>
         </div>
 
@@ -143,7 +173,7 @@ const Profile = () => {
           <button className="text-blue-500 mt-3 cursor-pointer">Partager ta première photo</button>
         </div>
       </div>
-      )}.
+      )}
       
       <Footer />
     </div>

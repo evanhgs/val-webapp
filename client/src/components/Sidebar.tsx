@@ -1,45 +1,60 @@
-import React from "react";
+import React, {useState} from "react";
 import { NavLink } from "react-router-dom";
+import Search  from './Search';
 
 
 export const Sidebar: React.FC = () => {
 
+
+  const [isSearch, setIsSearch] = useState(false);
+
+
+
+
   return (
-    <div className="w-[250px] h-screen bg-black text-white p-4 fixed left-0">
-      <h1 className="text-2xl font-bold mb-6 cursor-pointer">Valenstagram</h1>
-      <ul className="space-y-4">
-        <li>
-        <NavLink to="/" className="flex items-center space-x-3 p-2 hover:border hover:border-white rounded-lg cursor-pointer">
-          <span role="img" aria-label="home">🏠</span> <span>Home</span>
-          </NavLink>
-        </li>
-        <li className="flex items-center space-x-3 p-2 hover:border hover:border-white rounded-lg cursor-pointer">
-          <span role="img" aria-label="search">🔍</span> <span>Chercher</span>
-        </li>
-        <li className="flex items-center space-x-3 p-2 hover:border hover:border-white rounded-lg cursor-pointer">
-          <span role="img" aria-label="search">🧭</span> <span>Explorer</span>
-        </li>
-        <li className="flex items-center space-x-3 p-2 hover:border hover:border-white rounded-lg cursor-pointer">
-          <span role="img" aria-label="search">▶️</span> <span>Reels</span>
-        </li>
-        <li className="flex items-center space-x-3 p-2 hover:border hover:border-white rounded-lg cursor-pointer">
-          <span role="img" aria-label="search">📩</span> <span>Messages</span>
-        </li>
-        <li className="flex items-center space-x-3 p-2 hover:border hover:border-white rounded-lg cursor-pointer">
-          <span role="img" aria-label="notifications">❤️</span> <span>Notifications</span>
-        </li>
-        <li className="flex items-center space-x-3 p-2 hover:border hover:border-white rounded-lg cursor-pointer">
-          <span role="img" aria-label="notifications">➕</span> <span>Créer</span>
-        </li>
-        <li>
-        <NavLink to="/profile" className="flex items-center space-x-3 p-2 hover:border hover:border-white rounded-lg cursor-pointer">
-          <span role="img" aria-label="profile">👤</span> <span>Profil</span>
-          </NavLink>
-        </li>
-        <li className="flex items-center space-x-3 p-2 hover:border hover:border-white rounded-lg cursor-pointer">
-          <span role="img" aria-label="profile">⚙️</span> <span>Paramètres</span>
-        </li>
-      </ul>
-    </div>
+      <div className='fixed left-0 top-0 h-screen w-[350px] bg-black text-white p-4 transition-transform duration-300 overflow-y-auto'>
+        <ul className="space-y-4">
+
+          <li>
+            <NavLink to="/" className="flex items-center space-x-3 p-2 hover:border hover:border-white rounded-lg cursor-pointer">
+              <span role="img" aria-label="home">🏠</span> <span>Home</span>
+            </NavLink>
+          </li>
+
+          <li>
+            <div
+              className="flex items-center space-x-3 p-2 hover:border hover:border-white rounded-lg cursor-pointer"
+              onClick={() => setIsSearch(true)}>
+              <span role="img" aria-label="search">🔍</span> <span>Chercher</span>
+            </div>
+            {isSearch ? ( <Search setIsSearch={setIsSearch}/> ) : null }
+            
+          </li>
+
+          <li className="flex items-center space-x-3 p-2 hover:border hover:border-white rounded-lg cursor-pointer">
+            <span role="img" aria-label="search">🧭</span> <span>Explorer</span>
+          </li>
+          <li className="flex items-center space-x-3 p-2 hover:border hover:border-white rounded-lg cursor-pointer">
+            <span role="img" aria-label="search">▶️</span> <span>Reels</span>
+          </li>
+          <li className="flex items-center space-x-3 p-2 hover:border hover:border-white rounded-lg cursor-pointer">
+            <span role="img" aria-label="search">📩</span> <span>Messages</span>
+          </li>
+          <li className="flex items-center space-x-3 p-2 hover:border hover:border-white rounded-lg cursor-pointer">
+            <span role="img" aria-label="notifications">❤️</span> <span>Notifications</span>
+          </li>
+          <li className="flex items-center space-x-3 p-2 hover:border hover:border-white rounded-lg cursor-pointer">
+            <span role="img" aria-label="notifications">➕</span> <span>Créer</span>
+          </li>
+          <li>
+            <NavLink to="/profile" className="flex items-center space-x-3 p-2 hover:border hover:border-white rounded-lg cursor-pointer">
+              <span role="img" aria-label="profile">👤</span> <span>Profil</span>
+            </NavLink>
+          </li>
+          <li className="flex items-center space-x-3 p-2 hover:border hover:border-white rounded-lg cursor-pointer">
+            <span role="img" aria-label="profile">⚙️</span> <span>Paramètres</span>
+          </li>
+        </ul>
+      </div>
   );
 };

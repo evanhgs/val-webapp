@@ -7,7 +7,7 @@ def create_app(config_class):
     db.init_app(app)
 
     # autoriser les requêtes depuis le port 5173 (port de développement de React)
-    cors.init_app(app, resources={r"/*": {"origins": "http://localhost:5173"}}) 
+    cors.init_app(app, resources={r"/*": {"origins": "*"}}) 
     mig.init_app(app, db)
     
 
