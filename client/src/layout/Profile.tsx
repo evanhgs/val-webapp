@@ -1,5 +1,5 @@
 import  { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../components/AuthContext";
+import { AuthContext, AuthProvider } from "../components/AuthContext";
 import { Footer } from "../components/FooterComp";
 import { Logout } from "../components/Logout";
 import axios from "axios";
@@ -26,6 +26,15 @@ const Profile = () => {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false); // pour le form du profil 
   const [isUploading, setIsUploading] = useState(false); // pour l'upload de la pp 
+
+  const [isLoadingFollowers, setIsLoadingFollowers] = useState(false)
+
+  const [followers, setFollowers] = useState([]);
+  const [followersCount, setFollowersCount] = useState(0);
+
+  const [followed, setFollowed] = useState([]);
+  const [followedCount, setFollowedCount] = useState(0);
+  
 
 
 
@@ -60,8 +69,33 @@ const Profile = () => {
       }
     };
     fetchProfile();
-  }, [token, navigate]);
+  }, [token, navigate]); // dependance du hook pour s'assurer que la requete est bien relancée apres l'effet
 
+
+  useEffect(() => {
+    const fetchFollowers =async () => {
+      if (!token || !userData) return;
+
+      try {
+        setIsLoadingFollowers(true);
+
+        const followerResponse = await axios.get(`${config.serverUrl}/user/get-follow/${userData.username}`);
+        const followedResponse = await axios.get(`${config.serverUrl}/user/get-followed/${userData.username}`);
+
+        setFollowers(followerResponse.data.followers);
+        setFollowersCount(followerResponse.data.count);
+        setFollowed(followedResponse.data.followed);
+        setFollowedCount(followedResponse.data.count);
+        console.log(setFollowersCount);
+        console.log(setFollowedCount);
+      } catch (error) {
+          console.error("Erreur lors de la récupération des abonnés/abonnements", error);
+      } finally {
+        setIsLoadingFollowers(false);
+      }
+    };
+    fetchFollowers();
+  }, [token, userData]); // userData comme dépendance pour s'assurer que les données du profil sont chargées d'abord
 
   if (error) {
     return (
@@ -129,15 +163,31 @@ const Profile = () => {
 
             {/* Stats à changer pour la prochaine implémentation */}
             <div className="flex space-x-6 mt-3 text-gray-300">
-              <span>
-                <strong>1</strong> posts
-              </span>
-              <span>
-                <strong>10k</strong> abonnés
-              </span>
-              <span>
-                <strong>1</strong> abonnements
-              </span>
+              {isLoadingFollowers ? (
+                <>
+                  <span>
+                    <strong>...</strong> posts
+                  </span>
+                  <span>
+                    <strong>...</strong> abonnés
+                  </span>
+                  <span>
+                    <strong>...</strong> abonnements
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span>
+                    <strong>0</strong> posts
+                  </span>
+                  <span>
+                    <strong>{followersCount}</strong> abonnés
+                  </span>
+                  <span>
+                    <strong>{followedCount}</strong> abonnements
+                  </span>
+                </>
+              )}
             </div>
 
             {/* bio affichée*/}
