@@ -278,7 +278,7 @@ Args:
     user_id: L'ID de l'utilisateur dont vous souhaitez récupérer les followers
     
 Returns:
-    Une liste d'objets User représentant les followers
+    Une liste d'objets User représentant ses abonnés
 """
 @user_bp.route('/get-follow/<user_id>', methods=['GET', 'POST'])
 def get_user_followers(user_id):
@@ -303,12 +303,38 @@ def get_user_followers(user_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
 """
-Affiche les abonnements
+Récupère la liste des utilisateurs l'utilisateur spécifié suit
+
+Args:
+    user_id: L'ID de l'utilisateur dont vous souhaitez récupérer ses abonnements
+    
+Returns:
+    Une liste d'objets User représentant ses abonnements
 """
-@user_bp.route('/get-followed')
-def followed():
-    return
+@user_bp.route('/get-followed/<user_id>', methods=['GET', 'POST'])
+def get_user_followed(user_id):
+    try:
+        followers = db.session.query(
+            User.id, 
+            User.username,
+            User.profile_picture,
+            Follow.created_at.label('followed_at')).join(Follow, User.id == Follow.followed_id).filter(Follow.follower_id == user_id).order_by(Follow.created_at.desc()).all()
+         
+        result = [{
+            'id': follower.id,
+            'username': follower.username,
+            'profile_picture': follower.profile_picture,
+            'followed_at': follower.followed_at.isoformat()
+        } for follower in followers]
+        
+        return jsonify({
+            'followed': result,
+            'count': len(result)
+        }), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 
@@ -316,6 +342,40 @@ def followed():
 """
 Supprimer un abonné
 """
-@user_bp.route('/remove-follower')
+@user_bp.route('/remove-follower', methods=['GET', 'POST'])
 def remove_follower():
-    return
+    data = request.get_json()
+
+    username_other = data.get('username_other') # username de l'utilisateur à suivre
+    if not data or 'username_other' not in data:
+        return jsonify({'message': 'Missing username_other field'}), 404
+    
+    user_id = get_user_id_from_jwt() # id de l'utilisateur connecté
+    if not user_id:
+        return jsonify({'message': 'Unauthorized'}), 401
+
+    user_other = User.query.filter_by(username=username_other).first()
+    if not user_other:  
+        return jsonify({'message': 'User not found'}), 404
+    
+    user_id_other = user_other.id
+    
+    follow_query = Follow.query.filter_by(follower_id=user_id_other, followed_id=user_id).first()
+
+    if follow_query:
+        try:
+            db.session.delete(follow_query)
+            db.session.commit()
+            return jsonify({
+                'message': 'Delete follow relation successfully',
+                'users' : {
+                    'ex-follower-id': follow_query.follower_id,
+                    'ex-followed-id': follow_query.followed_id,
+                    }
+                }), 200
+
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'message': f'An error occurred: {str(e)}'}), 500
+    else:
+        return jsonify({'message': 'Follow query not found'}), 404
