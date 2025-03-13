@@ -186,7 +186,31 @@ It returns code **200** :
 }
 ```
 
-### Get followers of a user
+### Delete a follower
+
+`GET / POST : http://127.0.0.1:5000/user/remove-follower/<user_id>`
+
+In header, you need to add `Authorization` (OAuth 2.0) with the HS256 algo get from login.
+
+```json
+{
+   "username_other" : "test"
+}
+```
+
+It returns code **200** :
+
+```json
+{
+    "message": "Delete follow relation successfully",
+    "users": {
+        "ex-followed-id": "5c46a94e-c991-46ab-b14b-3f98fb220879",
+        "ex-follower-id": "28ff42af-b87c-4e4c-8051-3365547674d2"
+    }
+}
+```
+
+### Get followers of an user
 
 `GET / POST : http://127.0.0.1:5000/user/get-follow/<user_id>`
 
@@ -208,3 +232,24 @@ It returns code **200** :
 }
 ```
 
+### Get followed of an user
+
+`GET / POST : http://127.0.0.1:5000/user/get-followed/<user_id>`
+
+Switch `<user_id>` with the id of the user you want to get the followers.
+
+It returns code **200** :
+
+```json
+{
+    "count": 1,
+    "followed": [
+        {
+            "followed_at": "2025-03-12T22:04:20.106989",
+            "id": "5c46a94e-c991-46ab-b14b-3f98fb220879",
+            "profile_picture": "colin-watts-4mdlRYKQiDc-unsplash.jpg",
+            "username": "test2"
+        }
+    ]
+}
+```
