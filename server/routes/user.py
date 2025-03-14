@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, send_from_directory
 from server.models import User, Follow
-from server.config import db
+from server.app import db
 from server.routes.auth import get_user_id_from_jwt
 from werkzeug.utils import secure_filename
 import os 
