@@ -56,6 +56,21 @@ const UploadButton: React.FC<UploadButtonProps> = ({userData, setIsUploading}) =
                 </svg>
                 </button>
             </div>
+
+            {/* section pour afficher l'aperçu */}
+            <div className="mb-4">
+                <h3 className="text-white mb-2">Aperçu de l'image:</h3>
+                {profilePicture && (
+                    <div className="w-24 h-24 rounded-full overflow-hidden mx-auto">
+                        <img 
+                            src={profilePicture} 
+                            alt="Aperçu" 
+                            className="w-full h-full object-cover"
+                        />
+                    </div>
+                )}
+            </div>
+
             <p>Veuillez choisir votre nouvelle photo de profil en cliquant sur le bouton.</p>
             <input 
                 type='file' 

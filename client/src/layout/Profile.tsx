@@ -8,9 +8,18 @@ import EditProfileForm from "../components/EditProfileForm";
 import UploadButton from "../components/UploadProfilePic";
 import config from '../config';
 
+// type pour l'utilisateur
+interface UserProfile {
+  username: string;
+  email: string;
+  bio: string;
+  website: string;
+  created_at: string;
+  profile_picture: string;
+}
 
 const Profile = () => {
-  {/* typage du form pour la structure de l'état (mis à vide => ts)*/}
+  {/* typage du form pour la structure de l'état (mis à vide => ts) voir au dessus
   const [profile, setProfile] = useState({ 
     username: "",
     email: "",
@@ -18,9 +27,9 @@ const Profile = () => {
     website: "",
     created_at: "",
     profile_picture: "",
-  });
+  });*/}
   const [error, setError] = useState<string | null>(null);
-  const [userData, setUserData] = useState<any | null>(null);
+  const [userData, setUserData] = useState<UserProfile | null>(null);
   const { user } = useContext(AuthContext) || {};
   const token = user?.token;
   const navigate = useNavigate();
@@ -45,8 +54,7 @@ const Profile = () => {
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        setUserData(response.data);
-        setProfile({
+        setUserData({
           username: response.data.username,
           email: response.data.email,
           bio: response.data.bio || "Aucune bio disponible.",

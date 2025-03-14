@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from '../components/AuthContext';
 import config from '../config';
+import PhoneCarousel from '../components/Carousel';
+
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -35,21 +37,8 @@ const Register: React.FC = () => {
     <div className="flex flex-col items-center justify-center min-h-screen bg-black">
       {/* Conteneur principal */}
       <div className="flex flex-col md:flex-row items-center space-y-10 md:space-y-0 md:space-x-10">
-        {/* Section Mobile Mockup */}
-        <div className="relative hidden md:block">
-          <img
-            src="src/assets/iphone-login-pic.jpg" 
-            alt="Phone Mockup"
-            className="max-w-xs"
-          />
-          <div className="absolute top-8 left-1/2 transform -translate-x-1/2 w-[220px]">
-            <img
-              src="src/assets/Likes_Social_pagina.png"
-              alt="Instagram feed"
-              className="rounded-lg"
-            />
-          </div>
-        </div>
+        {/* Carousel de téléphone */}
+        <PhoneCarousel />
 
         {/* Formulaire d'inscription */}
         <div className="bg-gray-900 p-8 rounded-lg shadow-lg w-80 text-white">

@@ -1,10 +1,11 @@
 import os
 from server.main import create_app
 from server.config import DevelopmentConfig, ProductionConfig
-from flask import send_from_directory, render_template
+from flask import render_template
 
-# parametre à changer selon le choix
-app = create_app(DevelopmentConfig)
+# utilisation de productconfig 
+environment = os.environ.get('FLASK_ENV', 'production')
+app = create_app(ProductionConfig if environment == 'production' else DevelopmentConfig)
 
 
 @app.route('/')

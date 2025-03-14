@@ -1,19 +1,25 @@
 
 FROM python:3.9-slim
 
-ENV SECRET_KEY_APP='!CHANGEME!'
-ENV SECRET_KEY_JWT='!CHANGEME!'
-ENV DB_URI='sqlite:///valenstagram.db'
+ENV FLASK_ENV=production
+ENV SECRET_KEY_APP='your_production_secret_key'
+ENV SECRET_KEY_JWT='your_production_jwt_key'
+ENV DB_URI_PROD='sqlite:///instance/valenstagram.db'
 
 WORKDIR /server
 
-COPY . .
-
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-RUN flask db upgrade 
+COPY . .
+
+RUN mkdir -p instance
 
 EXPOSE 5000
 
-CMD ["python", "-m", "flask", "run", "--host=0.0.0.0"]
+COPY entrypoint.sh . 
+RUN chmod +x entrypoint.sh 
+
+
+CMD ["./entrypoint.sh"]
 
