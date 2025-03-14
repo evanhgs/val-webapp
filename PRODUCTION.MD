@@ -51,10 +51,9 @@ cd ./server
 python3 -m venv venv
 source venv/bin/activate
 
-pip install -r server/requirements.txt
+pip install -r ./requirements.txt
 
 # Test du serveur
-cd server
 python app.py
 ```
 
