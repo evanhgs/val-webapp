@@ -1,5 +1,5 @@
 import  { useContext, useEffect, useState } from "react";
-import { AuthContext, AuthProvider } from "../components/AuthContext";
+import { AuthContext } from "../components/AuthContext";
 import { Footer } from "../components/FooterComp";
 import { Logout } from "../components/Logout";
 import axios from "axios";
@@ -29,8 +29,8 @@ const Profile = () => {
 
   const [isLoadingFollowers, setIsLoadingFollowers] = useState(false)
 
-  const [followers, setFollowers] = useState([]);
-  const [followersCount, setFollowersCount] = useState(0);
+  const [followers, setFollowers] = useState([]); // liste des utilisateurs 
+  const [followersCount, setFollowersCount] = useState(0); // count (precook in route) 
 
   const [followed, setFollowed] = useState([]);
   const [followedCount, setFollowedCount] = useState(0);
@@ -180,10 +180,10 @@ const Profile = () => {
                   <span>
                     <strong>0</strong> posts
                   </span>
-                  <span>
+                  <span className="hover:text-white cursor-pointer">
                     <strong>{followersCount}</strong> abonnés
                   </span>
-                  <span>
+                  <span className="hover:text-white cursor-pointer">
                     <strong>{followedCount}</strong> abonnements
                   </span>
                 </>
