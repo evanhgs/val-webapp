@@ -5,7 +5,7 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - sqlite_data:/server/instance
+      - sqlite_data:/server/instance # s'assurer que le folder existe déjà avant de créer la db
     environment:
       - DB_URI=sqlite:///instance/valentanstagram.db
       - DB_URI_PROD=sqlite:///instance/valentanstagram.db

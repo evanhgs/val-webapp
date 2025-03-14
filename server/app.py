@@ -15,7 +15,7 @@ cors = CORS()
 # classes de configuration
 class Config:
     SECRET_KEY_APP = os.environ.get('SECRET_KEY_APP')
-    basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    basedir = os.path.abspath(os.path.dirname(__file__))
     SQLALCHEMY_DATABASE_URI = os.environ.get('DB_URI')
 
 class DevelopmentConfig(Config):
