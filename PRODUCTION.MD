@@ -4,10 +4,6 @@
 
 ### Structure du projet
 
-```bash
-
-```
-
 Utilisateur : `vmdocker:vmdocker`
 
 Administrateur : `root:root`
