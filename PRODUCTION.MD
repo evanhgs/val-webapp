@@ -8,6 +8,11 @@ Utilisateur : `vmdocker:vmdocker`
 
 Administrateur : `root:root`
 
+
+L'objectif est d'avoir deux serveurs qui tournent en même temps, un pour le frontend et un pour le backend.
+Sur la vm React est accessible via le port 80 et Flask via le port 5000.
+Et donc sur notre machine hôte il suffit de se connecter en localhost:8080 (redirection de port sur l'hote) et pour l'api en localhost:5000.
+
 ```bash
 valenstagram/
 ├── client/         # Frontend React
@@ -52,15 +57,13 @@ python3 -m venv venv
 source venv/bin/activate
 
 pip install -r ./requirements.txt
-pip install gunicorn
-
 # Test du serveur
 flask run
 ```
 
 Bien installer toutes les dépendances nécessaires.
 
-### Configuration de Gunicorn
+### Configuration du service systemd
 
 ```bash
 sudo nano /etc/systemd/system/valenstagram.service
@@ -95,7 +98,7 @@ sudo systemctl start valenstagram
 sudo systemctl enable valenstagram
 ```
 
-Normalement le processus Gunicorn fera tourner le serveur Flask.
+Normalement le processus Valenstagram fera tourner le serveur Flask dev h24.
 
 ### Configuration Nginx 
 
@@ -110,29 +113,11 @@ server {
     listen 80;
     server_name _;
 
-    # Frontend React
+    # Frontend React uniquement car Flask s'autogère avec le service systemd
     location / {
         root /home/vmdocker/Valenstagram/client/dist;
         try_files $uri $uri/ /index.html;
         add_header Cache-Control "no-cache, no-store, must-revalidate";
-    }
-
-    # Routes d'authentification
-    location /auth/ {
-        proxy_pass http://127.0.0.1:5000/auth/;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-
-    # Routes utilisateur
-    location /user/ {
-        proxy_pass http://127.0.0.1:5000/user/;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
     }
 }
 ```
@@ -143,11 +128,4 @@ Activer la configuration et restart :
 sudo ln -s /etc/nginx/sites-available/valenstagram /etc/nginx/sites-enabled
 sudo nginx -t  
 sudo systemctl restart nginx
-```
-
-### Tester gunicorn
-
-```bash
-# Test de Gunicorn
-gunicorn --workers 4 --bind 0.0.0.0:5000 app:app
 ```
