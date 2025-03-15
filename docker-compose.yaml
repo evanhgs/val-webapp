@@ -5,15 +5,26 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - sqlite_data:/server/valenstagram.db
+      - sqlite_data:/server/instance # s'assurer que le folder existe déjà avant de créer la db
+    environment:
+      - DB_URI=sqlite:///instance/valentanstagram.db
+      - DB_URI_PROD=sqlite:///instance/valentanstagram.db
+      - SECRET_KEY_APP=your_production_secret_key
+      - SECRET_KEY_JWT=your_production_jwt_key
+    restart: unless-stopped
 
   frontend:
     container_name: valentanstagram-front
     build: ./client
     ports:
-      - "5173:5173"
+      - "8080:80" # 80 -> 8080 port forwarding
     depends_on:
       - backend
+    restart: unless-stopped
+    environment:
+      - FLASK_ENV=production # config mode dans app.py 
+
 volumes:
   sqlite_data:
+    driver: local
 

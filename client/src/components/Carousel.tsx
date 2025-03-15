@@ -1,4 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
+import kiosque from '../public/le-kiosque-a-musique-sur-le-champ-de-mars.jpg'
+import ruelles from '../public/les-ruelles-de-valence.jpg'
+import musee from '../public/musee-valence.jpg'
+import valence from '../public/valence.jpg'
+import maison from '../public/visiter-valence-et-la-maison.jpg'
+import parc from '../public/visiter-valence-et-le-parc-jouvet.jpg'
+import phone from "../public/iphone-removebg.png"
 
 const PhoneCarousel = () => {
   const [currentImage, setCurrentImage] = useState(0);
@@ -8,12 +15,12 @@ const PhoneCarousel = () => {
   const carouselRef = useRef<HTMLDivElement>(null);
 
   const images = [
-    "src/assets/le-kiosque-a-musique-sur-le-champ-de-mars.jpg",
-    "src/assets/les-ruelles-de-valence.jpg",
-    "src/assets/musee-valence.jpg",
-    "src/assets/valence.jpg",
-    "src/assets/visiter-valence-et-la-maison.jpg",
-    "src/assets/visiter-valence-et-le-parc-jouvet.jpg",
+    kiosque,
+    ruelles,
+    musee,
+    valence,
+    maison,
+    parc,
   ]
 
   // Auto-rotation
@@ -27,15 +34,15 @@ const PhoneCarousel = () => {
 
   const nextImage = () => {
     if (isTransitioning) return;
-    
+
     setIsTransitioning(true);
-    setCurrentImage((prev) => (prev + 1) % images.length); 
+    setCurrentImage((prev) => (prev + 1) % images.length);
     setTimeout(() => setIsTransitioning(false), 500);
   };
 
   const prevImage = () => {
     if (isTransitioning) return;
-    
+
     setIsTransitioning(true);
     setCurrentImage((prev) => (prev - 1 + images.length) % images.length);
     setTimeout(() => setIsTransitioning(false), 500);
@@ -64,11 +71,11 @@ const PhoneCarousel = () => {
     setTouchEnd(0);
   };
 
-  const handleMouseDown = (e: React.MouseEvent)=> {
+  const handleMouseDown = (e: React.MouseEvent) => {
     setTouchStart(e.clientX);
   };
   const handleMouseMove = (e: React.MouseEvent) => {
-    if(!touchStart) return;
+    if (!touchStart) return;
     setTouchEnd(e.clientX);
   };
   const handleMouseUp = () => {
@@ -77,7 +84,7 @@ const PhoneCarousel = () => {
     const isLeftSwipe = distance > 50;
     const isRightSwipe = distance < -50;
 
-    if (isLeftSwipe){
+    if (isLeftSwipe) {
       nextImage();
     } else if (isRightSwipe) {
       prevImage();
@@ -95,23 +102,23 @@ const PhoneCarousel = () => {
     <div className="relative hidden md:block">
       {/* Phone frame */}
       <img
-        src="src/assets/iphone-removebg.png"  // 436x572 picture ration
+        src={phone}  // 436x572 picture ration
         alt="Phone Mockup"
         className="max-w-xs relative z-10"
         draggable="false"
       />
-      
+
       {/* Screen content */}
-      <div 
+      <div
         className="absolute top-[40px] left-1/2 transform -translate-x-1/2 w-[220px] h-[420px] overflow-hidden rounded-[24px] z-0 bg-black"
         style={{
-          top:'40px',
-          width:'190px',
-          height:'360px',
+          top: '40px',
+          width: '190px',
+          height: '360px',
         }}>
         {/* Carousel container qui occupe tout l'espace disponible */}
         {/* Slide container avec flex et width: 100% pour chaque image */}
-        <div 
+        <div
           className="relative w-full h-full overflow-hidden"
           ref={carouselRef}
           onTouchStart={handleTouchStart}
@@ -122,15 +129,15 @@ const PhoneCarousel = () => {
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseLeave}
         >
-          <div 
+          <div
             className="flex transition-transform duration-500 ease-in-out h-full"
-            style={{ 
+            style={{
               width: `${images.length * 100}%`,
-              transform: `translateX(-${(currentImage * 100) / images.length}%)` 
+              transform: `translateX(-${(currentImage * 100) / images.length}%)`
             }}>
             {images.map((image, index) => (
-              <div 
-                key={index} 
+              <div
+                key={index}
                 className="relative"
                 style={{ width: `${100 / images.length}%`, height: '100%' }}>
                 <img
@@ -138,26 +145,26 @@ const PhoneCarousel = () => {
                   alt={`Background ${index + 1}`}
                   className="w-full h-full object-cover"
                   style={{
-                    objectPosition: 'center', 
+                    objectPosition: 'center',
                   }}
                   draggable="false"
                 />
               </div>
             ))}
           </div>
-          
-          
+
+
           {/* Indicator dots */}
           <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
             {images.map((_, index) => (
-              <div 
+              <div
                 key={index}
                 className={`w-2 h-2 rounded-full cursor-pointer transition-all ${currentImage === index ? 'bg-white scale-125' : 'bg-gray-400'}`}
                 onClick={() => setCurrentImage(index)}
               />
             ))}
           </div>
-          
+
           {/* Overlay with app title */}
           <div className="absolute top-4 left-0 right-0 flex justify-center">
             <h2 className="text-white font-bold text-xl drop-shadow-lg">Valenstagram</h2>

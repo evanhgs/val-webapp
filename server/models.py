@@ -1,4 +1,4 @@
-from server.config import db
+from server.app import db
 from datetime import datetime
 import uuid
 
