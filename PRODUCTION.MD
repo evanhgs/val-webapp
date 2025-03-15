@@ -33,6 +33,9 @@ Installation des mises à jour, de python, de pip, de node, de npm et enfin de n
 ### Configuration des requêtes API
 
 ```bash
+cd ./client
+nano ./src/config.ts
+
 const config = { serverUrl: "http://172.20.10.2:5000" };
 export default config;
 ```
@@ -42,7 +45,6 @@ Ajouter un nom de domaine, pour ma part je garderai l'ip de la machine car c'est
 ### Créer le build du client
 
 ```bash
-cd ./client
 npm install
 npm run build
 ```
@@ -60,8 +62,8 @@ pip install -r ./requirements.txt
 mv .env.test .env 
 
 # Test du serveur & config de la db sqlite3
-flask db migrate
 flask db upgrade
+flask db migrate
 flask run
 ```
 
@@ -107,11 +109,16 @@ Normalement le processus Valenstagram fera tourner le serveur Flask dev h24.
 ### Configuration Nginx
 
 ```bash
-sudo nano /etc/nginx/sites-available/valenstagram
 # Copie du build React dans le dossier html & changement des permissions
-cp -r dist/* /var/www/html/ 
+cp -r /home/vmdocker/Valenstagram/client/dist/* /var/www/html/ 
 sudo chown -R www-data:www-data /var/www/html
 sudo chmod -R 755 /var/www/html
+```
+
+Création de la configuration Nginx :
+
+```bash
+sudo nano /etc/nginx/sites-available/valenstagram
 ```
 
 Contenu du fichier :
