@@ -1,10 +1,8 @@
 #!/bin/bash
 
-echo "Waiting for system to be ready..."
-sleep 2
-
-echo "Running database migrations..."
+# Mise à jour de la base de données
 flask db upgrade
+flask db migrate
 
-echo "Starting Gunicorn server with CORS support..."
-exec gunicorn --bind 0.0.0.0:5000 --workers 3 wsgi:app
+# Démarrage du serveur Flask
+exec flask run --host=0.0.0.0 --port=5000

@@ -1,24 +1,31 @@
-# stage 1 : build react vite
-FROM node:18-alpine AS build
+# Étape de build
+FROM node:20-alpine as build
 
-WORKDIR /client
+WORKDIR /app
 
+# Copie des fichiers de dépendances pour optimiser le cache Docker
 COPY package.json package-lock.json* ./
-RUN npm ci && npm cache clean --force
+RUN npm install
 
-COPY . . 
+# Copie du reste des fichiers source
+COPY . .
 
-RUN npm run build || (echo "Build failed! -> check typo" && exit 1) 
+# Configuration de l'URL du serveur API pour la production
+RUN echo "const config = { serverUrl: \"http://server:5000\" }; export default config;" > ./src/config.ts
 
-# stage 2 : production avec nginx
+# Build de l'application
+RUN npm run build
+
+# Étape de production avec Nginx
 FROM nginx:alpine
 
-COPY --from=build /client/nginx.conf /etc/nginx/conf.d/default.conf
+# Copie du build depuis l'étape précédente
+COPY --from=build /app/dist /usr/share/nginx/html
 
-COPY --from=build /client/dist /usr/share/nginx/html
+# Configuration personnalisée de Nginx
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-COPY ./src/public ./public
-
+# Exposition du port 80
 EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]
