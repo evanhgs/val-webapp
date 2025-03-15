@@ -188,7 +188,7 @@ It returns code **200** :
 
 ### Delete a follower
 
-`GET / POST : http://127.0.0.1:5000/user/remove-follower/<user_id>`
+`GET / POST : http://127.0.0.1:5000/user/remove-follower/`
 
 In header, you need to add `Authorization` (OAuth 2.0) with the HS256 algo get from login.
 
@@ -212,9 +212,9 @@ It returns code **200** :
 
 ### Get followers of an user
 
-`GET / POST : http://127.0.0.1:5000/user/get-follow/<user_id>`
+`GET / POST : http://127.0.0.1:5000/user/get-follow/<username>`
 
-Switch `<user_id>` with the id of the user you want to get the followers.
+Switch `<username>` with the id of the user you want to get the followers.
 
 It returns code **200** :
 
@@ -234,9 +234,9 @@ It returns code **200** :
 
 ### Get followed of an user
 
-`GET / POST : http://127.0.0.1:5000/user/get-followed/<user_id>`
+`GET / POST : http://127.0.0.1:5000/user/get-followed/<username>`
 
-Switch `<user_id>` with the id of the user you want to get the followers.
+Switch `<username>` with the id of the user you want to get the followers.
 
 It returns code **200** :
 

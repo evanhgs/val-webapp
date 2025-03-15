@@ -183,9 +183,10 @@ def get_profile_picture(filename):
 
 """
 Abonnement d'un utilisateur
-récupération de l'id de l'utilisateur connecté + l'id de l'utilisateur à suivre
+récupération de l'id de l'utilisateur connecté + l'username de l'utilisateur à suivre
 on vérifie si l'utilisateur connecté est déjà abonné à l'utilisateur à suivre
 si c'est le cas on retourne un message d'erreur, sinon on crée un nouvel abonnement
+de plus un utilisateur ne peut pas se suivre lui même
 """
 @user_bp.route('/follow', methods=['GET','POST'])
 def follow():
@@ -204,6 +205,9 @@ def follow():
         return jsonify({'message': 'User not found'}), 404
     
     user_id_other = user_other.id
+
+    if user_id == user_id_other:
+        return jsonify({'message': "You can't follow yourself"}), 400
     
     if Follow.query.filter_by(follower_id=user_id, followed_id=user_id_other).first():
         return jsonify({'message': 'Already following'}), 400
@@ -280,8 +284,9 @@ Args:
 Returns:
     Une liste d'objets User représentant ses abonnés
 """
-@user_bp.route('/get-follow/<user_id>', methods=['GET', 'POST'])
-def get_user_followers(user_id):
+@user_bp.route('/get-follow/<username>', methods=['GET', 'POST'])
+def get_user_followers(username):
+    user_id = User.query.filter_by(username=username).first().id
     try:
         followers = db.session.query(
             User.id, 
@@ -313,21 +318,26 @@ Args:
 Returns:
     Une liste d'objets User représentant ses abonnements
 """
-@user_bp.route('/get-followed/<user_id>', methods=['GET', 'POST'])
-def get_user_followed(user_id):
+@user_bp.route('/get-followed/<username>', methods=['GET', 'POST'])
+def get_user_followed(username):
+    user = User.query.filter_by(username=username).first()
+
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+    user_id = user.id
     try:
-        followers = db.session.query(
+        followed_users = db.session.query(
             User.id, 
             User.username,
             User.profile_picture,
             Follow.created_at.label('followed_at')).join(Follow, User.id == Follow.followed_id).filter(Follow.follower_id == user_id).order_by(Follow.created_at.desc()).all()
          
         result = [{
-            'id': follower.id,
-            'username': follower.username,
-            'profile_picture': follower.profile_picture,
-            'followed_at': follower.followed_at.isoformat()
-        } for follower in followers]
+            'id': followed.id,
+            'username': followed.username,
+            'profile_picture': followed.profile_picture,
+            'followed_at': followed.followed_at.isoformat()
+        } for followed in followed_users]
         
         return jsonify({
             'followed': result,

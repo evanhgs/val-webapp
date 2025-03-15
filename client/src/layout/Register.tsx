@@ -5,7 +5,6 @@ import { AuthContext } from '../components/AuthContext';
 import config from '../config';
 import PhoneCarousel from '../components/Carousel';
 
-
 const Register: React.FC = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -37,7 +36,7 @@ const Register: React.FC = () => {
     <div className="flex flex-col items-center justify-center min-h-screen bg-black">
       {/* Conteneur principal */}
       <div className="flex flex-col md:flex-row items-center space-y-10 md:space-y-0 md:space-x-10">
-        {/* Carousel de téléphone */}
+        
         <PhoneCarousel />
 
         {/* Formulaire d'inscription */}
