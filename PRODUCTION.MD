@@ -52,9 +52,10 @@ python3 -m venv venv
 source venv/bin/activate
 
 pip install -r ./requirements.txt
+pip install gunicorn
 
 # Test du serveur
-python app.py
+flask run
 ```
 
 Bien installer toutes les dépendances nécessaires.
@@ -77,7 +78,7 @@ User=vmdocker
 Group=www-data
 WorkingDirectory=/home/vmdocker/Valenstagram/server
 Environment="PATH=/home/vmdocker/Valenstagram/server/venv/bin"
-ExecStart=/home/vmdocker/Valenstagram/server/venv/bin/gunicorn --workers 4 --bind 0.0.0.0:5000 app:app
+ExecStart=/home/vmdocker/Valenstagram/server/venv/bin/gunicorn --workers 4 --bind 0.0.0.0:5000 wsgi:app
 
 [Install]
 WantedBy=multi-user.target
@@ -139,4 +140,11 @@ Activer la configuration et restart :
 sudo ln -s /etc/nginx/sites-available/valenstagram /etc/nginx/sites-enabled
 sudo nginx -t  
 sudo systemctl restart nginx
+```
+
+### Tester gunicorn
+
+```bash
+# Test de Gunicorn
+gunicorn --workers 4 --bind 0.0.0.0:5000 app:app
 ```
