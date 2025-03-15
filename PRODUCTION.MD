@@ -108,6 +108,10 @@ Normalement le processus Valenstagram fera tourner le serveur Flask dev h24.
 
 ```bash
 sudo nano /etc/nginx/sites-available/valenstagram
+# Copie du build React dans le dossier html & changement des permissions
+cp -r dist/* /var/www/html/ 
+sudo chown -R www-data:www-data /var/www/html
+sudo chmod -R 755 /var/www/html
 ```
 
 Contenu du fichier : 
@@ -119,7 +123,7 @@ server {
 
     # Frontend React uniquement car Flask s'autogère avec le service systemd
     location / {
-        root /home/vmdocker/Valenstagram/client/dist;
+        root /var/www/html;
         try_files $uri $uri/ /index.html;
         add_header Cache-Control "no-cache, no-store, must-revalidate";
     }
@@ -133,3 +137,5 @@ sudo ln -s /etc/nginx/sites-available/valenstagram /etc/nginx/sites-enabled
 sudo nginx -t  
 sudo systemctl restart nginx
 ```
+
+Si la configuration ne fonctionne pas (par exemple si le site React fonctionne dans la machine mais pas sur la machine hôte) alors il faut changer le réseau de la VM en "Bridged Adapter" et redémarrer la VM, puis bien changer l'adresse IP dans le fichier client/src/config.ts 
