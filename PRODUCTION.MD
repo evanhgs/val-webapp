@@ -58,7 +58,10 @@ source venv/bin/activate
 
 pip install -r ./requirements.txt
 mv .env.test .env 
-# Test du serveur
+
+# Test du serveur & config de la db sqlite3
+flask db migrate
+flask db upgrade
 flask run
 ```
 
