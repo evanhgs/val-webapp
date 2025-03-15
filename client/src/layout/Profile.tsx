@@ -18,6 +18,11 @@ interface UserProfile {
   profile_picture: string;
 }
 
+interface FollowUser {
+  username: string;
+  profile_picture?: string;
+}
+
 const Profile = () => {
   {/* typage du form pour la structure de l'état (mis à vide => ts) voir au dessus
   const [profile, setProfile] = useState({ 
@@ -38,11 +43,14 @@ const Profile = () => {
 
   const [isLoadingFollowers, setIsLoadingFollowers] = useState(false)
 
-  const [followers, setFollowers] = useState([]); // liste des utilisateurs 
+  const [followers, setFollowers] = useState<FollowUser[]>([]); // liste des utilisateurs 
   const [followersCount, setFollowersCount] = useState(0); // count (precook in route) 
 
-  const [followed, setFollowed] = useState([]);
+  const [followed, setFollowed] = useState<FollowUser[]>([]);
   const [followedCount, setFollowedCount] = useState(0);
+  
+  const [showFollowers, setShowFollowers] = useState(false);
+  const [showFollowed, setShowFollowed] = useState(false);
   
 
 
@@ -94,8 +102,8 @@ const Profile = () => {
         setFollowersCount(followerResponse.data.count);
         setFollowed(followedResponse.data.followed);
         setFollowedCount(followedResponse.data.count);
-        console.log(setFollowersCount);
-        console.log(setFollowedCount);
+        console.log("Followers count:", followerResponse.data.count);
+        console.log("Followed count:", followedResponse.data.count);
       } catch (error) {
           console.error("Erreur lors de la récupération des abonnés/abonnements", error);
       } finally {
@@ -122,6 +130,36 @@ const Profile = () => {
       </div>
     );
   }
+
+  // pop up des listes des abonnés / abonnements
+  const FollowersModal = ({ users, title, onClose }: { users: FollowUser[], title: string, onClose: () => void }) => {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+        <div className="bg-gray-800 rounded-lg w-96 max-h-[80vh] overflow-y-auto">
+          <div className="flex justify-between items-center p-4 border-b border-gray-700">
+            <h3 className="text-xl font-bold">{title}</h3>
+            <button onClick={onClose} className="text-xl">×</button>
+          </div>
+          <div className="p-4">
+            {users.length === 0 ? (
+              <p className="text-center text-gray-400">Aucun résultat</p>
+            ) : (
+              users.map((user, index) => (
+                <div key={index} className="flex items-center space-x-3 p-2 hover:bg-gray-700 rounded-md">
+                  <img 
+                    src={user.profile_picture ? `${config.serverUrl}/user/profile-picture/${user.profile_picture}` : `${config.serverUrl}/user/profile-picture/default.jpg`}
+                    alt={user.username} 
+                    className="w-10 h-10 rounded-full"
+                  />
+                  <span>{user.username}</span>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="flex-col md:flex-row min-h-screen bg-black text-white flex-grow ml-[250px]">
@@ -167,9 +205,6 @@ const Profile = () => {
               <button className="text-gray-400 text-xl cursor-pointer">⚙️</button>
             </div>
 
-
-
-            {/* Stats à changer pour la prochaine implémentation */}
             <div className="flex space-x-6 mt-3 text-gray-300">
               {isLoadingFollowers ? (
                 <>
@@ -188,10 +223,16 @@ const Profile = () => {
                   <span>
                     <strong>0</strong> posts
                   </span>
-                  <span className="hover:text-white cursor-pointer">
+
+                  <span 
+                    className="hover:text-white cursor-pointer"
+                    onClick={() => setShowFollowers(true)}>
                     <strong>{followersCount}</strong> abonnés
                   </span>
-                  <span className="hover:text-white cursor-pointer">
+
+                  <span 
+                    className="hover:text-white cursor-pointer"
+                    onClick={() => setShowFollowed(true)}>
                     <strong>{followedCount}</strong> abonnements
                   </span>
                 </>
@@ -231,6 +272,22 @@ const Profile = () => {
           <button className="text-blue-500 mt-3 cursor-pointer">Partager ta première photo</button>
         </div>
       </div>
+      )}
+
+      {showFollowers && (
+        <FollowersModal 
+          users={followers} 
+          title="Abonnés" 
+          onClose={() => setShowFollowers(false)} 
+        />
+      )}
+      
+      {showFollowed && (
+        <FollowersModal 
+          users={followed} 
+          title="Abonnements" 
+          onClose={() => setShowFollowed(false)} 
+        />
       )}
       
       <Footer />
