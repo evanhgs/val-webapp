@@ -70,7 +70,7 @@ Contenu du fichier :
 
 ```ini
 [Unit]
-Description=Gunicorn instance pour l'API Flask
+Description=Flask API pour Valenstagram
 After=network.target
 
 [Service]
@@ -78,7 +78,10 @@ User=vmdocker
 Group=www-data
 WorkingDirectory=/home/vmdocker/Valenstagram/server
 Environment="PATH=/home/vmdocker/Valenstagram/server/venv/bin"
-ExecStart=/home/vmdocker/Valenstagram/server/venv/bin/gunicorn --workers 4 --bind 0.0.0.0:5000 wsgi:app
+Environment="FLASK_APP=app.py"
+Environment="FLASK_ENV=production"
+Environment="PYTHONPATH=/home/vmdocker/Valenstagram"
+ExecStart=/home/vmdocker/Valenstagram/server/venv/bin/python -m flask run --host=0.0.0.0 --port=5000
 
 [Install]
 WantedBy=multi-user.target
