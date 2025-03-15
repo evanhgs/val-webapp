@@ -30,7 +30,16 @@ sudo apt install nginx -y
 
 Installation des mises à jour, de python, de pip, de node, de npm et enfin de nginx.
 
-### Récupérer le build du client
+### Configuration des requêtes API
+
+```bash
+const config = { serverUrl: "http://172.20.10.2:5000" };
+export default config;
+```
+
+Ajouter un nom de domaine, pour ma part je garderai l'ip de la machine car c'est un travail de cours.
+
+### Créer le build du client
 
 ```bash
 cd ./client
@@ -39,15 +48,6 @@ npm run build
 ```
 
 Création d'un répertoire dist.
-
-### Configuration des requêtes API
-
-```bash
-const config = { serverUrl: "http://localhost:5000" };
-export default config;
-```
-
-Ajouter un nom de domaine, pour ma part je garderai l'ip de la machine car c'est un travail de cours.
 
 ### Configuration backend Flask
 
@@ -73,7 +73,7 @@ Bien installer toutes les dépendances nécessaires.
 sudo nano /etc/systemd/system/valenstagram.service
 ```
 
-Contenu du fichier : 
+Contenu du fichier :
 
 ```ini
 [Unit]
@@ -104,7 +104,7 @@ sudo systemctl enable valenstagram
 
 Normalement le processus Valenstagram fera tourner le serveur Flask dev h24.
 
-### Configuration Nginx 
+### Configuration Nginx
 
 ```bash
 sudo nano /etc/nginx/sites-available/valenstagram
@@ -114,7 +114,7 @@ sudo chown -R www-data:www-data /var/www/html
 sudo chmod -R 755 /var/www/html
 ```
 
-Contenu du fichier : 
+Contenu du fichier :
 
 ```nginx
 server {
@@ -130,7 +130,7 @@ server {
 }
 ```
 
-Activer la configuration et restart : 
+Activer la configuration et restart :
 
 ```bash
 sudo ln -s /etc/nginx/sites-available/valenstagram /etc/nginx/sites-enabled
@@ -138,4 +138,4 @@ sudo nginx -t
 sudo systemctl restart nginx
 ```
 
-Si la configuration ne fonctionne pas (par exemple si le site React fonctionne dans la machine mais pas sur la machine hôte) alors il faut changer le réseau de la VM en "Bridged Adapter" et redémarrer la VM, puis bien changer l'adresse IP dans le fichier client/src/config.ts 
+Si la configuration ne fonctionne pas (par exemple si le site React fonctionne dans la machine mais pas sur la machine hôte) alors il faut changer le réseau de la VM en "Bridged Adapter" et redémarrer la VM, puis bien changer l'adresse IP dans le fichier client/src/config.ts
