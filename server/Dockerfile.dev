@@ -1,0 +1,11 @@
+FROM python:3.11-slim
+WORKDIR /server
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir flask-debugtoolbar
+COPY .env.test .env
+EXPOSE 5001
+COPY docker-entrypoint-dev.sh .
+RUN chmod +x docker-entrypoint-dev.sh
+
+ENTRYPOINT ["./docker-entrypoint-dev.sh"]

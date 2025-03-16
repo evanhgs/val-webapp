@@ -1,0 +1,37 @@
+services:
+  client-dev:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    networks:
+      - valenstagram-dev-network
+    depends_on:
+      - server-dev
+
+  server-dev:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./server:/server
+      - ./instance:/server/instance
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+      - PYTHONPATH=/server
+    networks:
+      - valenstagram-dev-network
+
+networks:
+  valenstagram-dev-network:
+    driver: bridge
