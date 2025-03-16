@@ -1,30 +1,31 @@
 services:
-  backend:
-    container_name: valentanstagram-server
-    build: ./server
+  client:
+    image: evanhs/valenstagram-client:latest
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+    networks:
+      - valenstagram-network
+    restart: unless-stopped
+
+  server:
+    image: evanhs/valenstagram-server:latest
     ports:
       - "5000:5000"
     volumes:
-      - sqlite_data:/server/instance # s'assurer que le folder existe déjà avant de créer la db
+      - ./instance:/app/instance
     environment:
-      - DB_URI=sqlite:///instance/valentanstagram.db
-      - DB_URI_PROD=sqlite:///instance/valentanstagram.db
-      - SECRET_KEY_APP=your_production_secret_key
-      - SECRET_KEY_JWT=your_production_jwt_key
+      - FLASK_APP=app.py
+      - FLASK_ENV=production
+      - PYTHONPATH=/app
+    networks:
+      - valenstagram-network
     restart: unless-stopped
 
-  frontend:
-    container_name: valentanstagram-front
-    build: ./client
-    ports:
-      - "8080:80" # 80 -> 8080 port forwarding
-    depends_on:
-      - backend
-    restart: unless-stopped
-    environment:
-      - FLASK_ENV=production # config mode dans app.py 
+networks:
+  valenstagram-network:
+    driver: bridge
 
 volumes:
-  sqlite_data:
-    driver: local
-
+  instance:

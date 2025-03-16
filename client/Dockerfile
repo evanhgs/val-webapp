@@ -1,24 +1,16 @@
-# stage 1 : build react vite
-FROM node:18-alpine AS build
+# Build stage
+FROM node:18-alpine as build
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+# Update the API endpoint configuration for Docker
+RUN sed -i 's|http://172.20.10.2:5000|http://server:5000|g' ./src/config.ts
+RUN npm run build
 
-WORKDIR /client
-
-COPY package.json package-lock.json* ./
-RUN npm ci && npm cache clean --force
-
-COPY . . 
-
-RUN npm run build || (echo "Build failed! -> check typo" && exit 1) 
-
-# stage 2 : production avec nginx
+# Production stage with Nginx
 FROM nginx:alpine
-
-COPY --from=build /client/nginx.conf /etc/nginx/conf.d/default.conf
-
-COPY --from=build /client/dist /usr/share/nginx/html
-
-COPY ./src/public ./public
-
+COPY --from=build /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
-
 CMD ["nginx", "-g", "daemon off;"]

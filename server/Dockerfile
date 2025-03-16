@@ -1,25 +1,11 @@
-
-FROM python:3.9-slim
-
-ENV FLASK_ENV=production
-ENV SECRET_KEY_APP='your_production_secret_key'
-ENV SECRET_KEY_JWT='your_production_jwt_key'
-ENV DB_URI_PROD='sqlite:///instance/valenstagram.db'
-
+FROM python:3.11-slim
 WORKDIR /server
-
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-
 COPY . .
-
-RUN mkdir -p instance
-
+COPY .env.test .env
 EXPOSE 5000
+COPY docker-entrypoint.sh .
+RUN chmod +x docker-entrypoint.sh
 
-COPY entrypoint.sh . 
-RUN chmod +x entrypoint.sh 
-
-
-CMD ["./entrypoint.sh"]
-
+ENTRYPOINT ["./docker-entrypoint.sh"]
