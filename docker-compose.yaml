@@ -1,8 +1,6 @@
 services:
   client:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
+    image: evanhs/valenstagram-client:latest
     ports:
       - "80:80"
     depends_on:
@@ -12,9 +10,7 @@ services:
     restart: unless-stopped
 
   server:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
+    image: evanhs/valenstagram-server:latest
     ports:
       - "5000:5000"
     volumes:
