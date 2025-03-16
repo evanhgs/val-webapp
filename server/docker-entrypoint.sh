@@ -5,4 +5,5 @@ flask db upgrade
 flask db migrate
 
 # Démarrage du serveur Flask
+# exec cd ..
 exec flask run --host=0.0.0.0 --port=5000

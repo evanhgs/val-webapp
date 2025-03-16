@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 
-WORKDIR /app
+WORKDIR /server
 
 # Installation des dépendances
 COPY requirements.txt .

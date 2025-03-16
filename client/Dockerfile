@@ -1,31 +1,16 @@
-# Étape de build
-FROM node:20-alpine as build
-
+# Build stage
+FROM node:18-alpine as build
 WORKDIR /app
-
-# Copie des fichiers de dépendances pour optimiser le cache Docker
-COPY package.json package-lock.json* ./
+COPY package*.json ./
 RUN npm install
-
-# Copie du reste des fichiers source
 COPY . .
-
-# Configuration de l'URL du serveur API pour la production
-RUN echo "const config = { serverUrl: \"http://server:5000\" }; export default config;" > ./src/config.ts
-
-# Build de l'application
+# Update the API endpoint configuration for Docker
+RUN sed -i 's|http://172.20.10.2:5000|http://server:5000|g' ./src/config.ts
 RUN npm run build
 
-# Étape de production avec Nginx
+# Production stage with Nginx
 FROM nginx:alpine
-
-# Copie du build depuis l'étape précédente
 COPY --from=build /app/dist /usr/share/nginx/html
-
-# Configuration personnalisée de Nginx
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Exposition du port 80
 EXPOSE 80
-
 CMD ["nginx", "-g", "daemon off;"]
