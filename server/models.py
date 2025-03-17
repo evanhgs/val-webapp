@@ -30,6 +30,7 @@ class Post(db.Model):
     image_url = db.Column(db.String(255), nullable=False)
     caption = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    hidden_tag = db.Column(db.Boolean, default=False) # tag qui permet de définir si le post doit être caché ou non 
 
     user_id = db.Column(db.String(36), db.ForeignKey('user.id'), nullable=False)
     likes = db.relationship('Like', backref='post', lazy=True)

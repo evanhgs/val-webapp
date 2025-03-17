@@ -40,9 +40,11 @@ def create_app(config_class):
     # importation de blueprints ici
     from server.routes.auth import auth_bp
     from server.routes.user import user_bp
+    from server.routes.posts import post_bp
     
     app.register_blueprint(auth_bp)
     app.register_blueprint(user_bp)
+    app.register_blueprint(post_bp)
 
     @app.route('/')
     def index():

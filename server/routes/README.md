@@ -110,12 +110,12 @@ With `Content-Type` as `multipart/form-data`
 And `Authorization` (OAuth 2.0) with the HS256 algo get from login.
 
 ```json
-const formData = new FormData(); 
-formData.append("file", file);
-{ }
+{
+    "file" : "amazing_picture.jpg"
+}
 ```
 
-It returns code **200** :
+It will download on server and returns code **200** :
 
 ```json
 {
@@ -253,3 +253,54 @@ It returns code **200** :
     ]
 }
 ```
+
+### Upload a post
+
+`POST : http://`
+
+In header, you need to add `Authorization` (OAuth 2.0) with the HS256 algo get from login. And `Content-Type` as `multipart/form-data`
+
+```json
+{
+    "caption" : "This is a caption",
+    "file" : "file.jpg"
+}
+```
+
+Here same process as the uploading profile picture but with a different route it return code **200** :
+
+```json
+{
+    "message": "Post uploaded successfully",
+    "post": {
+        "caption": "Look this cool picture !",
+        "created_at": "2025-03-17 15:15:51.394491",
+        "user_id": "28ff42af-b87c-4e4c-8051-3365547674d2"
+    },
+    "post_url": "/post/c7013664-db3d-45c5-a3c5-2680448170c6"
+}
+```
+
+### Get a post
+
+`GET : http://127.0.0.1:5000/post/<post_id>`
+
+Switch `<post_id>` with the id of the post you want to get.
+
+It returns code **200** :
+
+```json
+{
+    "message": "Post found",
+    "post": {
+        "caption": "Look this cool picture !",
+        "created_at": "2025-03-17 15:15:51.394491",
+        "id": "c7013664-db3d-45c5-a3c5-2680448170c6",
+        "image_url": "colin-watts-F7Sg9CovAVA-unsplash.jpg",
+        "user_id": "28ff42af-b87c-4e4c-8051-3365547674d2"
+    }
+}
+```
+
+- Future implementation, you will be able to get all the comments and likes of the post.
+
