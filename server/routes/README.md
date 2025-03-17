@@ -77,7 +77,7 @@ It returns code **200** :
 
 ### Update Profile
 
-`POST : http://127.0.0.1:5000/user/edit-profile`
+`POST : http://127.0.0.1:5000/user/edit`
 
 ```json
 {

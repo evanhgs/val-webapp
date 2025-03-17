@@ -18,7 +18,7 @@ const EditProfileForm = ({ userData, setIsEditing }: any) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post(`${config.serverUrl}/user/edit-profile`, formData, {
+      await axios.post(`${config.serverUrl}/user/edit`, formData, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       alert("Profil mis à jour !");

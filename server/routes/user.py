@@ -37,7 +37,7 @@ def profile():
 """
 Modification du profil utilisateur
 """
-@user_bp.route('/edit-profile', methods=['POST'])
+@user_bp.route('/edit', methods=['POST'])
 def edit_profile():
     user_id = get_user_id_from_jwt()
     if not user_id:
