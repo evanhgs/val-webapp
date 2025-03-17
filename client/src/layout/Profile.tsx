@@ -25,15 +25,7 @@ interface FollowUser {
 }
 
 const Profile = () => {
-  {/* typage du form pour la structure de l'état (mis à vide => ts) voir au dessus
-  const [profile, setProfile] = useState({ 
-    username: "",
-    email: "",
-    bio: "",
-    website: "",
-    created_at: "",
-    profile_picture: "",
-  });*/}
+  
   const [error, setError] = useState<string | null>(null);
   const [userData, setUserData] = useState<UserProfile | null>(null);
   const { user } = useContext(AuthContext) || {};
