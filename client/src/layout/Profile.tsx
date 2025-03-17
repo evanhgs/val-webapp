@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import EditProfileForm from "../components/EditProfileForm";
 import UploadButton from "../components/UploadProfilePic";
 import config from '../config';
+import { FollowersModal } from '../components/FollowersModal';
 
 // type pour l'utilisateur
 interface UserProfile {
@@ -102,8 +103,7 @@ const Profile = () => {
         setFollowersCount(followerResponse.data.count);
         setFollowed(followedResponse.data.followed);
         setFollowedCount(followedResponse.data.count);
-        console.log("Followers count:", followerResponse.data.count);
-        console.log("Followed count:", followedResponse.data.count);
+
       } catch (error) {
           console.error("Erreur lors de la récupération des abonnés/abonnements", error);
       } finally {
@@ -130,36 +130,6 @@ const Profile = () => {
       </div>
     );
   }
-
-  // pop up des listes des abonnés / abonnements
-  const FollowersModal = ({ users, title, onClose }: { users: FollowUser[], title: string, onClose: () => void }) => {
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-        <div className="bg-gray-800 rounded-lg w-96 max-h-[80vh] overflow-y-auto">
-          <div className="flex justify-between items-center p-4 border-b border-gray-700">
-            <h3 className="text-xl font-bold">{title}</h3>
-            <button onClick={onClose} className="text-xl">×</button>
-          </div>
-          <div className="p-4">
-            {users.length === 0 ? (
-              <p className="text-center text-gray-400">Aucun résultat</p>
-            ) : (
-              users.map((user, index) => (
-                <div key={index} className="flex items-center space-x-3 p-2 hover:bg-gray-700 rounded-md">
-                  <img 
-                    src={user.profile_picture ? `${config.serverUrl}/user/profile-picture/${user.profile_picture}` : `${config.serverUrl}/user/profile-picture/default.jpg`}
-                    alt={user.username} 
-                    className="w-10 h-10 rounded-full"
-                  />
-                  <span>{user.username}</span>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  };
 
   return (
     <div className="flex-col md:flex-row min-h-screen bg-black text-white flex-grow ml-[250px]">

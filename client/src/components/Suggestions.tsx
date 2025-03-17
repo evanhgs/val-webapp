@@ -13,3 +13,12 @@ export const Suggestions: React.FC = () => {
       </div>
     );
   };
+
+{/**
+  Pour faire ce composant il faut que je créé une route qui permet de savoir 
+  si un utilisateur est follow avec celui qui est connecté (pour me simplifier)
+  Et ensuite je passe cette requete en condition c'est à dire que je vais afficher
+  les premiers users qui sont succeptibles d'avoir une relation plus forte, donc 
+  ceux avec les abonnés en communs le plus élevé par ordre croissant.
+   
+  */}
