@@ -401,44 +401,44 @@ retourne un json contenant les informations:
 - site web
 """
 @user_bp.route('/profile/<username>', methods=['GET'])
-def profile_user(username_other):
-    data = request.get_json()
-
-    username_other = data.get('username_other') # username de l'utilisateur qu'on affiche ses infos
-    if not data or 'username_other' not in data:
-        return jsonify({'message': 'Missing username_other field'}), 404
-    
+def profile_user(username):
     user_id = get_user_id_from_jwt() # il faut etre connecté pour afficher le profil d'une personne
     if not user_id:
         return jsonify({'message': 'Need to be connected - Unauthorized'}), 401
 
-    user_other = User.query.filter_by(username=username_other).first()
+    user_other = User.query.filter_by(username=username).first()
     if not user_other:  
         return jsonify({'message': 'User not found'}), 404
-    
-    user_id_other = user_other.id    
-    
 
     return jsonify({
         'message': 'The user profile info', 
-        'username': user_id_other.username,
-        'profile_picture' : user_id_other.profile_picture,
-        'bio' : user_id_other.bio,
-        'website': user_id_other.website
+        'username': user_other.username,
+        'profile_picture': user_other.profile_picture,
+        'bio': user_other.bio,
+        'website': user_other.website
     }), 200
 
     
 
-
-@user_bp.route('/search/<username>')
+"""
+Cette route permet de rechercher des utilisateurs par leur nom d'utilisateur. Elle effectue une recherche
+insensible à la casse en utilisant le nom d'utilisateur fourni comme sous-chaîne. Si des utilisateurs correspondants
+sont trouvés, leurs noms d'utilisateur et photos de profil sont retournés dans la réponse.
+Paramètres de la requête :
+- username (str) : Le nom d'utilisateur ou une partie du nom d'utilisateur à rechercher.
+Réponses :
+- 200 OK : Retourne un objet JSON contenant une liste d'utilisateurs avec leurs noms d'utilisateur et photos de profil.
+- 404 Not Found : Retourne un objet JSON avec un message indiquant qu'aucun utilisateur n'a été trouvé.
+- 500 Internal Server Error : Retourne un objet JSON avec un message d'erreur en cas d'exception.
+"""
+@user_bp.route('/search/<username>', methods=['GET'])
 def search_people(username):
     try:
-        users = User.query.filter(User.username.ilike(f"%{username}%")).all()
+        users = User.query.filter(User.username.ilike(f"%{username}%")).all() # évite toutes erreurs avec la sous chaine 
         if not users:
             return jsonify({'message': 'No users found'}), 404
 
         result = [{
-            'id': user.id,
             'username': user.username,
             'profile_picture': user.profile_picture
         } for user in users]
