@@ -389,3 +389,63 @@ def remove_follower():
             return jsonify({'message': f'An error occurred: {str(e)}'}), 500
     else:
         return jsonify({'message': 'Follow query not found'}), 404
+
+
+"""affiche le profil d'une personne
+! il faut etre connecté pour voir le profil d'un utilisateur
+retourne un json contenant les informations: 
+- username
+- profile_picture
+- date_creation
+- bio
+- site web
+"""
+@user_bp.route('/profile/<username>', methods=['GET'])
+def profile_user(username_other):
+    data = request.get_json()
+
+    username_other = data.get('username_other') # username de l'utilisateur qu'on affiche ses infos
+    if not data or 'username_other' not in data:
+        return jsonify({'message': 'Missing username_other field'}), 404
+    
+    user_id = get_user_id_from_jwt() # il faut etre connecté pour afficher le profil d'une personne
+    if not user_id:
+        return jsonify({'message': 'Need to be connected - Unauthorized'}), 401
+
+    user_other = User.query.filter_by(username=username_other).first()
+    if not user_other:  
+        return jsonify({'message': 'User not found'}), 404
+    
+    user_id_other = user_other.id    
+    
+
+    return jsonify({
+        'message': 'The user profile info', 
+        'username': user_id_other.username,
+        'profile_picture' : user_id_other.profile_picture,
+        'bio' : user_id_other.bio,
+        'website': user_id_other.website
+    }), 200
+
+    
+
+
+@user_bp.route('/search/<username>')
+def search_people(username):
+    try:
+        users = User.query.filter(User.username.ilike(f"%{username}%")).all()
+        if not users:
+            return jsonify({'message': 'No users found'}), 404
+
+        result = [{
+            'id': user.id,
+            'username': user.username,
+            'profile_picture': user.profile_picture
+        } for user in users]
+
+        return jsonify({
+            'message': 'Users found',
+            'users': result
+        }), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
