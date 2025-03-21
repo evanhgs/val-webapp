@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useCallback} from 'react';
+import React, {useState} from 'react';
 import axios from "axios";
 import config from "../config";
 import { FollowersModal } from './FollowersModal';

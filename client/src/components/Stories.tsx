@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import config from "../config";
 import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 
 
 interface StoriesProps {
@@ -14,6 +15,10 @@ interface UserStories {
 
 export const Stories: React.FC<StoriesProps> = ({username, profile_picture}) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+    const foreignProfile = (username: string): void => {
+        navigate(`/profile/${username}`);
+    };
 
    // tableau contenant en premier élément le nombre d'abonnement, les personnes suivies
   const [userStories, setUserStories] = useState<UserStories>({ 
@@ -89,7 +94,11 @@ export const Stories: React.FC<StoriesProps> = ({username, profile_picture}) => 
                   alt="Profile"
                   className="w-20 h-20 rounded-full border-2 border-gray-600 object-cover"/>
 
-              <span className="text-xs mt-1 text-white truncate w-full text-center">{username}</span>
+              <span 
+                className="text-xs mt-1 text-white truncate w-full text-center cursor-pointer"
+                onClick={() => navigate("/profile")}
+                >{username}
+                </span>
             </div>
           )}
           
@@ -101,7 +110,7 @@ export const Stories: React.FC<StoriesProps> = ({username, profile_picture}) => 
                 alt="Profile"
                 className="w-20 h-20 rounded-full border-2 border-gray-600 object-cover"
               />
-              <span className="text-xs mt-1 text-white truncate w-full text-center">{user.username}</span>
+              <span className="text-xs mt-1 text-white truncate w-full text-center cursor-pointer" onClick={() => foreignProfile(user.username)}>{user.username}</span>
             </div>
           ))}
           
