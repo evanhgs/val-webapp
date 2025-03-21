@@ -136,6 +136,53 @@ It returns code **200** and the media of the filename.:
 
 *Example of a picture when you search /default.jpg*
 
+### Display foreign profile
+
+`GET : http://127.0.0..1:5000/user/profile/<username>`
+
+Switch `<username>` with the id of the user you want to get the profile.
+In header, you need to add `Authorization` (OAuth 2.0) with the HS256 algo get from login. And `Content-Type` as `multipart/form-data`
+
+It returns code **200** :
+
+```json
+{
+    "bio": "Salut je suis un autre utilisateur de valenstagram",
+    "message": "The user profile info",
+    "profile_picture": "colin-watts-4mdlRYKQiDc-unsplash.jpg",
+    "username": "test2",
+    "website": ""
+}
+```
+
+### Search for a user
+
+`GET : http://127.0.0.1:5000/user/search/<username>`
+
+Switch `<username>` with the id of the user you want to get the profile.
+
+It returns code **200** :
+
+```json
+{
+    "message": "Users found",
+    "users": [
+        {
+            "profile_picture": "cesar-couto-VlThqxlFaE0-unsplash.jpg",
+            "username": "test"
+        },
+        {
+            "profile_picture": "colin-watts-4mdlRYKQiDc-unsplash.jpg",
+            "username": "test2"
+        },
+        {
+            "profile_picture": "default.jpg",
+            "username": "test3"
+        }
+    ]
+}
+```
+
 ### Follow a user
 
 `GET / POST :  http://127.0.0.1:5000/user/follow`
@@ -303,4 +350,3 @@ It returns code **200** :
 ```
 
 - Future implementation, you will be able to get all the comments and likes of the post.
-

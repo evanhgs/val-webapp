@@ -400,7 +400,7 @@ retourne un json contenant les informations:
 - bio
 - site web
 """
-@user_bp.route('/profile/<username>', methods=['GET'])
+@user_bp.route('/profile/<username>', methods=['GET', 'POST'])
 def profile_user(username):
     user_id = get_user_id_from_jwt() # il faut etre connecté pour afficher le profil d'une personne
     if not user_id:
