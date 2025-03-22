@@ -57,7 +57,7 @@ const UploadButton: React.FC<UploadButtonProps> = ({userData, setIsUploading}) =
                 </button>
             </div>
 
-            {/* section pour afficher l'aperçu */}
+            {/* section pour afficher l'aperçu 
             <div className="mb-4">
                 <h3 className="text-white mb-2">Aperçu de l'image:</h3>
                 {profilePicture && (
@@ -70,11 +70,15 @@ const UploadButton: React.FC<UploadButtonProps> = ({userData, setIsUploading}) =
                     </div>
                 )}
             </div>
+            */}
 
-            <p>Veuillez choisir votre nouvelle photo de profil en cliquant sur le bouton.</p>
+
+            <label className='mb-[10px] block text-base font-medium text-dark dark:text-white'>
+                Veuillez choisir votre nouvelle photo de profil en cliquant sur le bouton.
+            </label>
             <input 
                 type='file' 
-                className='bg-gray-800 text-white px-3 py-1 rounded-md text-sm cursor-pointer'
+                className='w-full cursor-pointer rounded-md border border-stroke dark:border-dark-3 text-dark-6 outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-stroke dark:file:border-dark-3 file:bg-gray-2 dark:file:bg-dark-2 file:py-3 file:px-5 file:text-body-color dark:file:text-dark-6 file:hover:bg-primary file:hover:bg-opacity-10 focus:border-primary active:border-primary disabled:cursor-default disabled:bg-gray-2'
                 onChange={handleChange}
             />
             {error && <p className='text-red-500'>{error}</p>}
@@ -82,4 +86,4 @@ const UploadButton: React.FC<UploadButtonProps> = ({userData, setIsUploading}) =
     );
 }
 
-export default UploadButton 
+export default UploadButton
