@@ -1,9 +1,6 @@
-import { Footer } from "../components/FooterComp";
-import { Header } from "../components/Header";
 import { Stories } from "../components/Stories";
 import { Feed } from "../components/Feed";
 import { Suggestions } from "../components/Suggestions";
-import { Logout } from "../components/Logout"; 
 import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -49,20 +46,30 @@ const Home = () => {
   }, [token, navigate]);
 
   return (
-    <div className="flex flex-col flex-grow ml-[250px]">
-      <div className="mt-16 p-4 flex justify-center">
-        <div className="max-w-[900px] w-full flex">
-          <Header />
-          <div className="flex-grow">
-            <div className="mb-8">
-              <Stories username={userData?.username} profile_picture={userData?.profile_picture}/> 
-            </div>
+    <div className="flex flex-col w-full items-center pt-4">
+      {error && (
+        <div className="bg-red-500 text-white p-4 rounded max-w-[600px] w-full mb-4 relative z-10">
+          {error}
+        </div>
+      )}
+      
+      <div className="w-full max-w-[470px] md:max-w-[600px] lg:max-w-[820px] xl:max-w-[1000px] px-2 md:px-4 relative z-10">
+        <div className="mb-6">
+          <Stories 
+            username={userData?.username} 
+            profile_picture={userData?.profile_picture}
+          /> 
+        </div>
+        
+        <div className="flex w-full">
+          <div className="w-full lg:mr-8">
             <Feed />
           </div>
-          <div className="w-[300px] hidden lg:block">
-            <Suggestions />
-            <Footer />
-            <Logout />
+          
+          <div className="hidden lg:block w-[320px] flex-shrink-0">
+            <div className="sticky top-20">
+              <Suggestions />
+            </div>
           </div>
         </div>
       </div>

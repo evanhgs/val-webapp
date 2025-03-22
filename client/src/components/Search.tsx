@@ -56,7 +56,7 @@ const Search: React.FC<SearchProps> = ({ setIsSearch, isCompact }) => {
   };
   
   return (
-    <div className={`search-container ${isCompact ? 'fixed left-[80px]' : 'fixed left-[260px]'} top-4 transition-all duration-300`}>
+    <div className={`search-container ${isCompact ? 'fixed left-[80px]' : 'fixed left-[260px]'} top-4 transition-all duration-300 z-50`}>
       <div className="w-[300px] bg-gray-800 p-4 rounded-lg shadow-lg">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-bold text-white">Recherche</h3>

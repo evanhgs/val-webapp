@@ -10,7 +10,7 @@ interface StoriesProps {
 }
 interface UserStories {
   count_user: number | null;
-  followed_users?: Array<any>; // changer any par une interface appropriée
+  followed_users?: Array<any>; 
 }
 
 export const Stories: React.FC<StoriesProps> = ({username, profile_picture}) => {
@@ -59,78 +59,81 @@ export const Stories: React.FC<StoriesProps> = ({username, profile_picture}) => 
   }, [username]); // ajoute username comme dépendance 
 
   return (
-    <div className="relative border-b border-gray-700 pb-4">
-      {/* Boutons de navigation */}
-      <button 
-        onClick={() => handleScroll('left')} 
-        className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800 rounded-full p-2 text-white opacity-75 hover:opacity-100"
-        style={{ 
-          display: 'flex',
-          alignItems: 'center', 
-          justifyContent: 'center',
-        }}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="15 18 9 12 15 6"></polyline>
-        </svg>
-      </button>
+    <div className="relative rounded-lg bg-gray-900 p-2 md:p-4">
+      {/* Bouton gauche - visible seulement si nécessaire (il est toujours nécessaire)*/}
+      {userStories.followed_users && userStories.followed_users.length > 0 && (
+        <button 
+          onClick={() => handleScroll('left')} 
+          className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 rounded-full p-1.5 text-white shadow-lg opacity-80 hover:opacity-100 z-10"
+          style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+      )}
       
       {/* Container avec défilement horizontal */}
-      <div className="max-w-md mx-auto">
-        <div 
-          ref={scrollContainerRef}
-          className="flex space-x-4 p-4 overflow-x-auto hide-scrollbar" 
-          style={{ 
-            scrollbarWidth: 'none', 
-            msOverflowStyle: 'none',
-            scrollSnapType: 'x mandatory',
-          }}
-        >
-          {/* Profil utilisateur actuel */}
-          {username && (
-            <div className="flex flex-col items-center flex-shrink-0 scroll-snap-align-start" style={{ width: '80px', minWidth: '80px' }}>
-                <img
-                  src={profile_picture ? `${config.serverUrl}/user/profile-picture/${profile_picture}` : `${config.serverUrl}/user/profile-picture/default.jpg`}
-                  alt="Profile"
-                  className="w-20 h-20 rounded-full border-2 border-gray-600 object-cover"/>
-
-              <span 
-                className="text-xs mt-1 text-white truncate w-full text-center cursor-pointer"
-                onClick={() => navigate("/profile")}
-                >{username}
-                </span>
+      <div 
+        ref={scrollContainerRef}
+        className="flex space-x-4 py-1 px-2 overflow-x-auto scrollbar-hide"
+        style={{
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+          scrollSnapType: 'x mandatory',
+        }}
+      >
+        {/* profil de l'utilisateur connecté */}
+        {username && (
+          <div className="flex flex-col items-center flex-shrink-0 scroll-snap-align-start" style={{ width: '72px', minWidth: '72px' }}>
+            <div className="ring-2 ring-gradient-to-r from-pink-500 via-red-500 to-yellow-500 rounded-full p-0.5">
+              <img
+                src={profile_picture ? `${config.serverUrl}/user/profile-picture/${profile_picture}` : `${config.serverUrl}/user/profile-picture/default.jpg`}
+                alt="Profile"
+                className="w-14 h-14 rounded-full object-cover border-2 border-black"
+              />
             </div>
-          )}
-          
-          {/* profils des abonnements */}
-          {userStories.followed_users?.map((user, index) => (
-            <div key={index} className="flex flex-col items-center flex-shrink-0 scroll-snap-align-start" style={{ width: '80px', minWidth: '80px' }}>
+            <span 
+              className="text-xs mt-1 text-white truncate w-full text-center cursor-pointer"
+              onClick={() => navigate("/profile")}
+            >
+              {username}
+            </span>
+          </div>
+        )}
+        
+        {/* profiles des abonnements */}
+        {userStories.followed_users?.map((user, index) => (
+          <div key={index} className="flex flex-col items-center flex-shrink-0 scroll-snap-align-start" style={{ width: '72px', minWidth: '72px' }}>
+            <div className="ring-2 ring-gradient-to-r from-pink-500 via-red-500 to-yellow-500 rounded-full p-0.5">
               <img
                 src={user.profile_picture ? `${config.serverUrl}/user/profile-picture/${user.profile_picture}` : `${config.serverUrl}/user/profile-picture/default.jpg`}
                 alt="Profile"
-                className="w-20 h-20 rounded-full border-2 border-gray-600 object-cover"
+                className="w-14 h-14 rounded-full object-cover border-2 border-black"
               />
-              <span className="text-xs mt-1 text-white truncate w-full text-center cursor-pointer" onClick={() => foreignProfile(user.username)}>{user.username}</span>
             </div>
-          ))}
-          
-        </div>
+            <span 
+              className="text-xs mt-1 text-white truncate w-full text-center cursor-pointer" 
+              onClick={() => foreignProfile(user.username)}
+            >
+              {user.username}
+            </span>
+          </div>
+        ))}
       </div>
       
-      {/* Bouton droite */}
-      <button 
-        onClick={() => handleScroll('right')} 
-        className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800 rounded-full p-2 text-white opacity-75 hover:opacity-100"
-        style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center',
-         }}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="9 18 15 12 9 6"></polyline>
-        </svg>
-      </button>
+      {/* Bouton droite*/}
+      {userStories.followed_users && userStories.followed_users.length > 0 && (
+        <button 
+          onClick={() => handleScroll('right')} 
+          className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 rounded-full p-1.5 text-white shadow-lg opacity-80 hover:opacity-100 z-10"
+          style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      )}
     </div>
   );
 };

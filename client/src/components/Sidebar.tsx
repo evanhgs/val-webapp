@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import { NavLink } from "react-router-dom";
 import Search  from './Search';
-import { isSea } from "node:sea";
+import Settings from './Settings';
 
 
 export const Sidebar: React.FC = () => {
@@ -9,11 +9,12 @@ export const Sidebar: React.FC = () => {
 
   const [isSearch, setIsSearch] = useState(false);
   const [isCompact, setIsCompact] = useState(false);
+  const [isSetting, setIsSetting] = useState(false);
 
   // check taille de l'écran et ajuste sidebar
   useEffect(() => {
     const handleResize = () => {
-      setIsCompact(window.innerWidth < 768);
+      setIsCompact(window.innerWidth < 1000);
     };
     handleResize();
     window.addEventListener('resize', handleResize); // écoute h24 le redimensionnement
@@ -108,16 +109,22 @@ export const Sidebar: React.FC = () => {
           </li>
 
           <li>
-            <div className={`flex items-center ${isCompact ? 'justify-center' : 'space-x-3'} p-2 hover:border hover:border-white rounded-lg cursor-pointer`}>
+            <div 
+            className={`flex items-center ${isCompact ? 'justify-center' : 'space-x-3'} p-2 ${isSetting ? 'border border-white' : 'hover:border hover:border-white'} rounded-lg cursor-pointer`}
+            onClick={() => setIsSetting(!isSetting)}>
               <span role="img" aria-label="settings" className="text-xl">⚙️</span>
               {!isCompact && <span>Paramètres</span>}
             </div>
           </li>
+          
         </ul>
       </div>
       
-      {/* Render search component outside the sidebar */}
-      {isSearch && <Search setIsSearch={setIsSearch} isCompact={isCompact} />}
+      {/* Render components outside the sidebar and stack them */}
+      <div className={`fixed ${isCompact ? 'left-[80px]': 'left-[260px]'} top-4 flex flex-col space-y-40 transition-all duration-300`}>
+        {isSearch && <Search setIsSearch={setIsSearch} isCompact={false} />}
+        {isSetting && <Settings setIsSetting={setIsSetting} isCompact={false} />} 
+      </div>
     </>
   );
 };
