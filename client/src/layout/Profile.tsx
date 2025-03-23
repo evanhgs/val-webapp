@@ -124,7 +124,7 @@ const Profile = () => {
   }
 
   return (
-    <div className="flex-col md:flex-row min-h-screen bg-black text-white flex-grow ml-[250px]">
+    <div className="min-h-screen bg-black text-white w-full md:ml-[20px] ml-0">
       
       {/* page de profil */}
       {isEditing ? (
@@ -135,105 +135,103 @@ const Profile = () => {
             setIsUploading={setIsUploading} 
           /> ) : (
         
-        <div className="max-w-4xl mx-auto mt-10 p-4">
-        <div className="flex items-center space-x-10">
-
-          <img
-            src={`${config.serverUrl}/user/profile-picture/${userData.profile_picture}` || `${config.serverUrl}/user/profile-picture/default.jpg`}
-            alt="Profile"
-            className="w-28 h-28 rounded-full border-2 border-gray-600"
-          />
-
-          {/* Infos du profil */}
-          <div>
-            <div className="flex items-center space-x-4">
-              <h2 className="text-xl font-bold">{userData.username}</h2>
-
-              {/* Modifier le profil */}
-              <button   
-                onClick={() => setIsEditing(true)}
-                className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm cursor-pointer">
-                Modifier le profil
-              </button>
-              
-
-              {/* Button d'upload de photo */}
-              <button 
-                onClick={() => setIsUploading(true)}
-                className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm cursor-pointer">
-                Changer la photo de profil
-              </button> 
-
-              <button className="text-gray-400 text-xl cursor-pointer">⚙️</button>
+        <div className="max-w-4xl mx-auto p-4">
+          {/* Section du profil header - adaptée pour mobile et desktop */}
+          <div className="flex flex-col sm:flex-row sm:items-start sm:space-x-8">
+            {/* Photo de profil - centrée sur mobile, alignée à gauche sur desktop */}
+            <div className="flex justify-center sm:justify-start mb-6 sm:mb-0">
+              <img
+                src={`${config.serverUrl}/user/profile-picture/${userData.profile_picture}` || `${config.serverUrl}/user/profile-picture/default.jpg`}
+                alt="Profile"
+                className="w-20 h-20 sm:w-28 sm:h-28 rounded-full border-2 border-gray-600"
+              />
             </div>
 
-            <div className="flex space-x-6 mt-3 text-gray-300">
-              {isLoadingFollowers ? (
-                <>
-                  <span>
-                    <strong>...</strong> posts
-                  </span>
-                  <span>
-                    <strong>...</strong> abonnés
-                  </span>
-                  <span>
-                    <strong>...</strong> abonnements
-                  </span>
-                </>
-              ) : (
-                <>
-                  <span>
-                    <strong>0</strong> posts
-                  </span>
+            {/* Infos du profil */}
+            <div className="flex-1">
+              {/* Nom d'utilisateur et boutons */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
+                <h2 className="text-xl font-bold text-center sm:text-left mb-3 sm:mb-0">{userData.username}</h2>
 
-                  <span 
-                    className="hover:text-white cursor-pointer"
-                    onClick={() => setShowFollowers(true)}>
-                    <strong>{followersCount}</strong> abonnés
-                  </span>
+                {/* Buttons groupés dans un flex-wrap pour s'adapter aux petits écrans */}
+                <div className="flex flex-wrap justify-center sm:justify-start gap-2">
+                  <button   
+                    onClick={() => setIsEditing(true)}
+                    className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm cursor-pointer">
+                    Modifier le profil
+                  </button>
+                  
+                  <button 
+                    onClick={() => setIsUploading(true)}
+                    className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm cursor-pointer">
+                    Photo de profil
+                  </button> 
 
-                  <span 
-                    className="hover:text-white cursor-pointer"
-                    onClick={() => setShowFollowed(true)}>
-                    <strong>{followedCount}</strong> abonnements
-                  </span>
-                </>
-              )}
+                  <button className="text-gray-400 text-xl cursor-pointer">⚙️</button>
+                </div>
+              </div>
+
+              {/* Statistiques - adaptées pour être responsives */}
+              <div className="flex justify-center sm:justify-start space-x-6 mt-4 text-gray-300">
+                {isLoadingFollowers ? (
+                  <>
+                    <span><strong>...</strong> posts</span>
+                    <span><strong>...</strong> abonnés</span>
+                    <span><strong>...</strong> abonnements</span>
+                  </>
+                ) : (
+                  <>
+                    <span><strong>0</strong> posts</span>
+
+                    <span 
+                      className="hover:text-white cursor-pointer"
+                      onClick={() => setShowFollowers(true)}>
+                      <strong>{followersCount}</strong> abonnés
+                    </span>
+
+                    <span 
+                      className="hover:text-white cursor-pointer"
+                      onClick={() => setShowFollowed(true)}>
+                      <strong>{followedCount}</strong> abonnements
+                    </span>
+                  </>
+                )}
+              </div>
+
+              {/* Bio et site web - alignés au centre sur mobile, à gauche sur desktop */}
+              <div className="mt-4 text-center sm:text-left">
+                <p>{userData.bio || "Vous n'avez pas de bio !"}</p>
+                <p className="text-sm mt-2 text-blue-400">{userData.website || ""}</p>
+              </div>
             </div>
+          </div>
 
-            {/* bio affichée*/}
-            <p className="mt-2">{userData.bio || "Vous n'avez pas de bio !"}</p>
-            <div className="my-4"></div>
-            <p className="text-sm">{userData.website || ""}</p>
+          {/* Stories Highlights - adaptées pour être responsives */}
+          <div className="mt-8 flex justify-center sm:justify-start space-x-6 overflow-x-auto pb-2">
+            <div className="flex flex-col items-center">
+              <div className="w-16 h-16 border-2 border-gray-600 flex items-center justify-center rounded-full">
+                <span className="text-2xl">➕</span>
+              </div>
+              <p className="text-sm mt-2">Nouveau</p>
+            </div>
+          </div>
+
+          {/* Navigation Posts - adaptée pour être responsive */}
+          <div className="border-t border-gray-700 mt-8 flex justify-center space-x-2 sm:space-x-10 py-2 overflow-x-auto">
+            <span className="text-white font-bold p-2 hover:border hover:border-white rounded-lg cursor-pointer whitespace-nowrap">📷 POSTS</span>
+            <span className="text-gray-500 p-2 hover:border hover:border-white rounded-lg cursor-pointer whitespace-nowrap">🔖 SAUVEGARDÉS</span>
+            <span className="text-gray-500 p-2 hover:border hover:border-white rounded-lg cursor-pointer whitespace-nowrap">🏷️ IDENTIFIÉ</span>
+          </div>
+
+          {/* Section Share Photos - adaptée pour être responsive */}
+          <div className="text-center mt-8 px-4">
+            <h3 className="text-xl font-bold mt-2">Partage tes photos</h3>
+            <p className="text-gray-400 mt-2">
+              Quand tu partages des photos et vidéos, elles apparaissent sur ton profil.
+            </p>
+            <button className="text-blue-500 mt-3 cursor-pointer font-semibold">Partager ta première photo</button>
           </div>
         </div>
-
-        {/* Stories Highlights */}
-        <div className="mt-10 flex space-x-6">
-          <div className="flex flex-col items-center">
-            <div className="w-16 h-16 border-2 border-gray-600 flex items-center justify-center rounded-full">
-              <span className="text-2xl">➕</span>
-            </div>
-            <p className="text-sm mt-2">Nouveau</p>
-          </div>
-        </div>
-
-        {/* Navigation Posts */}
-        <div className="border-t border-gray-700 mt-10 flex justify-center space-x-10 py-2">
-          <span className="text-white font-bold p-2 hover:border hover:border-white rounded-lg cursor-pointer">📷 POSTS</span>
-          <span className="text-gray-500 p-2 hover:border hover:border-white rounded-lg cursor-pointer">🔖 SAVED</span>
-          <span className="text-gray-500 p-2 hover:border hover:border-white rounded-lg cursor-pointer">🏷️ TAGGED</span>
-        </div>
-
-        {/* Section Share Photos */}
-        <div className="text-center mt-10">
-          <h3 className="text-xl font-bold mt-2">Partage tes photos</h3>
-          <p className="text-gray-400 mt-2">
-            Quand tu partages des photos et vidéos, elles apparaissent sur ton profil.
-          </p>
-          <button className="text-blue-500 mt-3 cursor-pointer">Partager ta première photo</button>
-        </div>
-      </div>
       )}
 
       {showFollowers && (
