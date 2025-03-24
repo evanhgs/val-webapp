@@ -12,12 +12,17 @@ interface UserProfile {
   profile_picture: string;
 }
 
+interface UserFeed {
+  content: Array<any>; // tableau contenant tout le feed chargé
+}
+
 const Home = () => {
   const [error, setError] = useState<string|null>(null);
   const navigate = useNavigate();
   const { user } = useContext(AuthContext) || {};
   const token = user?.token;
   const [userData, setUserData] = useState<UserProfile | null>(null);
+  const [userFeed, setUserFeed] = useState<UserFeed | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -27,15 +32,22 @@ const Home = () => {
           navigate("/login");
           return;
         }
-
+        // récupération du profil de l'utilisateur connecté
         const response = await axios.post(
           `${config.serverUrl}/user/profile`,
-          {},
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        // récupération du feed personnalisé en fonction de l'utilisateur connecté
+        const responseFeed = await axios.get( 
+          `${config.serverUrl}/post/feed`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setUserData({
           username: response.data.username,
           profile_picture: response.data.profile_picture || "default.jpg",
+        });
+        setUserFeed({
+          content: responseFeed.data.content,
         });
       } catch (error) {
         console.error("Erreur lors de la récupération du compte: ", error);

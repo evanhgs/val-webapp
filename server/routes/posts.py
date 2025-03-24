@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from server.app import db
-from server.models import User, Post
+from server.models import User, Post, Follow
 from server.routes.auth import get_user_id_from_jwt
 from server.routes.user import allowed_file, UPLOAD_FOLDER
 from werkzeug.utils import secure_filename
@@ -93,6 +93,59 @@ def show_post(id_post):
             'created_at': str(post.created_at),
         }
     }), 200
+
+""" gestion des posts du feed 
+1. Récupérer la liste des utilisateurs suivis par l'utilisateur connecté.
+2. Récupérer leurs posts, triés par date (du plus récent au plus ancien).
+3. Récupérer une liste d'autres utilisateurs (exclure ceux suivis).
+4. Récupérer aléatoirement des posts parmi ces utilisateurs
+5. Fusionner les deux listes (posts des abonnés en premier et par date décroissante)
+"""
+@post_bp.route('/feed', methods=['GET'])
+def feed_post():
+    user_id = get_user_id_from_jwt()
+    if not user_id:
+        return jsonify({'message' : 'Not authorized'}), 401
+
+    feed = get_feed(user_id) # array
+    serialized_feed = [
+        {
+            'id': post.id,
+            'image_url': post.image_url,
+            'caption': post.caption,
+            'user_id': post.user_id,
+            'created_at': str(post.created_at),
+        }
+        for post in feed
+    ]
+    return jsonify({
+        'message': 'Feed successfully loaded', 
+        'content': serialized_feed
+    }), 200
+
+def get_followed_posts(user_id):
+    # récupération des utilisateurs suivis
+    followed_users = db.session.query(Follow.followed_id).filter(Follow.followed_id==user_id).subquery()
+    # récup des 2 derniers posts des abonnements
+    followed_posts = db.session.query(Post).filter(Post.user_id.in_(followed_users)).order_by(Post.created_at.desc()).limit(2).all()
+    return followed_posts
+
+def get_random_posts(user_id):
+    followed_users = db.session.query(Follow.followed_id).filter(Follow.follower_id == user_id).subquery()
+    # récup 10 personnes aléatoires en excluant ceux qui sont suivis 
+    random_users = db.session.query(User.id).filter(~User.id.in_(followed_users)).order_by(db.func.random()).limit(10).subquery()
+    # retourne 1 post le plus récent par personne
+    random_post = db.session.query(Post).filter(Post.user_id.in_(random_users)).order_by(db.func.random()).first()
+    return random_post
+
+"""merging des fonctions followed_posts & random_post sous forme d'array"""
+def get_feed(user_id):
+    posts = get_followed_posts(user_id)
+    random_post = get_random_posts(user_id) 
+    if random_post:
+        posts.append(random_post) 
+    return posts
+    
 
 
 @post_bp.route('/delete', methods=['POST'])

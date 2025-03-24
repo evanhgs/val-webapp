@@ -44,3 +44,4 @@ client/dist-ssr
 *.njsproj
 *.sln
 *.sw?
+*.vs
