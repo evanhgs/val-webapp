@@ -1,7 +1,16 @@
 import React from "react";
+import config from "../config";
 
-export const Feed: React.FC = () => {
-  const examplePosts = [
+
+
+interface UserFeedProps { // cette interface n'accepte que les props avec le type array et NON un objet contenant un tableau 
+  userFeed: Array<any>
+}
+
+export const Feed: React.FC<UserFeedProps> = ({userFeed}) => {
+
+  {/** structuration idéale d'un post
+      const examplePosts = [
     {
       id: 1,
       username: 'utilisateur_1',
@@ -12,37 +21,30 @@ export const Feed: React.FC = () => {
       comments: 23,
       timeAgo: '2h',
     },
-    {
-      id: 2,
-      username: 'utilisateur_2',
-      avatar: 'default.jpg',
-      image: 'placeholder2',
-      caption: 'Moment parfait en ville #citylife #weekend',
-      likes: 89,
-      comments: 12,
-      timeAgo: '4h',
-    },
-    {
-      id: 3,
-      username: 'utilisateur_3',
-      avatar: 'default.jpg',
-      image: 'placeholder3',
-      caption: 'Nouvelle création! Qu\'en pensez-vous? #art #creation',
-      likes: 245,
-      comments: 42,
-      timeAgo: '6h',
-    }
-  ];
+  ]; 
+  
+  // vrai tableau json renvoyé pour l'instant 
+  // {
+            "caption": "Look this cool picture !",
+            "created_at": "2025-03-17 15:15:51.394491",
+            "id": "c7013664-db3d-45c5-a3c5-2680448170c6",
+            "image_url": "colin-watts-F7Sg9CovAVA-unsplash.jpg",
+            "user_id": "28ff42af-b87c-4e4c-8051-3365547674d2",
+            "user_profile": "colin-watts-eYXrvDWeJWs-unsplash.jpg",
+            "username": "test"
+        },
+  */}
+  
 
   return (
     <div className="flex flex-col space-y-6">
-      {examplePosts.map((post) => (
+      {userFeed.map((post) => (
         <div key={post.id} className="bg-gray-900 rounded-lg overflow-hidden border border-gray-800">
           {/* Header du post */}
           <div className="flex items-center justify-between p-3">
             <div className="flex items-center">
               <img 
-                src={`/api/placeholder/${32}/${32}`} 
+                src={post.user_profile ? `${config.serverUrl}/user/profile-picture/${post.user_profile}` : `${config.serverUrl}/user/profile-picture/default.jpg`}
                 alt={post.username}
                 className="w-8 h-8 rounded-full object-cover mr-2 border border-gray-700"
               />
@@ -60,7 +62,7 @@ export const Feed: React.FC = () => {
           {/* Image du post */}
           <div className="aspect-square bg-gray-800 w-full flex items-center justify-center">
             <img 
-              src={`/api/placeholder/${470}/${470}`} 
+              src={post.image_url ? `${config.serverUrl}/user/profile-picture/${post.image_url}` : `${config.serverUrl}/user/profile-picture/default.jpg`} 
               alt="Post content"
               className="w-full h-full object-cover"
             />

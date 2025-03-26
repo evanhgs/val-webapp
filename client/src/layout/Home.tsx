@@ -13,7 +13,7 @@ interface UserProfile {
 }
 
 interface UserFeed {
-  content: Array<any>; // tableau contenant tout le feed chargé
+  content: Array<any>; // propriété type du tableau qui stock le feed
 }
 
 const Home = () => {
@@ -35,6 +35,7 @@ const Home = () => {
         // récupération du profil de l'utilisateur connecté
         const response = await axios.post(
           `${config.serverUrl}/user/profile`,
+          {}, // NE JAMAIS OUBLIER LE CORPS (meme vide) pour les requetes POST avec axios sinon il passe l'objet header dans le cors et ça bug...
           { headers: { Authorization: `Bearer ${token}` } }
         );
         // récupération du feed personnalisé en fonction de l'utilisateur connecté
@@ -47,8 +48,12 @@ const Home = () => {
           profile_picture: response.data.profile_picture || "default.jpg",
         });
         setUserFeed({
-          content: responseFeed.data.content,
+          content: responseFeed.data.content,   // récupère le tableau de tous les posts + garde le meme type de UserFeed
         });
+        
+        // Debugging to verify response structure
+        // console.log("API Response:", responseFeed.data);
+
       } catch (error) {
         console.error("Erreur lors de la récupération du compte: ", error);
         setError("Impossible de récupérer les infos du compte.");
@@ -75,7 +80,7 @@ const Home = () => {
         
         <div className="flex w-full">
           <div className="w-full lg:mr-8">
-            <Feed />
+            <Feed userFeed={userFeed?.content || []} /> {/* Passe le tableau de posts au composant Feed, ou un tableau vide si les données ne sont pas encore chargées */}
           </div>
           
           <div className="hidden lg:block w-[320px] flex-shrink-0">

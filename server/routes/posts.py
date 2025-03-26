@@ -114,6 +114,8 @@ def feed_post():
             'image_url': post.image_url,
             'caption': post.caption,
             'user_id': post.user_id,
+            'username': User.query.get(post.user_id).username,
+            'user_profile': User.query.get(post.user_id).profile_picture,
             'created_at': str(post.created_at),
         }
         for post in feed
