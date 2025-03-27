@@ -45,142 +45,152 @@ const ForeignProfile = () => {
   // Récupérer le paramètre username de l'URL
   const { username } = useParams<{ username: string }>();
 
-
-
-  {/** premier hook ajoutat les info de l'affichage du profil */}
   useEffect(() => {
-    const fetchProfile = async () => {
+  const fetchProfile = async () => {
+    try {
+    if (!token) {
+      setError("Vous devez etre connecté pour voir votre profil.");
+      navigate("/login");
+      return;
+    }
 
-      try {
-        if (!token) {
-          setError("Vous devez etre connecté pour voir votre profil.");
-          navigate("/login");
-          return;
-        }
-
-        const response = await axios.post(
-          `${config.serverUrl}/user/profile/${username}`,
-          {},
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setUserData({
-          username: response.data.username,
-          bio: response.data.bio || "Aucune bio disponible.",
-          website: response.data.website || "",
-          created_at: new Date(response.data.created_at).toLocaleDateString(),
-          profile_picture: response.data.profile_picture || "default.jpg",
-        });
-      } catch (error) {
-        console.error("Erreur lors de la récupération du profil: ", error);
-        setError("Impossible de récupérer les infos du profil.");
-      }
-    };
-    fetchProfile();
-  }, [token, navigate]); // dependance du hook pour s'assurer que la requete est bien relancée apres l'effet
-
+    const response = await axios.post(
+      `${config.serverUrl}/user/profile/${username}`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    setUserData({
+      username: response.data.username,
+      bio: response.data.bio || "Aucune bio disponible.",
+      website: response.data.website || "",
+      created_at: new Date(response.data.created_at).toLocaleDateString(),
+      profile_picture: response.data.profile_picture || "default.jpg",
+    });
+    } catch (error) {
+    console.error("Erreur lors de la récupération du profil: ", error);
+    setError("Impossible de récupérer les infos du profil.");
+    }
+  };
+  fetchProfile();
+  }, [token, navigate, username]); // Added username as dependency
 
   useEffect(() => {
-    const fetchFollowers =async () => {
-      if (!token || !userData) return;
+  const fetchFollowers = async () => {
+    if (!token || !userData) return;
 
-      try {
-        setIsLoadingFollowers(true);
+    try {
+    setIsLoadingFollowers(true);
 
-        const followerResponse = await axios.get(`${config.serverUrl}/user/get-follow/${userData.username}`);
-        const followedResponse = await axios.get(`${config.serverUrl}/user/get-followed/${userData.username}`);
+    const followerResponse = await axios.get(`${config.serverUrl}/user/get-follow/${userData.username}`);
+    const followedResponse = await axios.get(`${config.serverUrl}/user/get-followed/${userData.username}`);
 
-        setFollowers(followerResponse.data.followers);
-        setFollowersCount(followerResponse.data.count);
-        setFollowed(followedResponse.data.followed);
-        setFollowedCount(followedResponse.data.count);
+    setFollowers(followerResponse.data.followers);
+    setFollowersCount(followerResponse.data.count);
+    setFollowed(followedResponse.data.followed);
+    setFollowedCount(followedResponse.data.count);
 
-      } catch (error) {
-          console.error("Erreur lors de la récupération des abonnés/abonnements", error);
-      } finally {
-        setIsLoadingFollowers(false);
-      }
-    };
-    fetchFollowers();
-  }, [token, userData]); // userData comme dépendance pour s'assurer que les données du profil sont chargées d'abord
+    } catch (error) {
+      console.error("Erreur lors de la récupération des abonnés/abonnements", error);
+    } finally {
+    setIsLoadingFollowers(false);
+    }
+  };
+  fetchFollowers();
+  }, [token, userData]);
 
   if (error) {
-    return (
-      <div className="text-white text-center mt-10">
-        <p>{error}</p>
-        <p>Si vous rencontrez plusieurs erreur à la suite essayez de vous reconnecter</p>
-        < Logout />
-      </div>
-    );
+  return (
+    <div className="text-white text-center mt-10">
+    <p>{error}</p>
+    <p>Si vous rencontrez plusieurs erreur à la suite essayez de vous reconnecter</p>
+    <Logout />
+    </div>
+  );
   }
 
   if (!userData){
-    return (
-      <div className="text-white text-center mt-10">
-        <p>Chargement...</p>
-      </div>
-    );
+  return (
+    <div className="text-white text-center mt-10">
+    <p>Chargement...</p>
+    </div>
+  );
   }
 
   return (
-    <div className="flex-col md:flex-row min-h-screen bg-black text-white flex-grow ml-[250px]">
+    <div className="min-h-screen bg-black text-white w-full md:ml-[20px] ml-0">
+      
         
-        <div className="max-w-4xl mx-auto mt-10 p-4">
-        <div className="flex items-center space-x-10">
-
-          <img
-            src={`${config.serverUrl}/user/profile-picture/${userData.profile_picture}` || `${config.serverUrl}/user/profile-picture/default.jpg`}
-            alt="Profile"
-            className="w-28 h-28 rounded-full border-2 border-gray-600"
-          />
-
-          {/* Infos du profil */}
-          <div>
-            <div className="flex items-center space-x-4">
-              <h2 className="text-xl font-bold">{userData.username}</h2>
+        <div className="max-w-4xl mx-auto p-4">
+          {/* Section du profil header - adaptée pour mobile et desktop */}
+          <div className="flex flex-col sm:flex-row sm:items-start sm:space-x-8">
+            {/* Photo de profil - centrée sur mobile, alignée à gauche sur desktop */}
+            <div className="flex justify-center sm:justify-start mb-6 sm:mb-0">
+              <img
+                src={`${config.serverUrl}/user/profile-picture/${userData.profile_picture}` || `${config.serverUrl}/user/profile-picture/default.jpg`}
+                alt="Profile"
+                className="w-20 h-20 sm:w-28 sm:h-28 rounded-full border-2 border-gray-600"
+              />
             </div>
 
-            <div className="flex space-x-6 mt-3 text-gray-300">
-              {isLoadingFollowers ? (
-                <>
-                  <span>
-                    <strong>...</strong> posts
-                  </span>
-                  <span>
-                    <strong>...</strong> abonnés
-                  </span>
-                  <span>
-                    <strong>...</strong> abonnements
-                  </span>
-                </>
-              ) : (
-                <>
-                  <span>
-                    <strong>0</strong> posts
-                  </span>
+            {/* Infos du profil */}
+            <div className="flex-1">
+              {/* Nom d'utilisateur et boutons */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
+                <h2 className="text-xl font-bold text-center sm:text-left mb-3 sm:mb-0">{userData.username}</h2>
+              </div>
 
-                  <span 
-                    className="hover:text-white cursor-pointer"
-                    onClick={() => setShowFollowers(true)}>
-                    <strong>{followersCount}</strong> abonnés
-                  </span>
+              {/* Statistiques - adaptées pour être responsives */}
+              <div className="flex justify-center sm:justify-start space-x-6 mt-4 text-gray-300">
+                {isLoadingFollowers ? (
+                  <>
+                    <span><strong>...</strong> posts</span>
+                    <span><strong>...</strong> abonnés</span>
+                    <span><strong>...</strong> abonnements</span>
+                  </>
+                ) : (
+                  <>
+                    <span><strong>0</strong> posts</span>
 
-                  <span 
-                    className="hover:text-white cursor-pointer"
-                    onClick={() => setShowFollowed(true)}>
-                    <strong>{followedCount}</strong> abonnements
-                  </span>
-                </>
-              )}
+                    <span 
+                      className="hover:text-white cursor-pointer"
+                      onClick={() => setShowFollowers(true)}>
+                      <strong>{followersCount}</strong> abonnés
+                    </span>
+
+                    <span 
+                      className="hover:text-white cursor-pointer"
+                      onClick={() => setShowFollowed(true)}>
+                      <strong>{followedCount}</strong> abonnements
+                    </span>
+                  </>
+                )}
+              </div>
+
+              {/* Bio et site web - alignés au centre sur mobile, à gauche sur desktop */}
+              <div className="mt-4 text-center sm:text-left">
+                <p>{userData.bio || "Vous n'avez pas de bio !"}</p>
+                <p className="text-sm mt-2 text-blue-400">{userData.website || ""}</p>
+              </div>
             </div>
-
-            {/* bio affichée*/}
-            <p className="mt-2">{userData.bio || "Vous n'avez pas de bio !"}</p>
-            <div className="my-4"></div>
-            <p className="text-sm">{userData.website || ""}</p>
           </div>
-        </div>
-      </div>
 
+          {/* Stories Highlights - adaptées pour être responsives */}
+          <div className="mt-8 flex justify-center sm:justify-start space-x-6 overflow-x-auto pb-2">
+            <div className="flex flex-col items-center">
+              <div className="w-16 h-16 border-2 border-gray-600 flex items-center justify-center rounded-full">
+                <span className="text-2xl">➕</span>
+              </div>
+              <p className="text-sm mt-2">Nouveau</p>
+            </div>
+          </div>
+
+          {/* Navigation Posts - adaptée pour être responsive */}
+          <div className="border-t border-gray-700 mt-8 flex justify-center space-x-2 sm:space-x-10 py-2 overflow-x-auto">
+            <span className="text-white font-bold p-2 hover:border hover:border-white rounded-lg cursor-pointer whitespace-nowrap">📷 POSTS</span>
+          </div>
+
+
+        </div>
 
       {showFollowers && (
         <FollowersModal 
