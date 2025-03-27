@@ -350,3 +350,46 @@ It returns code **200** :
 ```
 
 - Future implementation, you will be able to get all the comments and likes of the post.
+
+### Display the feed for an user
+
+`GET : http://127.0.0.1:5000/post/feed`
+
+In header, you need to add `Authorization` (OAuth 2.0) with the HS256 algo get from login.
+
+It returns code **200** :
+
+```json
+{
+    "content": [
+        {
+            "caption": "Yeah this is a good picture",
+            "created_at": "2025-03-27 12:13:08.325125",
+            "id": "ad0e6c89-933b-4fc8-9326-8037048caa0a",
+            "image_url": "Capture_decran_du_2025-03-26_10-36-02.png",
+            "user_id": "9ef9ab78-5c8a-43cd-92c4-19fbd230b2a3",
+            "user_profile": "cat_selfie.jpg",
+            "username": "test"
+        },
+        {
+            "caption": "OH this is a good screenshot",
+            "created_at": "2025-03-27 12:12:53.098360",
+            "id": "108cacf5-11f3-4410-a01f-2f740018c246",
+            "image_url": "Capture_decran_du_2025-03-21_12-21-49.png",
+            "user_id": "9ef9ab78-5c8a-43cd-92c4-19fbd230b2a3",
+            "user_profile": "cat_selfie.jpg",
+            "username": "test"
+        },
+        {
+            "caption": "Look my cool picture ! ",
+            "created_at": "2025-03-27 12:12:18.591720",
+            "id": "3bab412f-a282-43d1-9b3b-f9c05fa19a11",
+            "image_url": "Capture_decran_du_2025-01-16_10-48-32.png",
+            "user_id": "9ef9ab78-5c8a-43cd-92c4-19fbd230b2a3",
+            "user_profile": "cat_selfie.jpg",
+            "username": "test"
+        }
+    ],
+    "message": "Feed successfully loaded"
+}
+```
