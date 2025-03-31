@@ -81,6 +81,32 @@ export const FollowersModal = ({ users, title, onClose }: { users: FollowUser[],
             })
         })
     }
+
+    // l'objectif est de charger tous les utilisateurs qui sont suivis par l'user actif 
+    // et ensuite les comparer avec ceux qui sont affichés dans le modal 
+    // (pour ceux qui sont en double afficher "followed")
+
+    // charge la requete pour avoir les utilisateurs follows
+    {/**
+    useEffect(() => {
+        const [FollewedUsers, setFollowedUsers] = useState<string[]>([]);
+
+        const isFollowing = async (username: string) => {
+            const response = await axios.get(`${config.serverUrl}/user/get-followed/${username}`);
+            setFollowedUsers(response.data.username);
+        };
+        
+        // Get current user's token to fetch their followed users
+        const token = localStorage.getItem('token');
+        if (token) {
+            const currentUser = JSON.parse(atob(token.split('.')[1])).username;
+            isFollowing(currentUser);
+        };
+
+        console.log(isFollowing);
+        
+    }, [])
+    */}
     
     return (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
