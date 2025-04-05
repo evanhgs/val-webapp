@@ -2,8 +2,11 @@ import React, { useState } from "react";
 import axios from "axios";
 import config from '../config';
 
+interface EditProfileFormProps {
+  onUpdateAlert: (message: string, type: 'success' | 'error' | 'info') => void;
+}
 
-const EditProfileForm = ({ userData, setIsEditing }: any) => {
+const EditProfileForm = ({ userData, setIsEditing, onUpdateAlert }: any) => {
   const [formData, setFormData] = useState({
     username: userData.username,
     bio: userData.bio || "",
@@ -21,10 +24,16 @@ const EditProfileForm = ({ userData, setIsEditing }: any) => {
       await axios.post(`${config.serverUrl}/user/edit`, formData, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
-      alert("Profil mis à jour !");
+      onUpdateAlert(
+        "Profil mis à jour avec succès",
+        "success"
+      );
       setIsEditing(false); 
     } catch (error) {
-      console.error("Echec de la mise à jour du profil: ", error);
+      onUpdateAlert(
+        "Echec, une erreur est survenue",
+        "error"
+      );
     }
   };
 

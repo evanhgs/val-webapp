@@ -42,7 +42,7 @@ export const Sidebar: React.FC = () => {
     { icon: "▶️", label: "Reels" },
     { icon: "📩", label: "Messages" },
     { icon: "❤️", label: "Notifications" },
-    { icon: "➕", label: "Créer" },
+    { icon: "➕", label: "Créer", link: "/upload", isNavLink: true },
     { icon: "👤", label: "Profil", link: "/profile", isNavLink: true },
     { icon: "⚙️", label: "Paramètres", onClick: () => setIsSetting(!isSetting), isActive: isSetting }
   ];
