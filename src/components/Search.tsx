@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from "axios";
 import config from "../config";
 import { FollowersModal } from './FollowersModal';
+import UseOutsideClickDetector from './OutsideClickDetector'
 
 interface SearchProps {
   setIsSearch: (isSearch: boolean) => void;
@@ -54,10 +55,17 @@ const Search: React.FC<SearchProps> = ({ setIsSearch, isCompact }) => {
       setIsLoading(false);
     }
   };
+
+
+
+  const searchContainerRef = UseOutsideClickDetector(() => {
+    setIsSearch(false);
+  });
   
   return (
-    <div className={`search-container ${isCompact ? 'fixed left-[80px]' : 'fixed left-[260px]'} top-4 transition-all duration-300 z-50`}>
-      <div className="w-[300px] bg-gray-800 p-4 rounded-lg shadow-lg">
+    <div className={`search-container fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 z-50`} 
+      ref={searchContainerRef}>
+      <div className={`bg-gray-800 p-4 rounded-lg shadow-lg ${isCompact ? 'w-[250px]' : 'w-[350px]'}`}>
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-bold text-white">Recherche</h3>
           <button 

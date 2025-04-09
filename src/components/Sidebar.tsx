@@ -37,14 +37,14 @@ export const Sidebar: React.FC = () => {
   // Liste des éléments du menu avec leurs propriétés
   const menuItems = [
     { icon: "🏠", label: "Home", link: "/", isNavLink: true },
-    { icon: "🔍", label: "Chercher", onClick: () => setIsSearch(!isSearch), isActive: isSearch },
+    { icon: "🔍", label: "Chercher", onClick: () => { setIsSetting(false); setIsSearch(true)}, isActive: isSearch },
     { icon: "🧭", label: "Explorer" },
     { icon: "▶️", label: "Reels" },
     { icon: "📩", label: "Messages" },
     { icon: "❤️", label: "Notifications" },
     { icon: "➕", label: "Créer", link: "/upload", isNavLink: true },
     { icon: "👤", label: "Profil", link: "/profile", isNavLink: true },
-    { icon: "⚙️", label: "Paramètres", onClick: () => setIsSetting(!isSetting), isActive: isSetting }
+    { icon: "⚙️", label: "Paramètres", onClick: () => { setIsSearch(false); setIsSetting(true)}, isActive: isSetting }
   ];
 
   // Classes CSS pour chaque mode d'affichage de la sidebar
@@ -86,7 +86,7 @@ export const Sidebar: React.FC = () => {
     const currentStyle = menuItemStyles[displayMode];
     
     // Classes CSS pour les états actif et hover
-    const activeClasses = "border border-white";
+    const activeClasses = "border border-white cursor-pointer";
     const hoverClasses = "hover:border hover:border-white cursor-pointer";
     
     // Contenu de l'élément (icône + label conditionnel)
