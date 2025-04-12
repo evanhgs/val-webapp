@@ -33,7 +33,7 @@ export const FollowersModal = ({ users, title, onClose }: { users: FollowUser[],
             return;
         }
         
-        fetch(`${config.serverUrl}/user/follow`, { // route for follow an user
+        fetch(`${config.serverUrl}/follow/user`, { // route for follow an user
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

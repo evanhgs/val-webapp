@@ -81,8 +81,8 @@ const ForeignProfile = () => {
     try {
     setIsLoadingFollowers(true);
 
-    const followerResponse = await axios.get(`${config.serverUrl}/user/get-follow/${userData.username}`);
-    const followedResponse = await axios.get(`${config.serverUrl}/user/get-followed/${userData.username}`);
+    const followerResponse = await axios.get(`${config.serverUrl}/follow/get-follow/${userData.username}`);
+    const followedResponse = await axios.get(`${config.serverUrl}/follow/get-followed/${userData.username}`);
 
     setFollowers(followerResponse.data.followers);
     setFollowersCount(followerResponse.data.count);

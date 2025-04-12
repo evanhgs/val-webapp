@@ -46,7 +46,7 @@ export const Stories: React.FC<StoriesProps> = ({username, profile_picture}) => 
       if (!username) return; 
 
       try {
-        const response = await axios.get(`${config.serverUrl}/user/get-followed/${username}`);
+        const response = await axios.get(`${config.serverUrl}/follow/get-followed/${username}`);
         setUserStories({
           count_user: response.data.count,
           followed_users: response.data.followed,
