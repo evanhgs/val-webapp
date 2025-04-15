@@ -4,7 +4,7 @@ import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import config from "../config.ts";
 
-const Post = () => {
+const UploadPost = () => {
     const { user } = useContext(AuthContext) || {};
     const token= user?.token;
     const navigate = useNavigate();
@@ -117,4 +117,4 @@ const Post = () => {
     );
 }
 
-export default Post;
+export default UploadPost;

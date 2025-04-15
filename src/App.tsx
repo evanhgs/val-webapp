@@ -8,7 +8,8 @@ import Register from "./layout/Register";
 import Layout from "./layout/Layout";
 import Profile from "./layout/Profile";
 import ForeignProfile from "./layout/ForeignProfile";
-import Post from "./layout/UploadPost";
+import UploadPost from "./layout/UploadPost";
+import ShowPost from "./layout/Post";
 
 const App: React.FC = () => {
   return (
@@ -23,7 +24,8 @@ const App: React.FC = () => {
               <Route path="/" element={<Home />} />
               <Route path="/profile" element={<Profile /> } />
               <Route path="/profile/:username" element={<ForeignProfile />} />
-              <Route path="/upload" element={<Post/>} />
+              <Route path="/upload" element={<UploadPost/>} />
+              <Route path="/post/:id" element={<ShowPost />} />
             </Route>
           </Route>
         </Routes>

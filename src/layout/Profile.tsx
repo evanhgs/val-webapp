@@ -9,6 +9,7 @@ import UploadButton from "../components/UploadProfilePic";
 import config from '../config';
 import { FollowersModal } from '../components/FollowersModal';
 import { AlertPopup } from "../components/AlertPopup";
+import { NavLink } from "react-router-dom";
 
 // type pour l'utilisateur
 interface UserProfile {
@@ -29,6 +30,15 @@ interface FollowUser {
 interface AlertProps {
   message: string;
   type: 'success' | 'error' | 'info';
+}
+
+interface Post {
+  caption: string;
+  created_at: string;
+  image_url: string;
+  user_profile: string;
+  username: string;
+  id: string;
 }
 
 const Profile = () => {
@@ -53,6 +63,8 @@ const Profile = () => {
   const [showFollowed, setShowFollowed] = useState(false);
   
   const [alert, setAlert] = useState<AlertProps | null>(null);
+
+  const [post, setPost] = useState<Post[]>([]);
   
 
 
@@ -86,7 +98,7 @@ const Profile = () => {
       }
     };
     fetchProfile();
-  }, [token, navigate]); // dependance du hook pour s'assurer que la requete est bien relancée apres l'effet
+  }, [token, navigate]);
 
 
   useEffect(() => {
@@ -98,11 +110,18 @@ const Profile = () => {
 
         const followerResponse = await axios.get(`${config.serverUrl}/follow/get-follow/${userData.username}`);
         const followedResponse = await axios.get(`${config.serverUrl}/follow/get-followed/${userData.username}`);
+        const postResponse = await axios.post(
+          `${config.serverUrl}/post/get-user/${userData.username}`,
+          null,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        //console.log(postResponse);
 
         setFollowers(followerResponse.data.followers);
         setFollowersCount(followerResponse.data.count);
         setFollowed(followedResponse.data.followed);
         setFollowedCount(followedResponse.data.count);
+        setPost(postResponse.data.post || []);
 
       } catch (error) {
           console.error("Erreur lors de la récupération des abonnés/abonnements", error);
@@ -111,7 +130,7 @@ const Profile = () => {
       }
     };
     fetchFollowers();
-  }, [token, userData]); // userData comme dépendance pour s'assurer que les données du profil sont chargées d'abord
+  }, [token, userData]); 
 
   if (error) {
     return (
@@ -139,7 +158,7 @@ const Profile = () => {
     type: 'success' | 'error' | 'info';
   }
 
-  // Function to handle alert popups
+
   const handleAlertPopup = ({ message, type }: AlertHandlerParams): void => {
     setAlert({
       message,
@@ -163,9 +182,9 @@ const Profile = () => {
           /> ) : (
         
         <div className="max-w-4xl mx-auto p-4">
-          {/* Section du profil header - adaptée pour mobile et desktop */}
+          {/* Section du profil header*/}
           <div className="flex flex-col sm:flex-row sm:items-start sm:space-x-8">
-            {/* Photo de profil - centrée sur mobile, alignée à gauche sur desktop */}
+            {/* Photo de profil  */}
             <div className="flex justify-center sm:justify-start mb-6 sm:mb-0">
               <img
                 src={`${config.serverUrl}/user/profile-picture/${userData.profile_picture}` || `${config.serverUrl}/user/profile-picture/default.jpg`}
@@ -176,11 +195,8 @@ const Profile = () => {
 
             {/* Infos du profil */}
             <div className="flex-1">
-              {/* Nom d'utilisateur et boutons */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
                 <h2 className="text-xl font-bold text-center sm:text-left mb-3 sm:mb-0">{userData.username}</h2>
-
-                {/* Buttons groupés dans un flex-wrap pour s'adapter aux petits écrans */}
                 <div className="flex flex-wrap justify-center sm:justify-start gap-2">
                   <button   
                     onClick={() => setIsEditing(true)}
@@ -198,7 +214,7 @@ const Profile = () => {
                 </div>
               </div>
 
-              {/* Statistiques - adaptées pour être responsives */}
+              {/* Statistiques  */}
               <div className="flex justify-center sm:justify-start space-x-6 mt-4 text-gray-300">
                 {isLoadingFollowers ? (
                   <>
@@ -208,7 +224,7 @@ const Profile = () => {
                   </>
                 ) : (
                   <>
-                    <span><strong>0</strong> posts</span>
+                    <span><strong>{(post?.length ?? 0)}</strong> posts</span>
 
                     <span 
                       className="hover:text-white cursor-pointer"
@@ -225,7 +241,7 @@ const Profile = () => {
                 )}
               </div>
 
-              {/* Bio et site web - alignés au centre sur mobile, à gauche sur desktop */}
+              {/* Bio et site web */}
               <div className="mt-4 text-center sm:text-left">
                 <p>{userData.bio || "Vous n'avez pas de bio !"}</p>
                 <p className="text-sm mt-2 text-blue-400">{userData.website || ""}</p>
@@ -233,7 +249,7 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* Stories Highlights - adaptées pour être responsives */}
+          {/* Stories Highlights */}
           <div className="mt-8 flex justify-center sm:justify-start space-x-6 overflow-x-auto pb-2">
             <div className="flex flex-col items-center">
               <div className="w-16 h-16 border-2 border-gray-600 flex items-center justify-center rounded-full">
@@ -243,20 +259,53 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* Navigation Posts - adaptée pour être responsive */}
+          {/* Navigation Posts */}
           <div className="border-t border-gray-700 mt-8 flex justify-center space-x-2 sm:space-x-10 py-2 overflow-x-auto">
             <span className="text-white font-bold p-2 hover:border hover:border-white rounded-lg cursor-pointer whitespace-nowrap">📷 POSTS</span>
             <span className="text-gray-500 p-2 hover:border hover:border-white rounded-lg cursor-pointer whitespace-nowrap">🔖 SAUVEGARDÉS</span>
             <span className="text-gray-500 p-2 hover:border hover:border-white rounded-lg cursor-pointer whitespace-nowrap">🏷️ IDENTIFIÉ</span>
           </div>
 
-          {/* Section Share Photos - adaptée pour être responsive */}
           <div className="text-center mt-8 px-4">
-            <h3 className="text-xl font-bold mt-2">Partage tes photos</h3>
-            <p className="text-gray-400 mt-2">
-              Quand tu partages des photos et vidéos, elles apparaissent sur ton profil.
-            </p>
-            <button className="text-blue-500 mt-3 cursor-pointer font-semibold">Partager ta première photo</button>
+            {/** get all post from user and display like/comment relation in galery &&&&& clickable comp that redirect onto the post*/}
+            {post.length > 0 ? (
+                <div className="grid grid-cols-3 gap-1">
+                {post.map((p, index) => (
+                  <div key={`post-${index}`} className="aspect-square relative group cursor-pointer">
+                  <img 
+                    src={`${config.serverUrl}/user/profile-picture/${p.image_url}`}
+                    alt={p.caption}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-200">
+                    <div className="text-white flex items-center space-x-4">
+                    <div className="flex items-center">
+                      <span className="mr-1">❤️</span>
+                      <span className="font-semibold">0</span>
+                    </div>
+                    <div className="flex items-center">
+                      <span className="mr-1">💬</span>
+                      <span className="font-semibold">0</span>
+                    </div>
+                    </div>
+                  </div>
+                  </div>
+                ))}
+                </div>
+            ) : (
+              <>
+                <h3 className="text-xl font-bold mt-2">Partage tes photos</h3>
+                <p className="text-gray-400 mt-2">
+                  Quand tu partages des photos et vidéos, elles apparaissent sur ton profil.
+                </p>
+                <NavLink
+                  to="/upload"
+                  className="text-blue-500 mt-3 cursor-pointer font-semibold"
+                >
+                    Partager ta première photo
+                </NavLink>
+              </>
+            )} 
           </div>
         </div>
       )}
