@@ -1,56 +1,62 @@
 import axios from 'axios';
 import config from '../config';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-interface Post { // meme objet post que dans profile 
+interface Post { 
     caption: string;
     created_at: string;
-    image_url: string;
-    user_profile: string;
-    username: string;
     id: string;
+    image_url: string;
+    user_profile_url: string;
+    username: string;
   }
 
-// id du post en parametre GET sinon retourne 404 not found
+// id du post en parametre GET sinon retourne 404 not found a faire
 const ShowPost = () => {
 
-    const [post, setPost] = useState<Post[]>([]);
-
-    //const PostId = useState('383cf999-2d11-4549-8653-ee2bbbba8faf');
-
+    const [post, setPost] = useState<Post | null>(null); 
     const {id} = useParams<{ id: string}>();
 
-    const displayPostfromId = async () => {
-        const response = await axios.get(
-            `${config.serverUrl}/post/${id}`,
-        );
+    useEffect(() => {
+        const displayPostfromId = async () => {
+            try {
+                const response = await axios.get(
+                    `${config.serverUrl}/post/${id}`
+                );
 
-        setPost(response.data.post || []);
-    }
-    displayPostfromId();
+                console.log("API response:", response.data);
+                
+                setPost(response.data.post);
+            } catch (error) {
+                console.error("Error fetching post:", error);
+            }
+        }
+        displayPostfromId();
+    }, [id]);
+
+    
     return(
-            <div className="max-w-2xl mx-auto my-8 bg-white rounded-lg shadow-lg overflow-hidden">
-                {post.length > 0 ? (
+            <div className="max-w-2xl mx-auto my-8 bg-black rounded-lg shadow-lg overflow-hidden">
+                {post ? ( 
                     <div className="post-container">
-                        {/* Header with user info */}
+                        
                         <div className="flex items-center p-4 border-b">
                             <img 
-                                src={post[0].user_profile || 'https://via.placeholder.com/40'} 
-                                alt={post[0].username}
+                                src={`${config.serverUrl}/user/profile-picture/${post.user_profile_url}` || `${config.serverUrl}/user/profile-picture/default.jpg`}
+                                alt={post?.username || 'Utilisateur'}
                                 className="w-10 h-10 rounded-full object-cover"
                             />
                             <div className="ml-3">
-                                <p className="font-bold text-sm">{post[0].username}</p>
+                                <p className="font-bold text-sm">{post?.username}</p>
                             </div>
                         </div>
                         
-                        {/* Image */}
-                        <div className="post-image-container">
+                        <div className="post-image-container mt-10">
                             <img 
-                                src={post[0].image_url} 
+                                src={`${config.serverUrl}/user/profile-picture/${post.image_url}` || `${config.serverUrl}/user/profile-picture/default.jpg`} 
                                 alt="Post content" 
-                                className="w-full object-cover max-h-[600px]"
+                                className="w-full object-cover max-h-[600px] rounded-md"
                             />
                         </div>
                         
@@ -73,26 +79,22 @@ const ShowPost = () => {
                                     </svg>
                                 </button>
                             </div>
+                            <p className="text-xs text-gray-500 mt-2">
+                                {post?.created_at.substring(0,10) || 'YYYY/mm/dd'}
+                            </p>
                         </div>
                         
                         {/* Caption */}
                         <div className="p-4">
                             <p className="text-sm">
-                                <span className="font-bold mr-1">{post[0].username}</span>
-                                {post[0].caption}
-                            </p>
-                            <p className="text-xs text-gray-500 mt-2">
-                                {new Date(post[0].created_at).toLocaleDateString('en-US', {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric'
-                                })}
+                                <span className="font-bold mr-1">{post?.username || 'Utilisateur'}</span>
+                                {post?.caption || 'Légende légendaire'}
                             </p>
                         </div>
                     </div>
                 ) : (
-                    <div className="p-8 text-center">
-                        <p className="text-gray-500">Loading post...</p>
+                    <div className="p-8 text-center bg-gray-700">
+                        <p className="text-gray-300">Loading post...</p>
                     </div>
                 )}
             </div>
