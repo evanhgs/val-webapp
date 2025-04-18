@@ -1,7 +1,7 @@
 import axios from 'axios';
 import config from '../config';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 interface Post { 
     caption: string;
@@ -17,6 +17,7 @@ const ShowPost = () => {
 
     const [post, setPost] = useState<Post | null>(null); 
     const {id} = useParams<{ id: string}>();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const displayPostfromId = async () => {
@@ -38,6 +39,14 @@ const ShowPost = () => {
     
     return(
             <div className="max-w-2xl mx-auto my-8 bg-black rounded-lg shadow-lg overflow-hidden">
+                <div className="mb-4 pl-2">
+                    <button onClick={() => navigate(-1)} className="inline-flex items-center text-white bg-gray-800 hover:bg-gray-700 rounded-full px-4 py-2 transition duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Retour
+                    </button>
+                </div>
                 {post ? ( 
                     <div className="post-container">
                         
@@ -85,12 +94,15 @@ const ShowPost = () => {
                         </div>
                         
                         {/* Caption */}
-                        <div className="p-4">
+                        { post?.caption && (
+                            <div className="p-4">
                             <p className="text-sm">
-                                <span className="font-bold mr-1">{post?.username || 'Utilisateur'}</span>
-                                {post?.caption || 'Légende légendaire'}
+                                <span className="font-bold mr-1">{post.username || '...'}: </span>
+                                <span>{post.caption || '...'}</span>
                             </p>
                         </div>
+                        )}
+                        
                     </div>
                 ) : (
                     <div className="p-8 text-center bg-gray-700">
