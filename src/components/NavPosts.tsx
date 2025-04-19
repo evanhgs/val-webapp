@@ -1,14 +1,14 @@
 import { NavLink } from 'react-router-dom';
 import config from '../config';
 
-interface Post { 
-    caption: string;
-    created_at: string;
-    id: string;
-    image_url: string;
-    user_profile_url: string;
-    username: string;
-  }
+interface Post {
+  caption: string;
+  created_at: string;
+  image_url: string;
+  user_profile: string;
+  username: string;
+  id: string;
+}
 
 interface NavPostsProps { // ?? why ??
   post: Post[];

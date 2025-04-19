@@ -2,6 +2,8 @@ import axios from 'axios';
 import config from '../config';
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import FollowButton from '../components/FollowButton';
+import { AlertPopup } from "../components/AlertPopup";
 
 interface Post { 
     caption: string;
@@ -12,12 +14,23 @@ interface Post {
     username: string;
   }
 
+interface FollowUser {
+    username: string;
+}
+interface AlertProps {
+    message: string;
+    type: 'success' | 'error' | 'info';
+}
+
 // id du post en parametre GET sinon retourne 404 not found a faire
 const ShowPost = () => {
 
     const [post, setPost] = useState<Post | null>(null); 
     const {id} = useParams<{ id: string}>();
     const navigate = useNavigate();
+    const [alert, setAlert] = useState<AlertProps | null>(null);
+    const [userFollow, setUserFollow] = useState<FollowUser | null>(null)
+
 
     useEffect(() => {
         const displayPostfromId = async () => {
@@ -29,16 +42,19 @@ const ShowPost = () => {
                 console.log("API response:", response.data);
                 
                 setPost(response.data.post);
+                setUserFollow(response.data.post.username);
             } catch (error) {
                 console.error("Error fetching post:", error);
             }
         }
         displayPostfromId();
+        console.log(userFollow)
     }, [id]);
 
     
     return(
             <div className="max-w-2xl mx-auto my-8 bg-black rounded-lg shadow-lg overflow-hidden">
+                {alert && <AlertPopup message={alert.message} type={alert.type}/>}
                 <div className="mb-4 pl-2">
                     <button onClick={() => navigate(-1)} className="inline-flex items-center text-white bg-gray-800 hover:bg-gray-700 rounded-full px-4 py-2 transition duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -50,15 +66,20 @@ const ShowPost = () => {
                 {post ? ( 
                     <div className="post-container">
                         
+                        {/** header  */}
                         <div className="flex items-center p-4 border-b">
                             <img 
                                 src={`${config.serverUrl}/user/profile-picture/${post.user_profile_url}` || `${config.serverUrl}/user/profile-picture/default.jpg`}
                                 alt={post?.username || 'Utilisateur'}
                                 className="w-10 h-10 rounded-full object-cover"
                             />
-                            <div className="ml-3">
-                                <p className="font-bold text-sm">{post?.username}</p>
+                            <div className="ml-3 cursor-pointer">
+                                <button className="font-bold text-sm" onClick={() => {navigate(`/profile/${post.username}`)}}>{post?.username}</button>
                             </div>
+                            <div className="ml-auto mr-4">
+                                {userFollow && <FollowButton user={userFollow} setAlert={setAlert}/>}
+                            </div>
+
                         </div>
                         
                         <div className="post-image-container mt-10">
