@@ -1,6 +1,5 @@
 import React from 'react';
 import config from "../config";
-import { error } from 'console';
 
 interface FollowUser {
     username: string;

@@ -6,6 +6,8 @@ import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import config from '../config';
 import { FollowersModal } from '../components/FollowersModal';
+import { NavPosts } from "../components/NavPosts";
+
 // page copié collé à quelques détails de Profil
 
 // type pour l'utilisateur
@@ -20,6 +22,15 @@ interface UserProfile {
 interface FollowUser {
   username: string;
   profile_picture?: string;
+}
+
+interface Post {
+  caption: string;
+  created_at: string;
+  image_url: string;
+  user_profile: string;
+  username: string;
+  id: string;
 }
 
 // récupérer le username directement dans la route
@@ -44,6 +55,8 @@ const ForeignProfile = () => {
   
   // Récupérer le paramètre username de l'URL
   const { username } = useParams<{ username: string }>();
+  const [post, setPost] = useState<Post[]>([]);
+
 
   useEffect(() => {
   const fetchProfile = async () => {
@@ -83,11 +96,18 @@ const ForeignProfile = () => {
 
     const followerResponse = await axios.get(`${config.serverUrl}/follow/get-follow/${userData.username}`);
     const followedResponse = await axios.get(`${config.serverUrl}/follow/get-followed/${userData.username}`);
+    const postResponse = await axios.post(
+      `${config.serverUrl}/post/get-user/${userData.username}`,
+      null,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
 
     setFollowers(followerResponse.data.followers);
     setFollowersCount(followerResponse.data.count);
     setFollowed(followedResponse.data.followed);
     setFollowedCount(followedResponse.data.count);
+    setPost(postResponse.data.post || []);
+
 
     } catch (error) {
       console.error("Erreur lors de la récupération des abonnés/abonnements", error);
@@ -128,9 +148,7 @@ const ForeignProfile = () => {
               Retour
               </button>
           </div>
-          {/* Section du profil header - adaptée pour mobile et desktop */}
           <div className="flex flex-col sm:flex-row sm:items-start sm:space-x-8">
-            {/* Photo de profil - centrée sur mobile, alignée à gauche sur desktop */}
             <div className="flex justify-center sm:justify-start mb-6 sm:mb-0">
               <img
                 src={`${config.serverUrl}/user/profile-picture/${userData.profile_picture}` || `${config.serverUrl}/user/profile-picture/default.jpg`}
@@ -139,14 +157,11 @@ const ForeignProfile = () => {
               />
             </div>
 
-            {/* Infos du profil */}
             <div className="flex-1">
-              {/* Nom d'utilisateur et boutons */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
                 <h2 className="text-xl font-bold text-center sm:text-left mb-3 sm:mb-0">{userData.username}</h2>
               </div>
 
-              {/* Statistiques - adaptées pour être responsives */}
               <div className="flex justify-center sm:justify-start space-x-6 mt-4 text-gray-300">
                 {isLoadingFollowers ? (
                   <>
@@ -156,7 +171,7 @@ const ForeignProfile = () => {
                   </>
                 ) : (
                   <>
-                    <span><strong>0</strong> posts</span>
+                    <span><strong>{(post?.length ?? 0)}</strong> posts</span>
 
                     <span 
                       className="hover:text-white cursor-pointer"
@@ -173,7 +188,6 @@ const ForeignProfile = () => {
                 )}
               </div>
 
-              {/* Bio et site web - alignés au centre sur mobile, à gauche sur desktop */}
               <div className="mt-4 text-center sm:text-left">
                 <p>{userData.bio || "Vous n'avez pas de bio !"}</p>
                 <p className="text-sm mt-2 text-blue-400">{userData.website || ""}</p>
@@ -181,7 +195,6 @@ const ForeignProfile = () => {
             </div>
           </div>
 
-          {/* Stories Highlights - adaptées pour être responsives */}
           <div className="mt-8 flex justify-center sm:justify-start space-x-6 overflow-x-auto pb-2">
             <div className="flex flex-col items-center">
               <div className="w-16 h-16 border-2 border-gray-600 flex items-center justify-center rounded-full">
@@ -191,10 +204,7 @@ const ForeignProfile = () => {
             </div>
           </div>
 
-          {/* Navigation Posts - adaptée pour être responsive */}
-          <div className="border-t border-gray-700 mt-8 flex justify-center space-x-2 sm:space-x-10 py-2 overflow-x-auto">
-            <span className="text-white font-bold p-2 hover:border hover:border-white rounded-lg cursor-pointer whitespace-nowrap">📷 POSTS</span>
-          </div>
+          <NavPosts post={post}/>
 
 
         </div>

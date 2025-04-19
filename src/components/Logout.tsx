@@ -10,8 +10,13 @@ export const Logout: React.FC = () => {
     };
 
     return (
-    <div>
-        <button onClick={handleLogout} className="cursor-pointer">Se déconnecter</button>
+    <div className="flex justify-center">
+        <button 
+            onClick={handleLogout} 
+            className="text-sm font-medium text-red-500 hover:text-red-700 transition-colors focus:outline-none"
+        >
+            Se déconnecter
+        </button>
     </div>
     );
 
