@@ -8,7 +8,7 @@ import EditProfileForm from "../components/EditProfileForm";
 import UploadButton from "../components/UploadProfilePic";
 import config from '../config';
 import { FollowersModal } from '../components/FollowersModal';
-import { AlertPopup } from "../components/AlertPopup";
+import { AlertContext } from "../components/AlertContext.tsx";
 import { NavPosts } from "../components/NavPosts";
 
 
@@ -169,7 +169,7 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-black text-white w-full md:ml-[20px] ml-0">
-      {alert && <AlertPopup message={alert.message} type={alert.type}/>}
+      {alert && <AlertContext message={alert.message} type={alert.type}/>}
       {/* page de profil */}
       {isEditing ? (
         <EditProfileForm 

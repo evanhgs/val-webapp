@@ -1,7 +1,7 @@
 import config from "../config";
 import { useNavigate } from 'react-router-dom';
 import { useState } from "react";
-import { AlertPopup } from "./AlertPopup";
+import { AlertContext } from "./AlertContext.tsx";
 import FollowButton from "./FollowButton";
 
 interface FollowUser {
@@ -22,41 +22,15 @@ export const FollowersModal = ({ users, title, onClose }: { users: FollowUser[],
     };
 
     const [alert, setAlert] = useState<AlertProps | null>(null);
-
-    
-
-    // l'objectif est de charger tous les utilisateurs qui sont suivis par l'user actif 
-    // et ensuite les comparer avec ceux qui sont affichés dans le modal 
-    // (pour ceux qui sont en double afficher "followed")
-
-    // charge la requete pour avoir les utilisateurs follows
-    {/**
-    useEffect(() => {
-        const [FollewedUsers, setFollowedUsers] = useState<string[]>([]);
-
-        const isFollowing = async (username: string) => {
-            const response = await axios.get(`${config.serverUrl}/user/get-followed/${username}`);
-            setFollowedUsers(response.data.username);
-        };
         
-        // Get current user's token to fetch their followed users
-        const token = localStorage.getItem('token');
-        if (token) {
-            const currentUser = JSON.parse(atob(token.split('.')[1])).username;
-            isFollowing(currentUser);
-        };
-
-        console.log(isFollowing);
-        
-    }, [])
-    */}
-    
     return (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
 
-            {/* Alerte stylisée qui apparaît en haut de la modal */}
-            {alert && <AlertPopup message={alert.message} type={alert.type}/>}
-
+            {alert && (
+                <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50">
+                    <AlertContext message={alert.message} type={alert.type} />
+                </div>
+            )}
             <div className="bg-gray-800 rounded-lg w-96 max-h-[80vh] overflow-y-auto">
                 <div className="flex justify-between items-center p-4 border-b border-gray-700">
                     <h3 className="text-xl font-bold">{title}</h3>

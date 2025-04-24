@@ -1,13 +1,14 @@
 import React from 'react';
 import config from "../config";
 
-interface FollowUser {
-    username: string;
-    //profile_picture?: string;
-}
 interface AlertProps {
     message: string;
     type: 'success' | 'error' | 'info';
+}
+
+interface FollowUser {
+    username: string;
+    profile_picture?: string;
 }
 
 interface FollowButtonProps {
@@ -26,18 +27,26 @@ const FollowButton = ({user, setAlert}: FollowButtonProps) => {
             });
             return;
         }
+        if (!user) {
+            console.error("Username is undefined or empty!");
+            setAlert({
+                message: "Erreur: nom d'utilisateur manquant",
+                type: 'error'
+            });
+            return;
+        }
         
-        const response = fetch(`${config.serverUrl}/follow/user`, { 
+        fetch(`${config.serverUrl}/follow/user`, {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}` 
             },
             body: JSON.stringify({
-            username_other: user.username
+                username_other : user.username
             })
         })
-        .then(async response => { 
+        .then(async response => {
             const data = await response.json();
             if (!response.ok) {
             if (data.message === "Already following") {
@@ -80,7 +89,6 @@ const FollowButton = ({user, setAlert}: FollowButtonProps) => {
             type: 'error'
             });
         });
-        console.log(response);
     };
     
     return (
