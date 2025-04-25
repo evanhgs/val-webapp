@@ -3,7 +3,6 @@ import config from '../config';
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import FollowButton from '../components/FollowButton';
-import { AlertContext } from "../components/AlertContext.tsx";
 
 interface Post { 
     caption: string;
@@ -67,7 +66,7 @@ const ShowPost = () => {
                                 <button className="font-bold text-sm" onClick={() => {navigate(`/profile/${post.username}`)}}>{post?.username}</button>
                             </div>
                             <div className="ml-auto mr-4">
-                                <FollowButton user={{username: post.username}} setAlert={setAlert}/>
+                                <FollowButton user={{username: post.username}} />
                             </div>
 
                         </div>
@@ -78,7 +77,6 @@ const ShowPost = () => {
                                 alt="Post content" 
                                 className="w-full object-cover max-h-[600px] rounded-md"
                             />
-                            {alert && <AlertContext message={alert.message} type={alert.type}/>}
                         </div>
                         
                         {/* Post actions */}

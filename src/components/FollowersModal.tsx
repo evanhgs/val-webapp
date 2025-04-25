@@ -1,8 +1,7 @@
 import config from "../config";
 import { useNavigate } from 'react-router-dom';
-import { useState } from "react";
-import { AlertContext } from "./AlertContext.tsx";
 import FollowButton from "./FollowButton";
+import AlertPopup from "./AlertPopup.tsx";
 
 interface FollowUser {
     username: string;
@@ -21,16 +20,9 @@ export const FollowersModal = ({ users, title, onClose }: { users: FollowUser[],
         navigate(`/profile/${username}`);
     };
 
-    const [alert, setAlert] = useState<AlertProps | null>(null);
-        
+
     return (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-
-            {alert && (
-                <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50">
-                    <AlertContext message={alert.message} type={alert.type} />
-                </div>
-            )}
             <div className="bg-gray-800 rounded-lg w-96 max-h-[80vh] overflow-y-auto">
                 <div className="flex justify-between items-center p-4 border-b border-gray-700">
                     <h3 className="text-xl font-bold">{title}</h3>
@@ -54,8 +46,9 @@ export const FollowersModal = ({ users, title, onClose }: { users: FollowUser[],
                                 alt={user.username} 
                                 className="w-10 h-10 rounded-full"
                             />
+                            <AlertPopup />
                             <span>{user.username}</span>
-                            <FollowButton user={user} setAlert={setAlert}/> 
+                            <FollowButton user={user} /> 
                         </div>
                         ))
                     )}

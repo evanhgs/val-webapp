@@ -2,9 +2,6 @@ import React, { useState } from "react";
 import axios from "axios";
 import config from '../config';
 
-interface EditProfileFormProps {
-  onUpdateAlert: (message: string, type: 'success' | 'error' | 'info') => void;
-}
 
 const EditProfileForm = ({ userData, setIsEditing, onUpdateAlert }: any) => {
   const [formData, setFormData] = useState({
@@ -24,16 +21,15 @@ const EditProfileForm = ({ userData, setIsEditing, onUpdateAlert }: any) => {
       await axios.post(`${config.serverUrl}/user/edit`, formData, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
-      onUpdateAlert(
-        "Profil mis à jour avec succès",
-        "success"
-      );
-      setIsEditing(false); 
+      onUpdateAlert({ 
+        message: "Profil mis à jour avec succès", 
+        type: "success" 
+      });
     } catch (error) {
-      onUpdateAlert(
-        "Echec, une erreur est survenue",
-        "error"
-      );
+      onUpdateAlert({ 
+        message: "Erreur lors de la mise à jour", 
+        type: "error" 
+      });
     }
   };
 

@@ -8,9 +8,8 @@ import EditProfileForm from "../components/EditProfileForm";
 import UploadButton from "../components/UploadProfilePic";
 import config from '../config';
 import { FollowersModal } from '../components/FollowersModal';
-import { AlertContext } from "../components/AlertContext.tsx";
 import { NavPosts } from "../components/NavPosts";
-
+import { useAlert } from "../components/AlertContext";
 
 // type pour l'utilisateur
 interface UserProfile {
@@ -27,11 +26,6 @@ interface FollowUser {
   profile_picture?: string;
 }
 
-// type pour la popup
-interface AlertProps {
-  message: string;
-  type: 'success' | 'error' | 'info';
-}
 
 interface Post {
   caption: string;
@@ -50,24 +44,16 @@ const Profile = () => {
   const token = user?.token;
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false); // pour le form du profil 
-  const [isUploading, setIsUploading] = useState(false); // pour l'upload de la pp 
-
+  const [isUploading, setIsUploading] = useState(false); // pour l'upload de la pp
   const [isLoadingFollowers, setIsLoadingFollowers] = useState(false)
-
   const [followers, setFollowers] = useState<FollowUser[]>([]); // liste des utilisateurs 
-  const [followersCount, setFollowersCount] = useState(0); // count (precook in route) 
-
+  const [followersCount, setFollowersCount] = useState(0); // count (precook in route)
   const [followed, setFollowed] = useState<FollowUser[]>([]);
   const [followedCount, setFollowedCount] = useState(0);
-  
   const [showFollowers, setShowFollowers] = useState(false);
   const [showFollowed, setShowFollowed] = useState(false);
-  
-  const [alert, setAlert] = useState<AlertProps | null>(null);
-
   const [post, setPost] = useState<Post[]>([]);
-  
-
+  const { showAlert } = useAlert();
 
   {/** premier hook ajoutat les info de l'affichage du profil */}
   useEffect(() => {
@@ -151,7 +137,8 @@ const Profile = () => {
     );
   }
 
-  // fonction de callback pour envoyer l'alert à l'enfant (-> récupérer le message et le type ) 
+
+  // fonction de callback pour envoyer l'alert à l'enfant (-> récupérer le message et le type )
   // et ensuite le conserver puis l'afficher ici
   // Interface for the alert popup handler parameters
   interface AlertHandlerParams {
@@ -161,15 +148,11 @@ const Profile = () => {
 
 
   const handleAlertPopup = ({ message, type }: AlertHandlerParams): void => {
-    setAlert({
-      message,
-      type
-    });
+    showAlert(message, type);
   };
 
   return (
     <div className="min-h-screen bg-black text-white w-full md:ml-[20px] ml-0">
-      {alert && <AlertContext message={alert.message} type={alert.type}/>}
       {/* page de profil */}
       {isEditing ? (
         <EditProfileForm 

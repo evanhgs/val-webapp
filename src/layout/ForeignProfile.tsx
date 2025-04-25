@@ -8,7 +8,6 @@ import config from '../config';
 import { FollowersModal } from '../components/FollowersModal';
 import { NavPosts } from "../components/NavPosts";
 import FollowButton from "../components/FollowButton.tsx";
-import { AlertContext } from "../components/AlertContext.tsx";
 
 // page copié collé à quelques détails de Profil
 
@@ -146,9 +145,6 @@ const ForeignProfile = () => {
 
   return (
     <div className="min-h-screen bg-black text-white w-full md:ml-[20px] ml-0">
-      <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
-        {alert && <AlertContext message={alert.message} type={alert.type}/>}
-      </div>
         <div className="max-w-4xl mx-auto p-4">
           <div className="mb-4 pl-2">
               <button onClick={() => navigate(-1)} className="inline-flex items-center text-white bg-gray-800 hover:bg-gray-700 rounded-full px-4 py-2 transition duration-200">
@@ -170,7 +166,7 @@ const ForeignProfile = () => {
             <div className="flex-1">
               <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
                 <h2 className="text-xl font-bold text-center sm:text-left mb-3 sm:mb-0">{userData.username}</h2>
-                  <FollowButton user={{username: userData.username}} setAlert={setAlert} />
+                  <FollowButton user={{username: userData.username}} />
               </div>
 
               <div className="flex justify-center sm:justify-start space-x-6 mt-4 text-gray-300">

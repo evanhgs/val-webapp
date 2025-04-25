@@ -1,6 +1,6 @@
 import { createContext, useState, useContext, ReactNode } from 'react';
 
-type AlertType = 'success' | 'warning' | 'danger';
+type AlertType = 'success' | 'error' | 'info';
 
 interface Alert {
     message: string;
