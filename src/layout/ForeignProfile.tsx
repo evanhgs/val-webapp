@@ -8,7 +8,6 @@ import config from '../config';
 import { FollowersModal } from '../components/FollowersModal';
 import { NavPosts } from "../components/NavPosts";
 import FollowButton from "../components/FollowButton.tsx";
-
 // page copié collé à quelques détails de Profil
 
 // type pour l'utilisateur
@@ -34,11 +33,6 @@ interface Post {
   id: string;
 }
 
-interface AlertProps {
-  message: string;
-  type: 'success' | 'error' | 'info';
-}
-
 // récupérer le username directement dans la route
 const ForeignProfile = () => {
   
@@ -62,8 +56,6 @@ const ForeignProfile = () => {
   // Récupérer le paramètre username de l'URL
   const { username } = useParams<{ username: string }>();
   const [post, setPost] = useState<Post[]>([]);
-  const [alert, setAlert] = useState<AlertProps | null>(null);
-
 
   useEffect(() => {
   const fetchProfile = async () => {

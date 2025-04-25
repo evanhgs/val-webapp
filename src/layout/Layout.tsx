@@ -2,6 +2,8 @@ import { Outlet } from "react-router-dom";
 import { Sidebar } from "../components/Sidebar";
 import { Header } from "../components/Header";
 import { useEffect, useState } from "react";
+import AlertPopup from "../components/AlertPopup";
+
 
 const Layout = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -18,6 +20,7 @@ const Layout = () => {
 
   return (
     <div className="flex bg-black min-h-screen text-white relative">
+      <AlertPopup />
       {/* place la sidebar en avant (évite la superposition zbi) */}
       <div className="relative z-30">
         <Sidebar />
