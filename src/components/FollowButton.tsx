@@ -1,86 +1,58 @@
 import React from 'react';
 import config from "../config";
+import { useAlert } from './AlertContext';
 
 interface FollowUser {
     username: string;
-    //profile_picture?: string;
-}
-interface AlertProps {
-    message: string;
-    type: 'success' | 'error' | 'info';
+    profile_picture?: string;
 }
 
 interface FollowButtonProps {
     user: FollowUser;
-    setAlert: React.Dispatch<React.SetStateAction<AlertProps | null >>;
 }
 
-const FollowButton = ({user, setAlert}: FollowButtonProps) => {
+const FollowButton = ({user}: FollowButtonProps) => {
+    const { showAlert } = useAlert();
     const followUser = (e: React.MouseEvent) => {
         e.stopPropagation(); // bloque la navigation lors du clic
         const token = localStorage.getItem('token');
         if (!token) {
-            setAlert({
-                message: "Vous devez être connecté pour suivre un utilisateur",
-                type: 'error'
-            });
+            showAlert("Vous devez être connecté pour suivre un utilisateur", "error");
             return;
         }
         
-        const response = fetch(`${config.serverUrl}/follow/user`, { 
+        fetch(`${config.serverUrl}/follow/user`, {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}` 
             },
             body: JSON.stringify({
-            username_other: user.username
+                username_other : user.username
             })
         })
-        .then(async response => { 
+        .then(async response => {
             const data = await response.json();
             if (!response.ok) {
-            if (data.message === "Already following") {
-                setAlert({
-                message: "Vous suivez déjà cet utilisateur",
-                type: 'info'
-                });
-            } else if (data.message === "You can't follow yourself") {
-                setAlert({
-                message: "Vous ne pouvez pas vous suivre vous-même",
-                type: 'error'
-                });
-            } else if (data.message === "User not found") {
-                setAlert({
-                message: "L'utilisateur n'a pas été trouvé",
-                type: 'info'
-                });
-            } else if (data.message === "Unauthorized") {
-                setAlert({
-                message: "Il faut être connecté pour s'abonner à un utilisateur",
-                type: 'error'
-                });
+                if (data.message === "Already following") {
+                    showAlert("Vous suivez déjà cet utilisateur", 'info');
+                } else if (data.message === "You can't follow yourself") {
+                    showAlert("Vous ne pouvez pas vous suivre vous-même", 'error');
+                } else if (data.message === "User not found") {
+                    showAlert("L'utilisateur n'a pas été trouvé", 'info');
+                } else if (data.message === "Unauthorized") {
+                    showAlert("Il faut être connecté pour s'abonner à un utilisateur", 'error');
+                } else {
+                    showAlert("Erreur lors de l'abonnement", 'error');
+                }
             } else {
-                setAlert({
-                message: "Erreur lors de l'abonnement",
-                type: 'error'
-                });
-            }
-            } else {
-            setAlert({
-                message: "Abonnement réussi",
-                type: 'success'
-            });
+                showAlert("Abonnement réussi", 'success');
             }
         })
         .catch(error => {
             console.error("Erreur réseau:", error);
-            setAlert({
-            message: "Erreur réseau lors de l'abonnement",
-            type: 'error'
-            });
+            showAlert("Erreur réseau lors de l'abonnement", 'error');
         });
-        console.log(response);
     };
     
     return (
