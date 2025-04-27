@@ -1,40 +1,53 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import config from "../config";
+import FollowButton from "./FollowButton";
 
 
-
-interface UserFeedProps { // cette interface n'accepte que les props avec le type array et NON un objet contenant un tableau 
-  userFeed: Array<any>
+interface PostCorps {
+  caption: string;
+  created_at: string;
+  id: string;
+  image_url: string;
+  user_id: string;
+  user_profile: string;
+  username: string;
 }
 
-export const Feed: React.FC<UserFeedProps> = ({userFeed}) => {
+interface UserFeedProps { // cette interface n'accepte que les props avec le type array et NON un objet contenant un tableau 
+  userFeed: Array<PostCorps>; // any c'est dégueulasse et trop facile
+  currentUsername?: string; 
+}
 
-  {/** structuration idéale d'un post
-      const examplePosts = [
-    {
-      id: 1,
-      username: 'utilisateur_1',
-      avatar: 'default.jpg',
-      image: 'placeholder1',
-      caption: 'Belle journée aujourd\'hui! #sunshine',
-      likes: 124,
-      comments: 23,
-      timeAgo: '2h',
-    },
-  ]; 
-  
-  // vrai tableau json renvoyé pour l'instant 
-  // {
-            "caption": "Look this cool picture !",
-            "created_at": "2025-03-17 15:15:51.394491",
-            "id": "c7013664-db3d-45c5-a3c5-2680448170c6",
-            "image_url": "colin-watts-F7Sg9CovAVA-unsplash.jpg",
-            "user_id": "28ff42af-b87c-4e4c-8051-3365547674d2",
-            "user_profile": "colin-watts-eYXrvDWeJWs-unsplash.jpg",
-            "username": "test"
-        },
-  */}
-  
+export const Feed: React.FC<UserFeedProps> = ({userFeed, currentUsername}) => {
+  const [userConnected, setUserConnected] = useState(currentUsername || '');
+
+  useEffect(() => {
+    if (currentUsername) {
+      setUserConnected(currentUsername);
+    }
+  }, [currentUsername]);
+
+  const isOwnPost = (postUsername: string) => {
+    return postUsername === userConnected;
+  };
+
+  // func de display les settings d'un post pour la permission de edit/delete post
+  const renderSettingsButton = (postUsername: string) => {
+    if (isOwnPost(postUsername)) {
+      return (
+        <button>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="1"></circle>
+            <circle cx="19" cy="12" r="1"></circle>
+            <circle cx="5" cy="12" r="1"></circle>
+          </svg>
+        </button>
+      );
+    }
+    return null;
+  };
+
+
 
   return (
     <div className="flex flex-col space-y-6">
@@ -50,13 +63,11 @@ export const Feed: React.FC<UserFeedProps> = ({userFeed}) => {
               />
               <span className="font-semibold text-sm">{post.username}</span>
             </div>
-            <button>
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="1"></circle>
-                <circle cx="19" cy="12" r="1"></circle>
-                <circle cx="5" cy="12" r="1"></circle>
-              </svg>
-            </button>
+            <div className="ml-auto mr-16">
+              <FollowButton user={{username: post.username}}/> 
+            </div>
+            {/* settings of your own post */}
+            {renderSettingsButton(post.username)}
           </div>
           
           {/* Image du post */}
@@ -97,7 +108,7 @@ export const Feed: React.FC<UserFeedProps> = ({userFeed}) => {
             </div>
             
             {/* Nombres de likes */}
-            <p className="font-semibold text-sm mb-1">{post.likes} J'aime</p>
+            <p className="font-semibold text-sm mb-1">{/*post.likes*/} J'aime</p>
             
             {/* Caption */}
             <p className="text-sm">
@@ -107,11 +118,11 @@ export const Feed: React.FC<UserFeedProps> = ({userFeed}) => {
             
             {/* Voir les commentaires */}
             <p className="text-gray-400 text-sm mt-1 cursor-pointer">
-              Voir les {post.comments} commentaires
+              Voir les {/*post.comments*/} commentaires
             </p>
             
             {/* Temps écoulé */}
-            <p className="text-gray-500 text-xs mt-2">Il y a {post.timeAgo}</p>
+            <p className="text-gray-500 text-xs mt-2">Post publié le {post?.created_at.substring(5,10) || 'YYYY/MM/dd'} à {post?.created_at.substring(10, 16) || 'hh/mm'}</p>
           </div>
           
           {/* Ajouter un commentaire */}
@@ -127,7 +138,6 @@ export const Feed: React.FC<UserFeedProps> = ({userFeed}) => {
               placeholder="Ajouter un commentaire..." 
               className="bg-transparent flex-grow outline-none text-sm"
             />
-            <button className="text-blue-500 font-semibold text-sm">Publier</button>
           </div>
         </div>
       ))}
