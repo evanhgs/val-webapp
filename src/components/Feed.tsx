@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from "react";
 import config from "../config";
 import FollowButton from "./FollowButton";
+import { PostSettings } from "./PostSettings";
 
 
 interface PostCorps {
@@ -18,36 +18,8 @@ interface UserFeedProps { // cette interface n'accepte que les props avec le typ
   currentUsername?: string; 
 }
 
-export const Feed: React.FC<UserFeedProps> = ({userFeed, currentUsername}) => {
-  const [userConnected, setUserConnected] = useState(currentUsername || '');
-
-  useEffect(() => {
-    if (currentUsername) {
-      setUserConnected(currentUsername);
-    }
-  }, [currentUsername]);
-
-  const isOwnPost = (postUsername: string) => {
-    return postUsername === userConnected;
-  };
-
-  // func de display les settings d'un post pour la permission de edit/delete post
-  const renderSettingsButton = (postUsername: string) => {
-    if (isOwnPost(postUsername)) {
-      return (
-        <button>
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="1"></circle>
-            <circle cx="19" cy="12" r="1"></circle>
-            <circle cx="5" cy="12" r="1"></circle>
-          </svg>
-        </button>
-      );
-    }
-    return null;
-  };
-
-
+export const Feed: React.FC<UserFeedProps> = ({userFeed}) => {
+  
 
   return (
     <div className="flex flex-col space-y-6">
@@ -67,7 +39,7 @@ export const Feed: React.FC<UserFeedProps> = ({userFeed, currentUsername}) => {
               <FollowButton user={{username: post.username}}/> 
             </div>
             {/* settings of your own post */}
-            {renderSettingsButton(post.username)}
+            <PostSettings postOwner={post?.username}/>
           </div>
           
           {/* Image du post */}
