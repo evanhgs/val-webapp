@@ -7,11 +7,8 @@ export const PostSettings = ({postOwner}: {postOwner: string}) => {
     const { user } = useContext(AuthContext) || {}; // token 
     ////// to do stocker dans le contexte l'id du mec
     const [isOpen, setIsOpen] = useState(false);
-
-    console.log(user)
     
-    
-    if (postOwner === user) {
+    if (postOwner === user?.username) {
     return (
         <div className="relative">
         <button onClick={() => setIsOpen(!isOpen)} className="p-1 hover:bg-gray-700 rounded-full">
@@ -63,7 +60,7 @@ export const PostSettings = ({postOwner}: {postOwner: string}) => {
     } else {
         return (
             <>
-                <p>caca</p>
+                <p>😵</p>
             </>
         );
     }

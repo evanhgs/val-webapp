@@ -5,11 +5,13 @@ import { AuthContext } from '../components/AuthContext';
 import config from '../config';
 import PhoneCarousel from '../components/Carousel';
 
+
+
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const { login } = useContext(AuthContext) || {}; // stock le token dans le storage *mauvais typage
+  const { login } = useContext(AuthContext) || {}; 
   const navigate = useNavigate();
 
 
@@ -21,8 +23,13 @@ const Login: React.FC = () => {
       if (username && password) {
         const response = await axios.post(`${config.serverUrl}/auth/login`, { username, password });
         if (login){
-          login(response.data.token);
-          navigate("/")
+          login(
+            response.data.token,
+            response.data.user_id,
+            response.data.profile_picture,
+            response.data.username
+          ); 
+          navigate("/");
         } else {
           setError("Nom d'utilisateur ou mot de passe incorrect.");
         } 
