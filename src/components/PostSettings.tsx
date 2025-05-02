@@ -4,8 +4,7 @@ import { AuthContext } from "./AuthContext";
 
 export const PostSettings = ({postOwner}: {postOwner: string}) => {
 
-    const { user } = useContext(AuthContext) || {}; // token 
-    ////// to do stocker dans le contexte l'id du mec
+    const { user } = useContext(AuthContext) || {};
     const [isOpen, setIsOpen] = useState(false);
     
     if (postOwner === user?.username) {

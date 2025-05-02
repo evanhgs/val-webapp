@@ -80,7 +80,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // supprime le token dans localstorage et reset l'état de user à null
-  const logout = () => {
+  const logout = () => { 
     localStorage.removeItem("token");
     localStorage.removeItem("username");
     localStorage.removeItem("profilePicture");
