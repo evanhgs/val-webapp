@@ -66,9 +66,8 @@ const Profile = () => {
           return;
         }
 
-        const response = await axios.post(
+        const response = await axios.get(
           `${config.serverUrl}/user/profile`,
-          {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setUserData({
@@ -97,9 +96,8 @@ const Profile = () => {
 
         const followerResponse = await axios.get(`${config.serverUrl}/follow/get-follow/${userData.username}`);
         const followedResponse = await axios.get(`${config.serverUrl}/follow/get-followed/${userData.username}`);
-        const postResponse = await axios.post(
-          `${config.serverUrl}/post/get-user/${userData.username}`,
-          null,
+        const postResponse = await axios.get(
+          `${config.serverUrl}/post/feed/${userData.username}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         //console.log(postResponse);

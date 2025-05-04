@@ -3,6 +3,7 @@ import config from '../config';
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import FollowButton from '../components/FollowButton';
+import { PostSettings } from "../components/PostSettings";
 
 interface Post { 
     caption: string;
@@ -63,6 +64,8 @@ const ShowPost = () => {
                         <div className="ml-auto mr-4">
                             <FollowButton user={{username: post.username}} />
                         </div>
+                        {/* settings of your own post */}
+                        <PostSettings postOwner={post?.username}/>
 
                     </div>
                     

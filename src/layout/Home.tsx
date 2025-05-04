@@ -33,9 +33,8 @@ const Home = () => {
           return;
         }
         // récupération du profil de l'utilisateur connecté
-        const response = await axios.post(
+        const response = await axios.get(
           `${config.serverUrl}/user/profile`,
-          {}, // NE JAMAIS OUBLIER LE CORPS (meme vide) pour les requetes POST avec axios sinon il passe l'objet header dans le cors et ça bug...
           { headers: { Authorization: `Bearer ${token}` } }
         );
         // récupération du feed personnalisé en fonction de l'utilisateur connecté
