@@ -1,11 +1,81 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "./AuthContext";
+import clsx from "clsx";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import config from "../config";
 
-
-export const PostSettings = ({postOwner}: {postOwner: string}) => {
+export const PostSettings = ({postOwner, postId}: {postOwner: string, postId: string}) => {
 
     const { user } = useContext(AuthContext) || {};
+    const token = user?.token;
     const [isOpen, setIsOpen] = useState(false);
+    const [isSwitchOpen, setSwitch] = useState(false);
+    const navigate = useNavigate();
+
+    const handleHiddenTag = async () => {
+        try {
+            if (!token){
+                navigate("/login");
+                return;
+            }
+            await axios.post(
+                `${config.serverUrl}/hide/${postId}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const handleEditCaption = async () => {
+        try {
+            if (!token){
+                navigate("/login");
+                return;
+            }
+            await axios.post(
+                `${config.serverUrl}/edit/${postId}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const handleDeletePost = async () => {
+        try {
+            if (!token){
+                navigate("/login");
+                return;
+            }
+            await axios.delete(
+                `${config.serverUrl}/delete/${postId}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+
+
+    function SwitchBtn({ isBtnOpen=false, onClick }: { isBtnOpen?: boolean, onClick: () => void }) {
+        return (
+            <div className="w-full text-left p-2 text-sm rounded flex items-center">
+                <div
+                    onClick={onClick}
+                    className={clsx(
+                        "cursor-pointer h-[14px] w-[30px] flex items-center rounded-full px-1 transition-colors duration-200",
+                        isBtnOpen ? "bg-emerald-500" : "bg-gray-500"
+                    )}>                
+                    <div className={clsx(
+                        "h-[10px] w-[10px] bg-white rounded-full transition-transform duration-200",
+                        isBtnOpen ? "translate-x-full" : "translate-x-0"
+                    )} />
+                </div>
+                <p className="ml-2">Cacher le post</p>
+            </div>
+        )
+    }
     
     if (postOwner === user?.username) {
     return (
@@ -24,7 +94,9 @@ export const PostSettings = ({postOwner}: {postOwner: string}) => {
                 <span className="text-sm font-medium">Options</span>
                 <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white">×</button>
             </div>
-            
+
+            <SwitchBtn onClick={() => setSwitch(!isSwitchOpen)} isBtnOpen={isSwitchOpen}/>
+
             <button 
                 onClick={() => {
                     console.log("Modifier le post");
@@ -59,7 +131,7 @@ export const PostSettings = ({postOwner}: {postOwner: string}) => {
     } else {
         return (
             <>
-                <p>😵</p>
+                <p>🚫</p>
             </>
         );
     }

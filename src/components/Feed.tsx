@@ -39,7 +39,7 @@ export const Feed: React.FC<UserFeedProps> = ({userFeed}) => {
               <FollowButton user={{username: post.username}}/> 
             </div>
             {/* settings of your own post */}
-            <PostSettings postOwner={post?.username}/>
+            <PostSettings postOwner={post?.username} postId={post?.id}/>
           </div>
           
           {/* Image du post */}
