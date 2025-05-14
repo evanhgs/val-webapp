@@ -4,15 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import FollowButton from '../components/FollowButton';
 import { PostSettings } from "../components/PostSettings";
-
-interface Post { 
-    caption: string;
-    created_at: string;
-    id: string;
-    image_url: string;
-    user_profile_url: string;
-    username: string;
-  }
+import { Post } from "../types/post";
 
 
 // id du post en parametre GET sinon retourne 404 not found a faire
@@ -65,8 +57,7 @@ const ShowPost = () => {
                             <FollowButton user={{username: post.username}} />
                         </div>
                         {/* settings of your own post */}
-                        <PostSettings postOwner={post?.username}/>
-
+                        {post && <PostSettings post={post} />}
                     </div>
                     
                     <div className="post-image-container mt-10">

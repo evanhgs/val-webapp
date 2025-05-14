@@ -1,40 +1,43 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "./AuthContext";
 import clsx from "clsx";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import config from "../config";
+import UseOutsideClickDetector from "./OutsideClickDetector";
+import { Post } from "../types/post"
 
-export const PostSettings = ({postOwner, postId}: {postOwner: string, postId: string}) => {
+export const PostSettings = ({post}: {post?: Post}) => {
 
     const { user } = useContext(AuthContext) || {};
     const token = user?.token;
     const [isOpen, setIsOpen] = useState(false);
-    const [isSwitchOpen, setSwitch] = useState(false);
-    const navigate = useNavigate();
-
-    const handleHiddenTag = async () => {
-        try {
-            if (!token){
-                navigate("/login");
-                return;
-            }
-            await axios.post(
-                `${config.serverUrl}/hide/${postId}`,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-        } catch (error) {
-            console.log(error);
+    const [isEditFormPostOpen, setIsEditFormPostOpen] = useState(false);
+    const [formData, setFormData] = useState({
+        caption: "",
+        hiddenTag: false,
+    });
+    useEffect(() => {
+        if (post) {
+            setFormData({
+                caption: post?.caption || "",
+                hiddenTag: !!post?.hiddenTag
+            });
         }
+    }, [post]);
+
+    const leaveContainerRef = UseOutsideClickDetector(() => {
+        setIsEditFormPostOpen(false);
+    });
+    const handleEditChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     }
-    const handleEditCaption = async () => {
+
+    const handleEditCaption = async (e: React.FormEvent) => {
+        e.preventDefault();
         try {
-            if (!token){
-                navigate("/login");
-                return;
-            }
             await axios.post(
-                `${config.serverUrl}/edit/${postId}`,
+                `${config.serverUrl}/post/edit/${post?.id}`,
+                formData,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
         } catch (error) {
@@ -43,41 +46,94 @@ export const PostSettings = ({postOwner, postId}: {postOwner: string, postId: st
     }
     const handleDeletePost = async () => {
         try {
-            if (!token){
-                navigate("/login");
-                return;
-            }
             await axios.delete(
-                `${config.serverUrl}/delete/${postId}`,
+                `${config.serverUrl}/post/delete/${post?.id}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
         } catch (error) {
             console.log(error);
         }
     }
+    const toggleHiddenTag = () => {
+        setFormData(prevData => ({
+            ...prevData,
+            hiddenTag: !prevData.hiddenTag
+        }));
+    };
 
-
-
-    function SwitchBtn({ isBtnOpen=false, onClick }: { isBtnOpen?: boolean, onClick: () => void }) {
+    function SwitchBtn({isOn, onChange}: {isOn: boolean, onChange: () => void }) {
         return (
-            <div className="w-full text-left p-2 text-sm rounded flex items-center">
-                <div
-                    onClick={onClick}
+            <div className="mb-4 flex items-center">
+                <label className="flex items-center cursor-pointer transition">
+                    <div
+                    onClick={onChange}
                     className={clsx(
-                        "cursor-pointer h-[14px] w-[30px] flex items-center rounded-full px-1 transition-colors duration-200",
-                        isBtnOpen ? "bg-emerald-500" : "bg-gray-500"
+                        "cursor-pointer w-12 h-6 flex items-center rounded-full px-1 transition-colors duration-200",
+                        isOn ? "bg-emerald-500" : "bg-gray-500"
                     )}>                
                     <div className={clsx(
-                        "h-[10px] w-[10px] bg-white rounded-full transition-transform duration-200",
-                        isBtnOpen ? "translate-x-full" : "translate-x-0"
+                        "w-5 h-4 bg-white rounded-full transition-transform duration-200",
+                        isOn ? "translate-x-full" : "translate-x-0"
                     )} />
-                </div>
-                <p className="ml-2">Cacher le post</p>
+                    </div>
+                    <div className="ml-3 text-sm">Masquer le post</div>
+                </label>                
             </div>
         )
     }
     
-    if (postOwner === user?.username) {
+    const editFormPost = () => {
+        return (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md"
+                ref={leaveContainerRef}>
+                    <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-lg font-medium">Modifier le post</h3>
+                        <button
+                            onClick={() => setIsEditFormPostOpen(false)}
+                            className="text-gray-400 hover:text-white">
+                        ✖️
+                        </button>
+                    </div>
+
+                    <form onSubmit={handleEditCaption}>
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium mb-2">Légende</label>
+                            <textarea
+                                className="w-full bg-gray-700 border border-gray-600 rounded-md p-2 text-white"
+                                rows={4}
+                                name="caption"
+                                value={formData.caption}
+                                onChange={handleEditChange}
+                                placeholder={post?.caption}
+                            />
+                        </div>
+
+                        <SwitchBtn isOn={formData.hiddenTag} onChange={toggleHiddenTag}/>
+
+                        <div className="flex justify-end gap-2">
+                            <button
+                                type="button"
+                                onClick={() => setIsEditFormPostOpen(false)}
+                                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md">
+                                Annuler
+                            </button>
+                            <button
+                                type="submit"
+                                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-md">
+                                Enregistrer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        );
+    }
+    if (isEditFormPostOpen == true) {
+        return editFormPost()
+    }
+    
+    if (post?.username === user?.username) {
     return (
         <div className="relative">
         <button onClick={() => setIsOpen(!isOpen)} className="p-1 hover:bg-gray-700 rounded-full">
@@ -95,12 +151,10 @@ export const PostSettings = ({postOwner, postId}: {postOwner: string, postId: st
                 <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white">×</button>
             </div>
 
-            <SwitchBtn onClick={() => setSwitch(!isSwitchOpen)} isBtnOpen={isSwitchOpen}/>
-
             <button 
                 onClick={() => {
-                    console.log("Modifier le post");
                     setIsOpen(false);
+                    setIsEditFormPostOpen(true);
                 }}
                 className="w-full text-left p-2 text-sm hover:bg-gray-700 rounded flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
@@ -112,7 +166,7 @@ export const PostSettings = ({postOwner, postId}: {postOwner: string, postId: st
             
             <button 
                 onClick={() => {
-                    console.log("Supprimer le post");
+                    handleDeletePost();
                     setIsOpen(false);
                 }}
                 className="w-full text-left p-2 text-sm text-red-400 hover:bg-gray-700 rounded flex items-center">

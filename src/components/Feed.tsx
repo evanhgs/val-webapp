@@ -1,26 +1,15 @@
 import config from "../config";
 import FollowButton from "./FollowButton";
 import { PostSettings } from "./PostSettings";
+import { Post } from "../types/post";
 
-
-interface PostCorps {
-  caption: string;
-  created_at: string;
-  id: string;
-  image_url: string;
-  user_id: string;
-  user_profile: string;
-  username: string;
-}
-
-interface UserFeedProps { // cette interface n'accepte que les props avec le type array et NON un objet contenant un tableau 
-  userFeed: Array<PostCorps>; // any c'est dégueulasse et trop facile
+interface UserFeedProps {
+  userFeed: Array<Post>; 
   currentUsername?: string; 
 }
 
 export const Feed: React.FC<UserFeedProps> = ({userFeed}) => {
   
-
   return (
     <div className="flex flex-col space-y-6">
       {userFeed.map((post) => (
@@ -29,7 +18,7 @@ export const Feed: React.FC<UserFeedProps> = ({userFeed}) => {
           <div className="flex items-center justify-between p-3">
             <div className="flex items-center">
               <img 
-                src={post.user_profile ? `${config.serverUrl}/user/profile-picture/${post.user_profile}` : `${config.serverUrl}/user/profile-picture/default.jpg`}
+                src={post.user_profile_url ? `${config.serverUrl}/user/profile-picture/${post.user_profile_url}` : `${config.serverUrl}/user/profile-picture/default.jpg`}
                 alt={post.username}
                 className="w-8 h-8 rounded-full object-cover mr-2 border border-gray-700"
               />
@@ -39,7 +28,7 @@ export const Feed: React.FC<UserFeedProps> = ({userFeed}) => {
               <FollowButton user={{username: post.username}}/> 
             </div>
             {/* settings of your own post */}
-            <PostSettings postOwner={post?.username} postId={post?.id}/>
+            {post && <PostSettings post={post} />}
           </div>
           
           {/* Image du post */}
