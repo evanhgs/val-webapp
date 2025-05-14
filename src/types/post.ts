@@ -5,6 +5,6 @@ export interface Post {
     image_url: string;
     user_profile_url: string;
     username: string;
-    hiddenTag: boolean;
+    hidden_tag: boolean;
   }
 

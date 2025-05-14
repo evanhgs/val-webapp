@@ -4,23 +4,25 @@ import clsx from "clsx";
 import axios from "axios";
 import config from "../config";
 import UseOutsideClickDetector from "./OutsideClickDetector";
-import { Post } from "../types/post"
+import { Post } from "../types/post";
+import { useAlert } from './AlertContext';
 
 export const PostSettings = ({post}: {post?: Post}) => {
 
     const { user } = useContext(AuthContext) || {};
     const token = user?.token;
+    const { showAlert } = useAlert();
     const [isOpen, setIsOpen] = useState(false);
     const [isEditFormPostOpen, setIsEditFormPostOpen] = useState(false);
     const [formData, setFormData] = useState({
         caption: "",
-        hiddenTag: false,
+        hidden_tag: false,
     });
     useEffect(() => {
         if (post) {
             setFormData({
                 caption: post?.caption || "",
-                hiddenTag: !!post?.hiddenTag
+                hidden_tag: Boolean(post?.hidden_tag)
             });
         }
     }, [post]);
@@ -40,10 +42,43 @@ export const PostSettings = ({post}: {post?: Post}) => {
                 formData,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-        } catch (error) {
-            console.log(error);
+            setIsEditFormPostOpen(false);
+            showAlert('Post modifié avec succès', 'success');
+        } catch (error: any) {
+            if (error.response) {
+                const { status, data } = error.response;
+
+                switch (status) {
+                    case 400:
+                        if (data.error && data.error.includes('caption is too long')) {
+                            showAlert('La légende est trop longue (max 200 caractères)', 'error');
+                        } else {
+                            showAlert('Format de post invalide', 'error');
+                        }
+                        break;
+                    case 401:
+                        showAlert('Vous devez être connecté pour modifier ce post', 'error');
+                        break;
+                    case 403:
+                        showAlert('Vous n\'êtes pas autorisé à modifier ce post', 'error');
+                        break;
+                    case 404:
+                        showAlert('Post introuvable', 'error');
+                        break;
+                    case 500:
+                        showAlert('Une erreur serveur est survenue', 'error');
+                        break;
+                    case 204:
+                        showAlert('Aucune modification détectée', 'info');
+                        setIsEditFormPostOpen(false);
+                        break;
+                    default:
+                        showAlert('Une erreur inattendue s\'est produite', 'error');
+                }
+            }
         }
     }
+
     const handleDeletePost = async () => {
         try {
             await axios.delete(
@@ -54,11 +89,15 @@ export const PostSettings = ({post}: {post?: Post}) => {
             console.log(error);
         }
     }
+
     const toggleHiddenTag = () => {
-        setFormData(prevData => ({
-            ...prevData,
-            hiddenTag: !prevData.hiddenTag
-        }));
+        setFormData(prevData => {
+            const newValue = !prevData.hidden_tag;
+            return {
+                ...prevData,
+                hidden_tag: newValue 
+            };
+        });
     };
 
     function SwitchBtn({isOn, onChange}: {isOn: boolean, onChange: () => void }) {
@@ -109,7 +148,7 @@ export const PostSettings = ({post}: {post?: Post}) => {
                             />
                         </div>
 
-                        <SwitchBtn isOn={formData.hiddenTag} onChange={toggleHiddenTag}/>
+                        <SwitchBtn isOn={formData.hidden_tag} onChange={toggleHiddenTag}/>
 
                         <div className="flex justify-end gap-2">
                             <button
@@ -191,4 +230,3 @@ export const PostSettings = ({post}: {post?: Post}) => {
     }
 
 }
-
