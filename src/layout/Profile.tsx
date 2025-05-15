@@ -10,36 +10,14 @@ import config from '../config';
 import { FollowersModal } from '../components/FollowersModal';
 import { NavPosts } from "../components/NavPosts";
 import { useAlert } from "../components/AlertContext";
-
-// type pour l'utilisateur
-interface UserProfile {
-  username: string;
-  email: string;
-  bio: string;
-  website: string;
-  created_at: string;
-  profile_picture: string;
-}
-
-interface FollowUser {
-  username: string;
-  profile_picture?: string;
-}
-
-
-interface Post {
-  caption: string;
-  created_at: string;
-  image_url: string;
-  user_profile: string;
-  username: string;
-  id: string;
-}
+import { UserType } from "../types/auth";
+import { FollowUser } from "../types/followProps";
+import { Post } from "../types/post";
 
 const Profile = () => {
   
   const [error, setError] = useState<string | null>(null);
-  const [userData, setUserData] = useState<UserProfile | null>(null);
+  const [userData, setUserData] = useState<UserType | null>(null);
   const { user } = useContext(AuthContext) || {};
   const token = user?.token;
   const navigate = useNavigate();
@@ -66,9 +44,8 @@ const Profile = () => {
           return;
         }
 
-        const response = await axios.post(
+        const response = await axios.get(
           `${config.serverUrl}/user/profile`,
-          {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setUserData({
@@ -76,8 +53,10 @@ const Profile = () => {
           email: response.data.email,
           bio: response.data.bio || "Aucune bio disponible.",
           website: response.data.website || "",
-          created_at: new Date(response.data.created_at).toLocaleDateString(),
-          profile_picture: response.data.profile_picture || "default.jpg",
+          created_at: response.data.created_at || "",
+          profilePicture: response.data.profile_picture || "default.jpg",
+          id: response.data.id, 
+          token: token,
         });
       } catch (error) {
         console.error("Erreur lors de la récupération du profil: ", error);
@@ -97,9 +76,8 @@ const Profile = () => {
 
         const followerResponse = await axios.get(`${config.serverUrl}/follow/get-follow/${userData.username}`);
         const followedResponse = await axios.get(`${config.serverUrl}/follow/get-followed/${userData.username}`);
-        const postResponse = await axios.post(
-          `${config.serverUrl}/post/get-user/${userData.username}`,
-          null,
+        const postResponse = await axios.get(
+          `${config.serverUrl}/post/feed/${userData.username}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         //console.log(postResponse);
@@ -171,7 +149,7 @@ const Profile = () => {
             {/* Photo de profil  */}
             <div className="flex justify-center sm:justify-start mb-6 sm:mb-0">
               <img
-                src={`${config.serverUrl}/user/profile-picture/${userData.profile_picture}` || `${config.serverUrl}/user/profile-picture/default.jpg`}
+                src={`${config.serverUrl}/user/profile-picture/${userData.profilePicture}` || `${config.serverUrl}/user/profile-picture/default.jpg`}
                 alt="Profile"
                 className="w-20 h-20 sm:w-28 sm:h-28 rounded-full border-2 border-gray-600"
               />

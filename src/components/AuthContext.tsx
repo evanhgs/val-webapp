@@ -1,24 +1,30 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import config from '../config';
+import { UserType, AuthContextType } from '../types/auth';
 
 
-interface AuthContextType {
-  user: any;                            //  information de l'utilisateur
-  login: (token: string) => void;       //  fonction de login qui stock le token
-  logout: ()=> void;                    //  fonction pour deco en supprimant le token
-}
-
-// création du contexte avec comme valeur null par defaut
 export const AuthContext = createContext<AuthContextType | null>(null); 
-
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
-  // gere l'etat de l'utilisateur, vérifie si un token est déjà stocké et initie l'état 
-  const [user, setUser] = useState(() => {
-    return localStorage.getItem("token") ? { 
-      token: localStorage.getItem("token") } : null;
+  // lazy loading, check les logins a chaque refresh/nouvelle page, évite de faire connecter l'utilisateur à chaque fois 
+  const [user, setUser] = useState<UserType | null>(() => {
+    const storedToken = localStorage.getItem("token");
+    const storedUsername = localStorage.getItem("username");
+    const storedProfilePicture = localStorage.getItem("profilePicture");
+    const storedId = localStorage.getItem("id");
+
+    if (storedToken && storedUsername && storedProfilePicture && storedId) {
+      return {
+        token: storedToken,
+        username: storedUsername,
+        profilePicture: storedProfilePicture,
+        id: storedId
+      };
+    }
+    return null;
+    
   });
 
   // Fonction pour valider le token (envoie au backend)
@@ -42,18 +48,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
     };
+    
     checkToken();
-  }, []);
+  }, []);  // Empty dependency array means this effect runs once on mount
 
   // stock le token dans localstorage et update l'utilisateur
-  const login = (token: string) => {
+  const login = (token: string, id: string, profilePicture: string, username: string) => {
     localStorage.setItem("token", token);
-    setUser({ token });
+    localStorage.setItem("username", username);
+    localStorage.setItem("profilePicture", profilePicture);
+    localStorage.setItem("id", id);
+    setUser({
+      username,
+      token,
+      profilePicture,
+      id
+    });
   };
 
   // supprime le token dans localstorage et reset l'état de user à null
-  const logout = () => {
+  const logout = () => { 
     localStorage.removeItem("token");
+    localStorage.removeItem("username");
+    localStorage.removeItem("profilePicture");
+    localStorage.removeItem("id");
     setUser(null);
   };
 

@@ -21,6 +21,7 @@ const EditProfileForm = ({ userData, setIsEditing, onUpdateAlert }: any) => {
       await axios.post(`${config.serverUrl}/user/edit`, formData, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
+      setIsEditing(false);
       onUpdateAlert({ 
         message: "Profil mis à jour avec succès", 
         type: "success" 

@@ -3,17 +3,8 @@ import axios from "axios";
 import config from "../config";
 import { FollowersModal } from './FollowersModal';
 import UseOutsideClickDetector from './OutsideClickDetector'
-
-interface SearchProps {
-  setIsSearch: (isSearch: boolean) => void;
-  isCompact?: boolean;
-}
-
-interface FollowUser {
-  id: string;
-  username: string;
-  profilePicture: string;
-}
+import { FollowUser } from '../types/followProps';
+import { SearchProps } from '../types/searchProps';
 
 const Search: React.FC<SearchProps> = ({ setIsSearch, isCompact }) => {
   const [showSearchResult, setShowSearchResult] = useState(false);
@@ -47,7 +38,7 @@ const Search: React.FC<SearchProps> = ({ setIsSearch, isCompact }) => {
         users: [{ 
           id: "0", 
           username: "Personne n'a été trouvé", 
-          profilePicture: `${config.serverUrl}/user/profile-picture/default.jpg` 
+          profile_picture: `${config.serverUrl}/user/profile-picture/default.jpg` 
         }]
       });
       setShowSearchResult(true);

@@ -3,20 +3,15 @@ import config from '../config';
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import FollowButton from '../components/FollowButton';
-
-interface Post { 
-    caption: string;
-    created_at: string;
-    id: string;
-    image_url: string;
-    user_profile_url: string;
-    username: string;
-  }
+import { PostSettings } from "../components/PostSettings";
+import { Post } from "../types/post";
+import { useAlert } from '../components/AlertContext';
 
 
 // id du post en parametre GET sinon retourne 404 not found a faire
 const ShowPost = () => {
 
+    const { showAlert } = useAlert();
     const [post, setPost] = useState<Post | null>(null); 
     const {id} = useParams<{ id: string}>();
     const navigate = useNavigate();
@@ -29,8 +24,23 @@ const ShowPost = () => {
                     `${config.serverUrl}/post/${id}`
                 );                
                 setPost(response.data.post);
-            } catch (error) {
-                console.error("Error fetching post:", error);
+            } catch (error: any) {
+                if (error.response) {
+                    const status = error.response.status;
+                    switch (status) {
+                        case 400:
+                            showAlert('Le format de l\id n\'est pas en UUID, veuillez réssayer avec un bon format', 'error');
+                            break;
+                        case 404:
+                            showAlert('Le post n\'a pas été trouvé', 'error');
+                            break;
+                        case 500:
+                            showAlert('Une erreur serveur est survenue', 'error');
+                            break;
+                        default:
+                            showAlert('Une erreur inattendue s\'est produite', 'error');
+                    }
+                }
             }
         }
         displayPostfromId().then(r => console.log(r));
@@ -61,9 +71,10 @@ const ShowPost = () => {
                             <button className="font-bold text-sm" onClick={() => {navigate(`/profile/${post.username}`)}}>{post?.username}</button>
                         </div>
                         <div className="ml-auto mr-4">
-                            <FollowButton user={{username: post.username}} />
+                            <FollowButton user={{id: post.id, username: post.username}} />
                         </div>
-
+                        {/* settings of your own post */}
+                        {post && <PostSettings post={post} />}
                     </div>
                     
                     <div className="post-image-container mt-10">

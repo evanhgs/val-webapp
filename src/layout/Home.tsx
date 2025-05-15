@@ -6,15 +6,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../components/AuthContext";
 import config from "../config";
-
-interface UserProfile {
-  username: string;
-  profile_picture: string;
-}
-
-interface UserFeed {
-  content: Array<any>; // propriété type du tableau qui stock le feed
-}
+import { UserProfile } from '../types/user';
+import { UserFeedProps } from '../types/feed';
 
 const Home = () => {
   const [error, setError] = useState<string|null>(null);
@@ -22,7 +15,7 @@ const Home = () => {
   const { user } = useContext(AuthContext) || {};
   const token = user?.token;
   const [userData, setUserData] = useState<UserProfile | null>(null);
-  const [userFeed, setUserFeed] = useState<UserFeed | null>(null);
+  const [userFeed, setUserFeed] = useState<UserFeedProps | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -33,9 +26,8 @@ const Home = () => {
           return;
         }
         // récupération du profil de l'utilisateur connecté
-        const response = await axios.post(
+        const response = await axios.get(
           `${config.serverUrl}/user/profile`,
-          {}, // NE JAMAIS OUBLIER LE CORPS (meme vide) pour les requetes POST avec axios sinon il passe l'objet header dans le cors et ça bug...
           { headers: { Authorization: `Bearer ${token}` } }
         );
         // récupération du feed personnalisé en fonction de l'utilisateur connecté
@@ -46,13 +38,14 @@ const Home = () => {
         setUserData({
           username: response.data.username,
           profile_picture: response.data.profile_picture || "default.jpg",
+          bio: response.data.bio || "",
+          website: response.data.website || "",
+          created_at: response.data.created_at || "",
         });
         setUserFeed({
-          content: responseFeed.data.content,   // récupère le tableau de tous les posts + garde le meme type de UserFeed
+          userFeed: responseFeed.data.content, 
+          currentUsername: userData?.username
         });
-        
-        // Debugging to verify response structure
-        // console.log("API Response:", responseFeed.data);
 
       } catch (error) {
         console.error("Erreur lors de la récupération du compte: ", error);
@@ -80,7 +73,9 @@ const Home = () => {
         
         <div className="flex w-full">
           <div className="w-full lg:mr-8">
-            <Feed userFeed={userFeed?.content || []} /> {/* Passe le tableau de posts au composant Feed, ou un tableau vide si les données ne sont pas encore chargées */}
+            <Feed userFeed={userFeed?.userFeed || []} currentUsername={userData?.username}/>
+             {/* Passe le tableau de posts au composant Feed, ou un tableau vide si les données ne sont pas encore chargées 
+             + envoie de l'utilisateur courant dans le feed pour la vérif de la propriété du post */}
           </div>
           
           <div className="hidden lg:block w-[320px] flex-shrink-0">

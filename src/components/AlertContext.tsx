@@ -1,17 +1,5 @@
 import { createContext, useState, useContext, ReactNode } from 'react';
-
-type AlertType = 'success' | 'error' | 'info';
-
-interface Alert {
-    message: string;
-    type: AlertType;
-}
-
-interface AlertPopup {
-    alert: Alert | null;
-    showAlert: (message: string, type: AlertType) => void;
-    hideAlert: () => void;
-}
+import { AlertType, Alert, AlertPopup } from '../types/alert';
 
 const AlertContext = createContext<AlertPopup | undefined>(undefined);
 

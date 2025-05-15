@@ -1,41 +1,10 @@
-import React from "react";
 import config from "../config";
-
-
-
-interface UserFeedProps { // cette interface n'accepte que les props avec le type array et NON un objet contenant un tableau 
-  userFeed: Array<any>
-}
+import FollowButton from "./FollowButton";
+import { PostSettings } from "./PostSettings";
+import { UserFeedProps } from '../types/feed';
 
 export const Feed: React.FC<UserFeedProps> = ({userFeed}) => {
-
-  {/** structuration idéale d'un post
-      const examplePosts = [
-    {
-      id: 1,
-      username: 'utilisateur_1',
-      avatar: 'default.jpg',
-      image: 'placeholder1',
-      caption: 'Belle journée aujourd\'hui! #sunshine',
-      likes: 124,
-      comments: 23,
-      timeAgo: '2h',
-    },
-  ]; 
   
-  // vrai tableau json renvoyé pour l'instant 
-  // {
-            "caption": "Look this cool picture !",
-            "created_at": "2025-03-17 15:15:51.394491",
-            "id": "c7013664-db3d-45c5-a3c5-2680448170c6",
-            "image_url": "colin-watts-F7Sg9CovAVA-unsplash.jpg",
-            "user_id": "28ff42af-b87c-4e4c-8051-3365547674d2",
-            "user_profile": "colin-watts-eYXrvDWeJWs-unsplash.jpg",
-            "username": "test"
-        },
-  */}
-  
-
   return (
     <div className="flex flex-col space-y-6">
       {userFeed.map((post) => (
@@ -44,19 +13,17 @@ export const Feed: React.FC<UserFeedProps> = ({userFeed}) => {
           <div className="flex items-center justify-between p-3">
             <div className="flex items-center">
               <img 
-                src={post.user_profile ? `${config.serverUrl}/user/profile-picture/${post.user_profile}` : `${config.serverUrl}/user/profile-picture/default.jpg`}
+                src={post.user_profile_url ? `${config.serverUrl}/user/profile-picture/${post.user_profile_url}` : `${config.serverUrl}/user/profile-picture/default.jpg`}
                 alt={post.username}
                 className="w-8 h-8 rounded-full object-cover mr-2 border border-gray-700"
               />
               <span className="font-semibold text-sm">{post.username}</span>
             </div>
-            <button>
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="1"></circle>
-                <circle cx="19" cy="12" r="1"></circle>
-                <circle cx="5" cy="12" r="1"></circle>
-              </svg>
-            </button>
+            <div className="ml-auto mr-16">
+              <FollowButton user={{id: post.id, username: post.username}}/> 
+            </div>
+            {/* settings of your own post */}
+            {post && <PostSettings post={post} />}
           </div>
           
           {/* Image du post */}
@@ -97,7 +64,7 @@ export const Feed: React.FC<UserFeedProps> = ({userFeed}) => {
             </div>
             
             {/* Nombres de likes */}
-            <p className="font-semibold text-sm mb-1">{post.likes} J'aime</p>
+            <p className="font-semibold text-sm mb-1">{/*post.likes*/} J'aime</p>
             
             {/* Caption */}
             <p className="text-sm">
@@ -107,11 +74,11 @@ export const Feed: React.FC<UserFeedProps> = ({userFeed}) => {
             
             {/* Voir les commentaires */}
             <p className="text-gray-400 text-sm mt-1 cursor-pointer">
-              Voir les {post.comments} commentaires
+              Voir les {/*post.comments*/} commentaires
             </p>
             
             {/* Temps écoulé */}
-            <p className="text-gray-500 text-xs mt-2">Il y a {post.timeAgo}</p>
+            <p className="text-gray-500 text-xs mt-2">Post publié le {post?.created_at.substring(5,10) || 'YYYY/MM/dd'} à {post?.created_at.substring(10, 16) || 'hh/mm'}</p>
           </div>
           
           {/* Ajouter un commentaire */}
@@ -127,7 +94,6 @@ export const Feed: React.FC<UserFeedProps> = ({userFeed}) => {
               placeholder="Ajouter un commentaire..." 
               className="bg-transparent flex-grow outline-none text-sm"
             />
-            <button className="text-blue-500 font-semibold text-sm">Publier</button>
           </div>
         </div>
       ))}
