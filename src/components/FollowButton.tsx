@@ -1,15 +1,7 @@
 import React from 'react';
 import config from "../config";
 import { useAlert } from './AlertContext';
-
-interface FollowUser {
-    username: string;
-    profile_picture?: string;
-}
-
-interface FollowButtonProps {
-    user: FollowUser;
-}
+import { FollowButtonProps } from '../types/followProps';
 
 const FollowButton = ({user}: FollowButtonProps) => {
     const { showAlert } = useAlert();

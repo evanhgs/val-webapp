@@ -6,15 +6,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../components/AuthContext";
 import config from "../config";
-
-interface UserProfile {
-  username: string;
-  profile_picture: string;
-}
-
-interface UserFeed {
-  content: Array<any>; // propriété type du tableau qui stock le feed
-}
+import { UserProfile } from '../types/user';
+import { UserFeedProps } from '../types/feed';
 
 const Home = () => {
   const [error, setError] = useState<string|null>(null);
@@ -22,7 +15,7 @@ const Home = () => {
   const { user } = useContext(AuthContext) || {};
   const token = user?.token;
   const [userData, setUserData] = useState<UserProfile | null>(null);
-  const [userFeed, setUserFeed] = useState<UserFeed | null>(null);
+  const [userFeed, setUserFeed] = useState<UserFeedProps | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -45,9 +38,13 @@ const Home = () => {
         setUserData({
           username: response.data.username,
           profile_picture: response.data.profile_picture || "default.jpg",
+          bio: response.data.bio || "",
+          website: response.data.website || "",
+          created_at: response.data.created_at || "",
         });
         setUserFeed({
-          content: responseFeed.data.content,   // récupère le tableau de tous les posts + garde le meme type de UserFeed
+          userFeed: responseFeed.data.content, 
+          currentUsername: userData?.username
         });
 
       } catch (error) {
@@ -76,7 +73,7 @@ const Home = () => {
         
         <div className="flex w-full">
           <div className="w-full lg:mr-8">
-            <Feed userFeed={userFeed?.content || []} currentUsername={userData?.username}/>
+            <Feed userFeed={userFeed?.userFeed || []} currentUsername={userData?.username}/>
              {/* Passe le tableau de posts au composant Feed, ou un tableau vide si les données ne sont pas encore chargées 
              + envoie de l'utilisateur courant dans le feed pour la vérif de la propriété du post */}
           </div>

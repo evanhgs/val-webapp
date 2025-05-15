@@ -1,22 +1,8 @@
 import { NavLink } from 'react-router-dom';
 import config from '../config';
-
-interface Post {
-  caption: string;
-  created_at: string;
-  image_url: string;
-  user_profile: string;
-  username: string;
-  id: string;
-}
-
-interface NavPostsProps { // ?? why ??
-  post: Post[];
-}
+import { NavPostsProps } from '../types/post';
 
 export const NavPosts = ({post}: NavPostsProps) => {
-
-
     return (
         <div className=""> {/** todo: implement tags */}
             <div className="border-t border-gray-700 mt-8 flex justify-center space-x-2 sm:space-x-10 py-2 overflow-x-auto">

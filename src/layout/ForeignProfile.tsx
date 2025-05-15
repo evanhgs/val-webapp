@@ -8,37 +8,15 @@ import config from '../config';
 import { FollowersModal } from '../components/FollowersModal';
 import { NavPosts } from "../components/NavPosts";
 import FollowButton from "../components/FollowButton.tsx";
-// page copié collé à quelques détails de Profil
+import { UserProfile } from '../types/user.ts';
+import { FollowUser } from '../types/followProps.ts';
+import { Post } from '../types/post.ts';
 
-// type pour l'utilisateur
-interface UserProfile {
-  username: string;
-  bio: string;
-  website: string;
-  created_at: string;
-  profile_picture: string;
-}
-
-interface FollowUser {
-  username: string;
-  profile_picture?: string;
-}
-
-interface Post {
-  caption: string;
-  created_at: string;
-  image_url: string;
-  user_profile: string;
-  username: string;
-  id: string;
-}
-
-// récupérer le username directement dans la route
 const ForeignProfile = () => {
   
   const [error, setError] = useState<string | null>(null);
   const [userData, setUserData] = useState<UserProfile | null>(null);
-  const { user } = useContext(AuthContext) || {}; //  token
+  const { user } = useContext(AuthContext) || {};
   const token = user?.token;
   const navigate = useNavigate();
 
@@ -156,7 +134,7 @@ const ForeignProfile = () => {
             <div className="flex-1">
               <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
                 <h2 className="text-xl font-bold text-center sm:text-left mb-3 sm:mb-0">{userData.username}</h2>
-                  <FollowButton user={{username: userData.username}} />
+                  <FollowButton user={{ id: user?.id || '', username: userData.username}} />
               </div>
 
               <div className="flex justify-center sm:justify-start space-x-6 mt-4 text-gray-300">

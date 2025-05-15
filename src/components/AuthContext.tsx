@@ -1,21 +1,8 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import config from '../config';
+import { UserType, AuthContextType } from '../types/auth';
 
-// stockage du contexte global de l'utilisateur connecté 
-// un simple objet full string ^^ (jsp si je mets tous les champs possible comme au lieu de faire une requete pour les cherchers j'aurais tout ce dont j'ai besoin et oui ce commentaire est super long, c'est normal j'aime bien embeter les gens et évidemment on oublie pas de fermer la parenthèse)
-interface UserType  {
-  username: string;
-  token: string;
-  profilePicture: string;
-  id: string;
-}
-
-interface AuthContextType {
-  user: UserType | null;                            
-  login: (token: string, username: string, profilePicture: string, id: string) => void;
-  logout: ()=> void;
-}
 
 export const AuthContext = createContext<AuthContextType | null>(null); 
 

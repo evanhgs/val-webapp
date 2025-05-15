@@ -20,7 +20,12 @@ const Register: React.FC = () => {
     try {
       const response = await axios.post(`${config.serverUrl}/auth/register`, { username, email, password });
       if (login) {
-        login(response.data.token);
+        login(
+          response.data.token,
+          response.data.username,
+          response.data.profilePicture,
+          response.data.id
+        );
         navigate("/");
       } else {
         setError('Login function is not available')

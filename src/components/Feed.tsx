@@ -1,12 +1,7 @@
 import config from "../config";
 import FollowButton from "./FollowButton";
 import { PostSettings } from "./PostSettings";
-import { Post } from "../types/post";
-
-interface UserFeedProps {
-  userFeed: Array<Post>; 
-  currentUsername?: string; 
-}
+import { UserFeedProps } from '../types/feed';
 
 export const Feed: React.FC<UserFeedProps> = ({userFeed}) => {
   
@@ -25,7 +20,7 @@ export const Feed: React.FC<UserFeedProps> = ({userFeed}) => {
               <span className="font-semibold text-sm">{post.username}</span>
             </div>
             <div className="ml-auto mr-16">
-              <FollowButton user={{username: post.username}}/> 
+              <FollowButton user={{id: post.id, username: post.username}}/> 
             </div>
             {/* settings of your own post */}
             {post && <PostSettings post={post} />}

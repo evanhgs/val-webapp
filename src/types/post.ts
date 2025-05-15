@@ -8,3 +8,6 @@ export interface Post {
     hidden_tag: boolean;
   }
 
+export interface NavPostsProps {
+  post: Post[];
+}

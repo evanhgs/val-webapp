@@ -1,17 +1,14 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import axios from 'axios';
 import config from '../config';
+import { AuthContext } from "./AuthContext";
+import { UploadButtonProps } from '../types/uploadProps';
 
-interface UserData { profile_picture: string }
-interface UploadButtonProps {
-    userData: UserData;
-    setIsUploading: React.Dispatch<React.SetStateAction<boolean>>;
-}
+const UploadButton: React.FC<UploadButtonProps> = ({ setIsUploading }) => {
 
-const UploadButton: React.FC<UploadButtonProps> = ({ userData, setIsUploading }) => {
-
+    const { user } = useContext(AuthContext) || {};
     const [error, setError] = useState<string>('');
-    const [profilePicture, setProfilePicture] = useState<string>(userData.profile_picture || "");
+    const [profilePicture, setProfilePicture] = useState<string>(user?.profilePicture || "");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {

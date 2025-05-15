@@ -48,7 +48,7 @@ const UploadPost = () => {
             const formData = new FormData();
             formData.append("file", file);
             formData.append("caption", caption);
-            const response = await axios.post(
+            await axios.post(
                 `${config.serverUrl}/post/upload`,
                 formData,
                 {

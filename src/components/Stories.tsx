@@ -2,16 +2,7 @@ import React, { useRef, useEffect, useState } from "react";
 import config from "../config";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
-
-
-interface StoriesProps {
-  username?: string | null;
-  profile_picture?: string | null;
-}
-interface UserStories {
-  count_user: number | null;
-  followed_users?: Array<any>; 
-}
+import { StoriesProps, UserStories } from "../types/storyProps";
 
 export const Stories: React.FC<StoriesProps> = ({username, profile_picture}) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);

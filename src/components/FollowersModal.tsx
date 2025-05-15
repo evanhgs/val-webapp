@@ -2,15 +2,7 @@ import config from "../config";
 import { useNavigate } from 'react-router-dom';
 import FollowButton from "./FollowButton";
 import UseOutsideClickDetector from "./OutsideClickDetector";
-interface FollowUser {
-    username: string;
-    profile_picture?: string;
-}
-export interface AlertProps {
-    message: string;
-    type: 'success' | 'error' | 'info';
-}
-
+import { FollowUser } from '../types/followProps';
 
 // pop up des listes des abonnés / abonnements
 export const FollowersModal = ({ users, title, onClose }: { users: FollowUser[], title: string, onClose: () => void }) => {

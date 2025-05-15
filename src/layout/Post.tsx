@@ -71,7 +71,7 @@ const ShowPost = () => {
                             <button className="font-bold text-sm" onClick={() => {navigate(`/profile/${post.username}`)}}>{post?.username}</button>
                         </div>
                         <div className="ml-auto mr-4">
-                            <FollowButton user={{username: post.username}} />
+                            <FollowButton user={{id: post.id, username: post.username}} />
                         </div>
                         {/* settings of your own post */}
                         {post && <PostSettings post={post} />}

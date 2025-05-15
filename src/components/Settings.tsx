@@ -1,12 +1,8 @@
 import React from 'react';
 import { Logout } from "../components/Logout"; 
 import UseOutsideClickDetector from './OutsideClickDetector'
+import { SearchProps } from '../types/searchProps';
 
-
-interface SearchProps {
-  setIsSetting: (isSearch: boolean) => void;
-  isCompact?: boolean;
-}
 
 const Settings: React.FC<SearchProps> = ({ setIsSetting, isCompact }) => {
 
