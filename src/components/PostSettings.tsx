@@ -6,12 +6,14 @@ import config from "../config";
 import UseOutsideClickDetector from "./OutsideClickDetector";
 import { Post } from "../types/post";
 import { useAlert } from './AlertContext';
+import { useNavigate } from "react-router-dom";
 
 export const PostSettings = ({post}: {post?: Post}) => {
 
     const { user } = useContext(AuthContext) || {};
     const token = user?.token;
     const { showAlert } = useAlert();
+    const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const [isEditFormPostOpen, setIsEditFormPostOpen] = useState(false);
     const [formData, setFormData] = useState({
@@ -46,7 +48,7 @@ export const PostSettings = ({post}: {post?: Post}) => {
             showAlert('Post modifié avec succès', 'success');
         } catch (error: any) {
             if (error.response) {
-                const { status, data } = error.response;
+                const { data, status } = error.response;
 
                 switch (status) {
                     case 400:
@@ -85,8 +87,28 @@ export const PostSettings = ({post}: {post?: Post}) => {
                 `${config.serverUrl}/post/delete/${post?.id}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-        } catch (error) {
-            console.log(error);
+            showAlert('Post supprimé avec succès', 'success');
+            navigate("/profile");
+        } catch (error: any) {
+            if (error.response) {
+                const status = error.response.status;
+                switch (status) {
+                        case 401:
+                            showAlert('Vous devez être connecté pour supprimer ce post', 'error');
+                            break;
+                        case 403:
+                            showAlert('Vous n\'êtes pas authorisé à supprimer ce post', 'error');
+                            break;
+                        case 404:
+                            showAlert('Le post n\'a pas été trouvé', 'error');
+                            break;
+                        case 500:
+                            showAlert('Une erreur serveur est survenue', 'error');
+                            break;
+                        default:
+                            showAlert('Une erreur inattendue s\'est produite', 'error');
+                    }
+            }
         }
     }
 
@@ -223,9 +245,7 @@ export const PostSettings = ({post}: {post?: Post}) => {
     );
     } else {
         return (
-            <>
-                <p>🚫</p>
-            </>
+            <></>
         );
     }
 

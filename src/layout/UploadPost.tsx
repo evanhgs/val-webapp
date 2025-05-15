@@ -1,10 +1,13 @@
 import {AuthContext} from "../components/AuthContext.tsx";
-import React, {useContext , useState} from "react";
+import React, {useContext , useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import config from "../config.ts";
+import { useAlert } from "../components/AlertContext.tsx";
 
 const UploadPost = () => {
+    
+    const { showAlert } = useAlert();
     const { user } = useContext(AuthContext) || {};
     const token= user?.token;
     const navigate = useNavigate();
@@ -12,11 +15,13 @@ const UploadPost = () => {
     const [error, setError] = useState<string>("");
     const [caption, setCaption] = useState<string>("");
 
-    if (!token) {
+    useEffect(()=>{
+        if (!token) {
         setError("Vous devez être connecté pour publier un post.");
         navigate("/login");
         return;
     }
+    }, [token, navigate])
 
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -53,14 +58,33 @@ const UploadPost = () => {
                     },
                 }
             );
-            console.log(response);
             setFile(null);
             setError("");
             setCaption("");
-        } catch (error) {
-            console.error(error);
-            setError("Erreur lors de l'upload de l'image.")
-        }
+            showAlert('Post publié avec succès', 'success');
+            navigate("/profile")
+        } catch (error: any) {
+                console.error("Error fetching post:", error);
+                if (error.response) {
+                    const status = error.response.status;
+                    switch (status) {
+                        case 401:
+                            showAlert('Vous devez être connecté pour modifier ce post', 'error');
+                            break;
+                        case 404:
+                            showAlert('Le fichier n\'a pas été trouvé ou n\'est pas sélectionné', 'error');
+                            break;
+                        case 500:
+                            showAlert('Une erreur serveur est survenue', 'error');
+                            break;
+                        case 406:
+                            showAlert('Dommage... ^^', 'info');
+                            break;
+                        default:
+                            showAlert('Une erreur inattendue s\'est produite', 'error');
+                    }
+                }
+            }
     };
 
 
@@ -105,7 +129,7 @@ const UploadPost = () => {
                     <button
                         className={`px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition flex items-center justify-center ${!File ? 'opacity-50 cursor-not-allowed' : ''}`}
                         onClick={handleSubmit}
-                        disabled={!File}
+                        disabled={!file}
                     >  Valider et enregistrer
                     </button>
                 </div>
