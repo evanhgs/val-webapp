@@ -160,8 +160,8 @@ export const Sidebar: React.FC = () => {
             ? 'left-[80px] top-4' 
             : `left-[${isExpanded ? '260px' : '80px'}] top-4`
       } flex flex-col space-y-4`}>
-        {isSearch && <Search setIsSearch={setIsSearch} isCompact={false} />}
-        {isSetting && <Settings setIsSetting={setIsSetting} isCompact={false} />} 
+        {isSearch && <Search setIsSearch={setIsSearch} setIsSetting={setIsSetting} isCompact={false} />}
+        {isSetting && <Settings setIsSetting={setIsSetting} setIsSearch={setIsSearch} isCompact={false} />} 
       </div>
 
       {/* Espace supplémentaire en bas pour éviter le chevauchement en mode téléphone */}

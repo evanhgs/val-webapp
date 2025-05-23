@@ -8,7 +8,9 @@ RUN mv .env.test .env
 RUN npm run build
  
 # Production Stage
-FROM nginx:stable-alpine AS production
-COPY --from=build /app/build /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+FROM node:18-alpine AS production
+WORKDIR /app
+RUN npm install -g serve
+COPY --from=build /app/dist /app/dist
+EXPOSE 3000
+CMD ["serve", "-s", "dist", "-l", "3000"]

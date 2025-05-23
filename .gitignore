@@ -29,3 +29,4 @@ client/dist-ssr
 node_modules/
 images/
 .env
+dist/
