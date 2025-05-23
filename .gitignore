@@ -28,3 +28,5 @@ client/dist-ssr
 *.vs:
 node_modules/
 images/
+.env
+dist/

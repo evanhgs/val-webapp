@@ -1,0 +1,13 @@
+name: valenstagram-front
+
+services:
+  front:
+    build: 
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - ./node_modules:/app/node_modules
+    environment:
+      - VITE_API_SERVER_URL=http://localhost:8888
