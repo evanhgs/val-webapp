@@ -10,4 +10,10 @@ services:
       - .:/app
       - ./node_modules:/app/node_modules
     environment:
-      - VITE_API_SERVER_URL=http://localhost:8888
+      - VITE_API_SERVER_URL=http://nginx:80
+    networks:
+      - frontend
+
+networks:
+  frontend:
+    external: true
