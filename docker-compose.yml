@@ -2,15 +2,11 @@ name: valenstagram-front
 
 services:
   front:
-    build: 
-      dockerfile: Dockerfile
+    image: evanhs/val-webapp:1.0
     ports:
       - "3000:3000"
-    volumes:
-      - .:/app
-      - ./node_modules:/app/node_modules
     environment:
-      - VITE_API_SERVER_URL=http://nginx:80
+      - VITE_API_SERVER_URL=http://val-api:5000
     networks:
       - frontend
 
