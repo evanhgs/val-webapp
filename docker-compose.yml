@@ -6,7 +6,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - VITE_API_SERVER_URL=http://val-api:5000
+      - VITE_API_SERVER_URL='https://api.albumfamille.site/'
     networks:
       - frontend
 
