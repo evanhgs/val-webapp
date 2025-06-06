@@ -4,7 +4,7 @@ import config from '../config';
 import { UserType, AuthContextType } from '../types/auth';
 
 
-export const AuthContext = createContext<AuthContextType | null>(null); 
+export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
@@ -24,7 +24,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       };
     }
     return null;
-    
+
   });
 
   // Fonction pour valider le token (envoie au backend)
@@ -48,7 +48,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
     };
-    
+
     checkToken();
   }, []);  // Empty dependency array means this effect runs once on mount
 
@@ -67,7 +67,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // supprime le token dans localstorage et reset l'état de user à null
-  const logout = () => { 
+  const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
     localStorage.removeItem("profilePicture");

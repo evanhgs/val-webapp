@@ -1,4 +1,4 @@
-import  { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../components/AuthContext";
 import { Footer } from "../components/FooterComp";
 import { Logout } from "../components/Logout";
@@ -15,7 +15,7 @@ import { FollowUser } from "../types/followProps";
 import { Post } from "../types/post";
 
 const Profile = () => {
-  
+
   const [error, setError] = useState<string | null>(null);
   const [userData, setUserData] = useState<UserType | null>(null);
   const { user } = useContext(AuthContext) || {};
@@ -33,7 +33,7 @@ const Profile = () => {
   const [post, setPost] = useState<Post[]>([]);
   const { showAlert } = useAlert();
 
-  {/** premier hook ajoutat les info de l'affichage du profil */}
+  {/** premier hook ajoutat les info de l'affichage du profil */ }
   useEffect(() => {
     const fetchProfile = async () => {
 
@@ -55,7 +55,7 @@ const Profile = () => {
           website: response.data.website || "",
           created_at: response.data.created_at || "",
           profilePicture: response.data.profile_picture || "default.jpg",
-          id: response.data.id, 
+          id: response.data.id,
           token: token,
         });
       } catch (error) {
@@ -68,7 +68,7 @@ const Profile = () => {
 
 
   useEffect(() => {
-    const fetchFollowers =async () => {
+    const fetchFollowers = async () => {
       if (!token || !userData) return;
 
       try {
@@ -89,13 +89,13 @@ const Profile = () => {
         setPost(postResponse.data.post || []);
 
       } catch (error) {
-          console.error("Erreur lors de la récupération des abonnés/abonnements", error);
+        console.error("Erreur lors de la récupération des abonnés/abonnements", error);
       } finally {
         setIsLoadingFollowers(false);
       }
     };
     fetchFollowers();
-  }, [token, userData]); 
+  }, [token, userData]);
 
   if (error) {
     return (
@@ -107,7 +107,7 @@ const Profile = () => {
     );
   }
 
-  if (!userData){
+  if (!userData) {
     return (
       <div className="text-white text-center mt-10">
         <p>Chargement...</p>
@@ -133,16 +133,16 @@ const Profile = () => {
     <div className="min-h-screen bg-black text-white w-full md:ml-[20px] ml-0">
       {/* page de profil */}
       {isEditing ? (
-        <EditProfileForm 
-          userData={userData} 
-          setIsEditing={setIsEditing} 
-          onUpdateAlert={handleAlertPopup}/>
-      ) : isUploading ? ( 
-          <UploadButton 
-            userData={userData} 
-            setIsUploading={setIsUploading} 
-          /> ) : (
-        
+        <EditProfileForm
+          userData={userData}
+          setIsEditing={setIsEditing}
+          onUpdateAlert={handleAlertPopup} />
+      ) : isUploading ? (
+        <UploadButton
+          userData={userData}
+          setIsUploading={setIsUploading}
+        />) : (
+
         <div className="max-w-4xl mx-auto p-4">
           {/* Section du profil header*/}
           <div className="flex flex-col sm:flex-row sm:items-start sm:space-x-8">
@@ -160,17 +160,17 @@ const Profile = () => {
               <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
                 <h2 className="text-xl font-bold text-center sm:text-left mb-3 sm:mb-0">{userData.username}</h2>
                 <div className="flex flex-wrap justify-center sm:justify-start gap-2">
-                  <button   
+                  <button
                     onClick={() => setIsEditing(true)}
                     className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm cursor-pointer">
                     Modifier le profil
                   </button>
-                  
-                  <button 
+
+                  <button
                     onClick={() => setIsUploading(true)}
                     className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm cursor-pointer">
                     Photo de profil
-                  </button> 
+                  </button>
 
                   <button className="text-gray-400 text-xl cursor-pointer">⚙️</button>
                 </div>
@@ -188,13 +188,13 @@ const Profile = () => {
                   <>
                     <span><strong>{(post?.length ?? 0)}</strong> posts</span>
 
-                    <span 
+                    <span
                       className="hover:text-white cursor-pointer"
                       onClick={() => setShowFollowers(true)}>
                       <strong>{followersCount}</strong> abonnés
                     </span>
 
-                    <span 
+                    <span
                       className="hover:text-white cursor-pointer"
                       onClick={() => setShowFollowed(true)}>
                       <strong>{followedCount}</strong> abonnements
@@ -227,26 +227,26 @@ const Profile = () => {
             <span className="text-gray-500 p-2 hover:border hover:border-white rounded-lg cursor-pointer whitespace-nowrap">🔖 SAUVEGARDÉS</span>
             <span className="text-gray-500 p-2 hover:border hover:border-white rounded-lg cursor-pointer whitespace-nowrap">🏷️ IDENTIFIÉ</span>
           </div>
-          <NavPosts post={post}/>
+          <NavPosts post={post} />
         </div>
       )}
 
       {showFollowers && (
-        <FollowersModal 
-          users={followers} 
-          title="Abonnés" 
-          onClose={() => setShowFollowers(false)} 
+        <FollowersModal
+          users={followers}
+          title="Abonnés"
+          onClose={() => setShowFollowers(false)}
         />
       )}
-      
+
       {showFollowed && (
-        <FollowersModal 
-          users={followed} 
-          title="Abonnements" 
-          onClose={() => setShowFollowed(false)} 
+        <FollowersModal
+          users={followed}
+          title="Abonnements"
+          onClose={() => setShowFollowed(false)}
         />
       )}
-      
+
       <Footer />
     </div>
   );

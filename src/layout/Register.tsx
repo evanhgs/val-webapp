@@ -41,7 +41,7 @@ const Register: React.FC = () => {
     <div className="flex flex-col items-center justify-center min-h-screen bg-black">
       {/* Conteneur principal */}
       <div className="flex flex-col md:flex-row items-center space-y-10 md:space-y-0 md:space-x-10">
-        
+
         <PhoneCarousel />
 
         {/* Formulaire d'inscription */}

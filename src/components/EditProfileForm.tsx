@@ -22,14 +22,14 @@ const EditProfileForm = ({ userData, setIsEditing, onUpdateAlert }: any) => {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
       setIsEditing(false);
-      onUpdateAlert({ 
-        message: "Profil mis à jour avec succès", 
-        type: "success" 
+      onUpdateAlert({
+        message: "Profil mis à jour avec succès",
+        type: "success"
       });
     } catch (error) {
-      onUpdateAlert({ 
-        message: "Erreur lors de la mise à jour", 
-        type: "error" 
+      onUpdateAlert({
+        message: "Erreur lors de la mise à jour",
+        type: "error"
       });
     }
   };
@@ -46,7 +46,7 @@ const EditProfileForm = ({ userData, setIsEditing, onUpdateAlert }: any) => {
           </svg>
         </button>
       </div>
-      
+
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Username */}
         <div>

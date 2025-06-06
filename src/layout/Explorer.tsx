@@ -7,8 +7,8 @@ import axios from "axios";
 import { NavPosts } from "../components/NavPosts";
 
 const Explorer = () => {
-    
-    const [error, setError] = useState<string|null>(null);
+
+    const [error, setError] = useState<string | null>(null);
     const [globalFeed, setGlobalFeed] = useState<UserFeedProps | null>(null);
     const navigate = useNavigate();
     const { user } = useContext(AuthContext) || {};
@@ -24,7 +24,7 @@ const Explorer = () => {
                 }
                 const response = await axios.get(
                     `${config.serverUrl}/post/feed/global`,
-                    { headers: { Authorization: `Bearer ${token}`}}
+                    { headers: { Authorization: `Bearer ${token}` } }
                 );
                 setGlobalFeed({
                     userFeed: response.data.content
@@ -39,7 +39,7 @@ const Explorer = () => {
     return (
         <>
             {error && <div className="error-message">{error}</div>}
-            <NavPosts post={globalFeed?.userFeed || []}/>
+            <NavPosts post={globalFeed?.userFeed || []} />
         </>
     );
 }

@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import Search  from './Search';
+import Search from './Search';
 import Settings from './Settings';
 
 
@@ -37,14 +37,14 @@ export const Sidebar: React.FC = () => {
   // Liste des éléments du menu avec leurs propriétés
   const menuItems = [
     { icon: "🏠", label: "Home", link: "/", isNavLink: true },
-    { icon: "🔍", label: "Chercher", onClick: () => { setIsSetting(false); setIsSearch(true)}, isActive: isSearch },
+    { icon: "🔍", label: "Chercher", onClick: () => { setIsSetting(false); setIsSearch(true) }, isActive: isSearch },
     { icon: "🧭", label: "Explorer", link: "/explorer", isNavLink: true },
     { icon: "▶️", label: "Reels" },
     { icon: "📩", label: "Messages" },
     { icon: "❤️", label: "Notifications" },
     { icon: "➕", label: "Créer", link: "/upload", isNavLink: true },
     { icon: "👤", label: "Profil", link: "/profile", isNavLink: true },
-    { icon: "⚙️", label: "Paramètres", onClick: () => { setIsSearch(false); setIsSetting(true)}, isActive: isSetting }
+    { icon: "⚙️", label: "Paramètres", onClick: () => { setIsSearch(false); setIsSetting(true) }, isActive: isSetting }
   ];
 
   // Classes CSS pour chaque mode d'affichage de la sidebar
@@ -84,17 +84,17 @@ export const Sidebar: React.FC = () => {
   const renderMenuItem = (item: any, index: number) => {
     // Obtenir les styles correspondant au mode d'affichage actuel
     const currentStyle = menuItemStyles[displayMode];
-    
+
     // Classes CSS pour les états actif et hover
     const activeClasses = "border border-white cursor-pointer";
     const hoverClasses = "hover:border hover:border-white cursor-pointer";
-    
+
     // Contenu de l'élément (icône + label conditionnel)
     const content = (
       <>
-        <span 
-          role="img" 
-          aria-label={item.label.toLowerCase()} 
+        <span
+          role="img"
+          aria-label={item.label.toLowerCase()}
           className={`text-xl ${displayMode === 'phone' ? 'text-lg' : ''}`}
         >
           {item.icon}
@@ -107,9 +107,9 @@ export const Sidebar: React.FC = () => {
     if (item.isNavLink) {
       return (
         <li key={index}>
-          <NavLink 
-            to={item.link} 
-            className={({isActive}) => `${currentStyle.item} ${isActive ? activeClasses : hoverClasses}`}
+          <NavLink
+            to={item.link}
+            className={({ isActive }) => `${currentStyle.item} ${isActive ? activeClasses : hoverClasses}`}
           >
             {content}
           </NavLink>
@@ -137,8 +137,8 @@ export const Sidebar: React.FC = () => {
         {/* Bouton de toggle uniquement visible en mode PC ou compact, mais pas en phone */}
         {displayMode !== 'phone' && (
           <div className="flex justify-end mb-4">
-            <button 
-              className="text-gray-400 hover:text-white focus:outline-none" 
+            <button
+              className="text-gray-400 hover:text-white focus:outline-none"
               onClick={toggleSidebar}
             >
               {isExpanded ? '←' : '→'}
@@ -151,17 +151,16 @@ export const Sidebar: React.FC = () => {
           {menuItems.map(renderMenuItem)}
         </ul>
       </div>
-      
+
       {/* Composants extérieurs à la sidebar (Search et Settings) */}
-      <div className={`fixed transition-all duration-300 ${
-        displayMode === 'phone' 
-          ? 'left-4 bottom-20' 
-          : displayMode === 'compact' 
-            ? 'left-[80px] top-4' 
+      <div className={`fixed transition-all duration-300 ${displayMode === 'phone'
+          ? 'left-4 bottom-20'
+          : displayMode === 'compact'
+            ? 'left-[80px] top-4'
             : `left-[${isExpanded ? '260px' : '80px'}] top-4`
-      } flex flex-col space-y-4`}>
+        } flex flex-col space-y-4`}>
         {isSearch && <Search setIsSearch={setIsSearch} setIsSetting={setIsSetting} isCompact={false} />}
-        {isSetting && <Settings setIsSetting={setIsSetting} setIsSearch={setIsSearch} isCompact={false} />} 
+        {isSetting && <Settings setIsSetting={setIsSetting} setIsSearch={setIsSearch} isCompact={false} />}
       </div>
 
       {/* Espace supplémentaire en bas pour éviter le chevauchement en mode téléphone */}

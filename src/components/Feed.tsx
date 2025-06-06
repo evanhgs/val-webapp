@@ -3,8 +3,8 @@ import FollowButton from "./FollowButton";
 import { PostSettings } from "./PostSettings";
 import { UserFeedProps } from '../types/feed';
 
-export const Feed: React.FC<UserFeedProps> = ({userFeed}) => {
-  
+export const Feed: React.FC<UserFeedProps> = ({ userFeed }) => {
+
   return (
     <div className="flex flex-col space-y-6">
       {userFeed.map((post) => (
@@ -12,7 +12,7 @@ export const Feed: React.FC<UserFeedProps> = ({userFeed}) => {
           {/* Header du post */}
           <div className="flex items-center justify-between p-3">
             <div className="flex items-center">
-              <img 
+              <img
                 src={post.user_profile_url ? `${config.serverUrl}/user/profile-picture/${post.user_profile_url}` : `${config.serverUrl}/user/profile-picture/default.jpg`}
                 alt={post.username}
                 className="w-8 h-8 rounded-full object-cover mr-2 border border-gray-700"
@@ -20,21 +20,21 @@ export const Feed: React.FC<UserFeedProps> = ({userFeed}) => {
               <span className="font-semibold text-sm">{post.username}</span>
             </div>
             <div className="ml-auto mr-16">
-              <FollowButton user={{id: post.id, username: post.username}}/> 
+              <FollowButton user={{ id: post.id, username: post.username }} />
             </div>
             {/* settings of your own post */}
             {post && <PostSettings post={post} />}
           </div>
-          
+
           {/* Image du post */}
           <div className="aspect-square bg-gray-800 w-full flex items-center justify-center">
-            <img 
-              src={post.image_url ? `${config.serverUrl}/user/profile-picture/${post.image_url}` : `${config.serverUrl}/user/profile-picture/default.jpg`} 
+            <img
+              src={post.image_url ? `${config.serverUrl}/user/profile-picture/${post.image_url}` : `${config.serverUrl}/user/profile-picture/default.jpg`}
               alt="Post content"
               className="w-full h-full object-cover"
             />
           </div>
-          
+
           {/* Actions du post */}
           <div className="p-3">
             <div className="flex justify-between mb-2">
@@ -62,25 +62,25 @@ export const Feed: React.FC<UserFeedProps> = ({userFeed}) => {
                 </svg>
               </button>
             </div>
-            
+
             {/* Nombres de likes */}
             <p className="font-semibold text-sm mb-1">{/*post.likes*/} J'aime</p>
-            
+
             {/* Caption */}
             <p className="text-sm">
               <span className="font-semibold mr-1">{post.username}</span>
               {post.caption}
             </p>
-            
+
             {/* Voir les commentaires */}
             <p className="text-gray-400 text-sm mt-1 cursor-pointer">
               Voir les {/*post.comments*/} commentaires
             </p>
-            
+
             {/* Temps écoulé */}
-            <p className="text-gray-500 text-xs mt-2">Post publié le {post?.created_at.substring(5,10) || 'YYYY/MM/dd'} à {post?.created_at.substring(10, 16) || 'hh/mm'}</p>
+            <p className="text-gray-500 text-xs mt-2">Post publié le {post?.created_at.substring(5, 10) || 'YYYY/MM/dd'} à {post?.created_at.substring(10, 16) || 'hh/mm'}</p>
           </div>
-          
+
           {/* Ajouter un commentaire */}
           <div className="flex items-center border-t border-gray-800 p-3">
             <button className="mr-3">
@@ -89,9 +89,9 @@ export const Feed: React.FC<UserFeedProps> = ({userFeed}) => {
                 <polyline points="14 2 14 8 20 8"></polyline>
               </svg>
             </button>
-            <input 
-              type="text" 
-              placeholder="Ajouter un commentaire..." 
+            <input
+              type="text"
+              placeholder="Ajouter un commentaire..."
               className="bg-transparent flex-grow outline-none text-sm"
             />
           </div>

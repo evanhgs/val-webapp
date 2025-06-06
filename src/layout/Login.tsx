@@ -11,7 +11,7 @@ const Login: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const { login } = useContext(AuthContext) || {}; 
+  const { login } = useContext(AuthContext) || {};
   const navigate = useNavigate();
 
 
@@ -22,17 +22,17 @@ const Login: React.FC = () => {
     try {
       if (username && password) {
         const response = await axios.post(`${config.serverUrl}/auth/login`, { username, password });
-        if (login){
+        if (login) {
           login(
             response.data.token,
             response.data.user_id,
             response.data.profile_picture,
             response.data.username
-          ); 
+          );
           navigate("/");
         } else {
           setError("Nom d'utilisateur ou mot de passe incorrect.");
-        } 
+        }
       } else {
         setError('Veuillez remplir tous les champs.');
       }
@@ -75,9 +75,9 @@ const Login: React.FC = () => {
               Se connecter
             </button>
           </form>
-          
+
           {error && <p className="text-red-500 text-center mt-3">{error}</p>}
-          
+
           <div className="mt-6 text-center">
             <p>
               Vous n'avez pas de compte ?{" "}

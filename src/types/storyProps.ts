@@ -5,5 +5,5 @@ export interface StoriesProps {
 
 export interface UserStories {
   count_user: number | null;
-  followed_users?: Array<any>; 
+  followed_users?: Array<any>;
 }

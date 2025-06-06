@@ -1,26 +1,26 @@
-import {AuthContext} from "../components/AuthContext.tsx";
-import React, {useContext , useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import { AuthContext } from "../components/AuthContext.tsx";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import config from "../config.ts";
 import { useAlert } from "../components/AlertContext.tsx";
 
 const UploadPost = () => {
-    
+
     const { showAlert } = useAlert();
     const { user } = useContext(AuthContext) || {};
-    const token= user?.token;
+    const token = user?.token;
     const navigate = useNavigate();
     const [file, setFile] = useState<File | null>(null);
     const [error, setError] = useState<string>("");
     const [caption, setCaption] = useState<string>("");
 
-    useEffect(()=>{
+    useEffect(() => {
         if (!token) {
-        setError("Vous devez être connecté pour publier un post.");
-        navigate("/login");
-        return;
-    }
+            setError("Vous devez être connecté pour publier un post.");
+            navigate("/login");
+            return;
+        }
     }, [token, navigate])
 
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,20 +28,20 @@ const UploadPost = () => {
         if (file) {
             setFile(file);
             setError("");
-        }else {
+        } else {
             setError("Aucune image sélectionnée");
         }
     }
     const handleCaptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const text = e.target.value;
-        if (caption.length <= 200 ) {
+        if (caption.length <= 200) {
             setCaption(text);
         }
     };
 
 
     const handleSubmit = async () => {
-        if (!file){
+        if (!file) {
             setError("Veuillez sélectionner une image avant de publier.");
             return;
         } try {
@@ -64,27 +64,27 @@ const UploadPost = () => {
             showAlert('Post publié avec succès', 'success');
             navigate("/profile")
         } catch (error: any) {
-                console.error("Error fetching post:", error);
-                if (error.response) {
-                    const status = error.response.status;
-                    switch (status) {
-                        case 401:
-                            showAlert('Vous devez être connecté pour modifier ce post', 'error');
-                            break;
-                        case 404:
-                            showAlert('Le fichier n\'a pas été trouvé ou n\'est pas sélectionné', 'error');
-                            break;
-                        case 500:
-                            showAlert('Une erreur serveur est survenue', 'error');
-                            break;
-                        case 406:
-                            showAlert('Dommage... ^^', 'info');
-                            break;
-                        default:
-                            showAlert('Une erreur inattendue s\'est produite', 'error');
-                    }
+            console.error("Error fetching post:", error);
+            if (error.response) {
+                const status = error.response.status;
+                switch (status) {
+                    case 401:
+                        showAlert('Vous devez être connecté pour modifier ce post', 'error');
+                        break;
+                    case 404:
+                        showAlert('Le fichier n\'a pas été trouvé ou n\'est pas sélectionné', 'error');
+                        break;
+                    case 500:
+                        showAlert('Une erreur serveur est survenue', 'error');
+                        break;
+                    case 406:
+                        showAlert('Dommage... ^^', 'info');
+                        break;
+                    default:
+                        showAlert('Une erreur inattendue s\'est produite', 'error');
                 }
             }
+        }
     };
 
 
@@ -98,26 +98,26 @@ const UploadPost = () => {
 
                     </button>
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                         xmlns="http://www.w3.org/2000/svg">
+                        xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                              d="M6 18L18 6M6 6l12 12"></path>
+                            d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </div>
                 <div className='mb-4'>
                     <input
                         type='file'
                         className='w-full cursor-pointer rounded-md border border-gray-600 bg-gray-800 text-white outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-gray-600 file:bg-gray-700 file:py-3 file:px-5 file:text-white file:hover:bg-blue-500 file:hover:bg-opacity-20'
-                        onChange={handleChange}/>
+                        onChange={handleChange} />
                     {error && <p className='text-red-500 mt-2'>{error}</p>}
                 </div>
                 <div className="flex flex-wrap flex-col w-full mb-4">
-                  <textarea
-                      className="w-full rounded-md border border-gray-600 bg-gray-800 outline-none focus:outline-none p-2"
-                      placeholder="Ajouter une légende..."
-                      value={caption}
-                      onChange={handleCaptionChange}
-                      maxLength={200}
-                  />
+                    <textarea
+                        className="w-full rounded-md border border-gray-600 bg-gray-800 outline-none focus:outline-none p-2"
+                        placeholder="Ajouter une légende..."
+                        value={caption}
+                        onChange={handleCaptionChange}
+                        maxLength={200}
+                    />
                     <div className="flex justify-end text-sm text-gray-400 mt-1">
                         {caption.length}/200 caractères
                     </div>

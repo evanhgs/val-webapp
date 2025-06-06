@@ -13,7 +13,7 @@ const Layout = () => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -25,7 +25,7 @@ const Layout = () => {
       <div className="relative z-30">
         <Sidebar />
       </div>
-      
+
       {/* main container */}
       <div className="flex flex-col min-h-screen text-white flex-grow">
         <div className={`fixed top-0 right-0 z-20 ${isMobile ? 'left-0' : 'left-[72px] lg:left-[244px]'}`}>

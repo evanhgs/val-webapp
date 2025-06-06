@@ -10,7 +10,7 @@ import { UserProfile } from '../types/user';
 import { UserFeedProps } from '../types/feed';
 
 const Home = () => {
-  const [error, setError] = useState<string|null>(null);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { user } = useContext(AuthContext) || {};
   const token = user?.token;
@@ -31,7 +31,7 @@ const Home = () => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
         // récupération du feed personnalisé en fonction de l'utilisateur connecté
-        const responseFeed = await axios.get( 
+        const responseFeed = await axios.get(
           `${config.serverUrl}/post/feed`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -43,7 +43,7 @@ const Home = () => {
           created_at: response.data.created_at || "",
         });
         setUserFeed({
-          userFeed: responseFeed.data.content, 
+          userFeed: responseFeed.data.content,
           currentUsername: userData?.username
         });
 
@@ -62,22 +62,22 @@ const Home = () => {
           {error}
         </div>
       )}
-      
+
       <div className="w-full max-w-[470px] md:max-w-[600px] lg:max-w-[820px] xl:max-w-[1000px] px-2 md:px-4 relative z-10">
         <div className="mb-6">
-          <Stories 
-            username={userData?.username} 
+          <Stories
+            username={userData?.username}
             profile_picture={userData?.profile_picture}
-          /> 
+          />
         </div>
-        
+
         <div className="flex w-full">
           <div className="w-full lg:mr-8">
-            <Feed userFeed={userFeed?.userFeed || []} currentUsername={userData?.username}/>
-             {/* Passe le tableau de posts au composant Feed, ou un tableau vide si les données ne sont pas encore chargées 
+            <Feed userFeed={userFeed?.userFeed || []} currentUsername={userData?.username} />
+            {/* Passe le tableau de posts au composant Feed, ou un tableau vide si les données ne sont pas encore chargées 
              + envoie de l'utilisateur courant dans le feed pour la vérif de la propriété du post */}
           </div>
-          
+
           <div className="hidden lg:block w-[320px] flex-shrink-0">
             <div className="sticky top-20">
               <Suggestions />

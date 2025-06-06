@@ -3,11 +3,11 @@ import { AlertType, Alert, AlertPopup } from '../types/alert';
 
 const AlertContext = createContext<AlertPopup | undefined>(undefined);
 
-export const AlertProvider = ({children}: {children: ReactNode}) => {
+export const AlertProvider = ({ children }: { children: ReactNode }) => {
 
     const [alert, setAlert] = useState<Alert | null>(null);
     const showAlert = (message: string, type: AlertType) => {
-        setAlert({message, type});
+        setAlert({ message, type });
         setTimeout(() => setAlert(null), 3000);
     }
     const hideAlert = () => setAlert(null);

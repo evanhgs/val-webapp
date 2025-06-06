@@ -1,4 +1,4 @@
-export interface UserType  {
+export interface UserType {
   username: string;
   email?: string;
   bio?: string;
@@ -10,7 +10,7 @@ export interface UserType  {
 }
 
 export interface AuthContextType {
-  user: UserType | null;                            
+  user: UserType | null;
   login: (token: string, username: string, profilePicture: string, id: string) => void;
-  logout: ()=> void;
+  logout: () => void;
 }

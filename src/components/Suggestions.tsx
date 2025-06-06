@@ -9,13 +9,13 @@ export const Suggestions: React.FC = () => {
         {[...Array(5)].map((_, i) => (
           <div key={i} className="flex items-center justify-between mb-4">
             <div className="flex items-center">
-              <img 
-                src={`/api/placeholder/${40}/${40}`} 
-                alt="Profile" 
+              <img
+                src={`/api/placeholder/${40}/${40}`}
+                alt="Profile"
                 className="w-10 h-10 rounded-full object-cover border border-gray-700"
               />
               <div className="ml-3">
-                <p className="text-sm font-semibold">utilisateur_{i+1}</p>
+                <p className="text-sm font-semibold">utilisateur_{i + 1}</p>
                 <p className="text-xs text-gray-400">Suggestions pour vous</p>
               </div>
             </div>

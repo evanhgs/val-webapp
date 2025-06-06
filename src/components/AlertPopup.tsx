@@ -6,9 +6,9 @@ const AlertPopup: React.FC = () => {
 
     if (!alert) return null;
 
-    const bgColor = 
+    const bgColor =
         alert.type === 'success' ? '#4CAF50' :
-        alert.type === 'error' ? '#F44336' : '#2196F3';
+            alert.type === 'error' ? '#F44336' : '#2196F3';
 
     return (
         <div style={{
@@ -27,7 +27,7 @@ const AlertPopup: React.FC = () => {
             gap: '8px'
         }}>
             <span>{alert.message}</span>
-            <button 
+            <button
                 onClick={hideAlert}
                 style={{
                     background: 'none',
