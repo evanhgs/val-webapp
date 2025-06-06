@@ -38,7 +38,7 @@ export const Sidebar: React.FC = () => {
   const menuItems = [
     { icon: "🏠", label: "Home", link: "/", isNavLink: true },
     { icon: "🔍", label: "Chercher", onClick: () => { setIsSetting(false); setIsSearch(true)}, isActive: isSearch },
-    { icon: "🧭", label: "Explorer" },
+    { icon: "🧭", label: "Explorer", link: "/explorer", isNavLink: true },
     { icon: "▶️", label: "Reels" },
     { icon: "📩", label: "Messages" },
     { icon: "❤️", label: "Notifications" },

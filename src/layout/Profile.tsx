@@ -222,6 +222,11 @@ const Profile = () => {
           </div>
 
           {/* Navigation Posts */}
+          <div className="border-t border-gray-700 mt-8 flex justify-center space-x-2 sm:space-x-10 py-2 overflow-x-auto">
+            <span className="text-white font-bold p-2 hover:border hover:border-white rounded-lg cursor-pointer whitespace-nowrap">📷 POSTS</span>
+            <span className="text-gray-500 p-2 hover:border hover:border-white rounded-lg cursor-pointer whitespace-nowrap">🔖 SAUVEGARDÉS</span>
+            <span className="text-gray-500 p-2 hover:border hover:border-white rounded-lg cursor-pointer whitespace-nowrap">🏷️ IDENTIFIÉ</span>
+          </div>
           <NavPosts post={post}/>
         </div>
       )}

@@ -5,11 +5,7 @@ import { NavPostsProps } from '../types/post';
 export const NavPosts = ({post}: NavPostsProps) => {
     return (
         <div className=""> {/** todo: implement tags */}
-            <div className="border-t border-gray-700 mt-8 flex justify-center space-x-2 sm:space-x-10 py-2 overflow-x-auto">
-              <span className="text-white font-bold p-2 hover:border hover:border-white rounded-lg cursor-pointer whitespace-nowrap">📷 POSTS</span>
-              <span className="text-gray-500 p-2 hover:border hover:border-white rounded-lg cursor-pointer whitespace-nowrap">🔖 SAUVEGARDÉS</span>
-              <span className="text-gray-500 p-2 hover:border hover:border-white rounded-lg cursor-pointer whitespace-nowrap">🏷️ IDENTIFIÉ</span>
-            </div>
+            
 
             <div className="text-center mt-8 px-4">
               {/** get all post from user and display like/comment relation in galery &&&&& clickable comp that redirect onto the post*/}

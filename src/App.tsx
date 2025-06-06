@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter , Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./components/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./layout/Home";
@@ -11,12 +11,13 @@ import ForeignProfile from "./layout/ForeignProfile";
 import UploadPost from "./layout/UploadPost";
 import ShowPost from "./layout/Post";
 import {AlertProvider} from "./components/AlertContext.tsx";
+import Explorer from "./layout/Explorer.tsx";
 
 const App: React.FC = () => {
   return (
     <AuthProvider>
       <AlertProvider>
-        <Router>
+        <BrowserRouter>
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
@@ -28,10 +29,11 @@ const App: React.FC = () => {
                 <Route path="/profile/:username" element={<ForeignProfile />} />
                 <Route path="/upload" element={<UploadPost/>} />
                 <Route path="/post/:id" element={<ShowPost />} />
+                <Route path="/explorer" element={<Explorer />} />
               </Route>
             </Route>
           </Routes>
-        </Router>
+        </BrowserRouter>
       </AlertProvider>
     </AuthProvider>
   );
