@@ -149,7 +149,7 @@ const Profile = () => {
             {/* Photo de profil  */}
             <div className="flex justify-center sm:justify-start mb-6 sm:mb-0">
               <img
-                src={`${config.serverUrl}/user/profile-picture/${userData.profilePicture}` || `${config.serverUrl}/user/profile-picture/default.jpg`}
+                src={`${config.serverUrl}/user/picture/${userData.profilePicture}` || `${config.serverUrl}/user/picture/default.jpg`}
                 alt="Profile"
                 className="w-20 h-20 sm:w-28 sm:h-28 rounded-full border-2 border-gray-600"
               />

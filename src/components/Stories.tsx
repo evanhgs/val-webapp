@@ -79,7 +79,7 @@ export const Stories: React.FC<StoriesProps> = ({ username, profile_picture }) =
           <div className="flex flex-col items-center flex-shrink-0 scroll-snap-align-start" style={{ width: '72px', minWidth: '72px' }}>
             <div className="ring-2 ring-gradient-to-r from-pink-500 via-red-500 to-yellow-500 rounded-full p-0.5">
               <img
-                src={profile_picture ? `${config.serverUrl}/user/profile-picture/${profile_picture}` : `${config.serverUrl}/user/profile-picture/default.jpg`}
+                src={profile_picture ? `${config.serverUrl}/user/picture/${profile_picture}` : `${config.serverUrl}/user/picture/default.jpg`}
                 alt="Profile"
                 className="w-14 h-14 rounded-full object-cover border-2 border-black"
               />
@@ -98,7 +98,7 @@ export const Stories: React.FC<StoriesProps> = ({ username, profile_picture }) =
           <div key={index} className="flex flex-col items-center flex-shrink-0 scroll-snap-align-start" style={{ width: '72px', minWidth: '72px' }}>
             <div className="ring-2 ring-gradient-to-r from-pink-500 via-red-500 to-yellow-500 rounded-full p-0.5">
               <img
-                src={user.profile_picture ? `${config.serverUrl}/user/profile-picture/${user.profile_picture}` : `${config.serverUrl}/user/profile-picture/default.jpg`}
+                src={user.profile_picture ? `${config.serverUrl}/user/picture/${user.profile_picture}` : `${config.serverUrl}/user/picture/default.jpg`}
                 alt="Profile"
                 className="w-14 h-14 rounded-full object-cover border-2 border-black"
               />

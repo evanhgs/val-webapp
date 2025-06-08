@@ -36,7 +36,7 @@ export const FollowersModal = ({ users, title, onClose }: { users: FollowUser[],
                                 }}
                             >
                                 <img
-                                    src={user.profile_picture ? `${config.serverUrl}/user/profile-picture/${user.profile_picture}` : `${config.serverUrl}/user/profile-picture/default.jpg`}
+                                    src={user.profile_picture ? `${config.serverUrl}/user/picture/${user.profile_picture}` : `${config.serverUrl}/user/picture/default.jpg`}
                                     alt={user.username}
                                     className="w-10 h-10 rounded-full"
                                 />

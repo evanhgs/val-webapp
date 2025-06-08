@@ -13,7 +13,7 @@ export const Feed: React.FC<UserFeedProps> = ({ userFeed }) => {
           <div className="flex items-center justify-between p-3">
             <div className="flex items-center">
               <img
-                src={post.user_profile_url ? `${config.serverUrl}/user/profile-picture/${post.user_profile_url}` : `${config.serverUrl}/user/profile-picture/default.jpg`}
+                src={post.user_profile_url ? `${config.serverUrl}/user/picture/${post.user_profile_url}` : `${config.serverUrl}/user/picture/default.jpg`}
                 alt={post.username}
                 className="w-8 h-8 rounded-full object-cover mr-2 border border-gray-700"
               />
@@ -29,7 +29,7 @@ export const Feed: React.FC<UserFeedProps> = ({ userFeed }) => {
           {/* Image du post */}
           <div className="aspect-square bg-gray-800 w-full flex items-center justify-center">
             <img
-              src={post.image_url ? `${config.serverUrl}/user/profile-picture/${post.image_url}` : `${config.serverUrl}/user/profile-picture/default.jpg`}
+              src={post.image_url ? `${config.serverUrl}/user/picture/${post.image_url}` : `${config.serverUrl}/user/picture/default.jpg`}
               alt="Post content"
               className="w-full h-full object-cover"
             />

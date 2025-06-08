@@ -15,7 +15,7 @@ export const NavPosts = ({ post }: NavPostsProps) => {
               <div key={`post-${index}`} className="aspect-square relative group cursor-pointer">
                 <NavLink to={`/post/${p.id}`}>
                   <img
-                    src={`${config.serverUrl}/user/profile-picture/${p.image_url}`}
+                    src={`${config.serverUrl}/user/picture/${p.image_url}`}
                     alt={p.caption}
                     className="w-full h-full object-cover"
                   />

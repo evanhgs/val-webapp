@@ -63,7 +63,7 @@ const ShowPost = () => {
                     {/** header  */}
                     <div className="flex items-center p-4 border-b">
                         <img
-                            src={`${config.serverUrl}/user/profile-picture/${post.user_profile_url}` || `${config.serverUrl}/user/profile-picture/default.jpg`}
+                            src={`${config.serverUrl}/user/picture/${post.user_profile_url}` || `${config.serverUrl}/user/picture/default.jpg`}
                             alt={post?.username || 'Utilisateur'}
                             className="w-10 h-10 rounded-full object-cover"
                         />
@@ -79,7 +79,7 @@ const ShowPost = () => {
 
                     <div className="post-image-container mt-10">
                         <img
-                            src={`${config.serverUrl}/user/profile-picture/${post.image_url}` || `${config.serverUrl}/user/profile-picture/default.jpg`}
+                            src={`${config.serverUrl}/user/picture/${post.image_url}` || `${config.serverUrl}/user/picture/default.jpg`}
                             alt="Post content"
                             className="w-full object-cover max-h-[600px] rounded-md"
                         />

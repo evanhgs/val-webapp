@@ -28,7 +28,7 @@ const Search: React.FC<SearchProps> = ({ setIsSearch, isCompact }) => {
           : [{
             id: "0",
             username: "Personne n'a été trouvé",
-            profilePicture: `${config.serverUrl}/user/profile-picture/default.jpg`
+            profilePicture: `${config.serverUrl}/user/picture/default.jpg`
           }]
       });
       setShowSearchResult(true);
@@ -38,7 +38,7 @@ const Search: React.FC<SearchProps> = ({ setIsSearch, isCompact }) => {
         users: [{
           id: "0",
           username: "Personne n'a été trouvé",
-          profile_picture: `${config.serverUrl}/user/profile-picture/default.jpg`
+          profile_picture: `${config.serverUrl}/user/picture/default.jpg`
         }]
       });
       setShowSearchResult(true);
