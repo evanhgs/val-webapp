@@ -8,7 +8,7 @@ const AlertPopup: React.FC = () => {
 
     const bgColor =
         alert.type === 'success' ? '#4CAF50' :
-            alert.type === 'error' ? '#F44336' : '#2196F3';
+            alert.type === 'error' ? '#F44336' : '#ebae21';
 
     return (
         <div style={{

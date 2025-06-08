@@ -2,6 +2,7 @@ import config from "../config";
 import FollowButton from "./FollowButton";
 import { PostSettings } from "./PostSettings";
 import { UserFeedProps } from '../types/feed';
+import { LikeButton } from "./LikeButton";
 
 export const Feed: React.FC<UserFeedProps> = ({ userFeed }) => {
 
@@ -39,11 +40,8 @@ export const Feed: React.FC<UserFeedProps> = ({ userFeed }) => {
           <div className="p-3">
             <div className="flex justify-between mb-2">
               <div className="flex space-x-4">
-                <button>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"></path>
-                  </svg>
-                </button>
+
+                <LikeButton postId={post?.id} userId="" id="" createdAt=""/>
                 <button>
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
