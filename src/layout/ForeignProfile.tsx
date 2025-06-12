@@ -100,6 +100,7 @@ const ForeignProfile = () => {
       </div>
     )
   }
+  console.log("followData complet", followData);
 
   return (
     <div className="min-h-screen bg-black text-white w-full md:ml-[20px] ml-0">
@@ -179,7 +180,7 @@ const ForeignProfile = () => {
 
       {showFollowers &&  (
         <FollowersModal
-          users={followData?.followers?.users || []}
+          users={followData?.followers?.followers || []}
           title="Abonnés"
           onClose={() => setShowFollowers(false)}
         />
@@ -187,7 +188,7 @@ const ForeignProfile = () => {
 
       {showFollowed && (
         <FollowersModal
-          users={followData?.followed?.users || []}
+          users={followData?.followed?.followed || []}
           title="Abonnements"
           onClose={() => setShowFollowed(false)}
         />
