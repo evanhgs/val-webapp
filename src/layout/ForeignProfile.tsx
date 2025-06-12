@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../components/AuthContext";
 import { Footer } from "../components/FooterComp";
-import { Logout } from "../components/Logout";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import config from '../config';
@@ -9,25 +8,20 @@ import { FollowersModal } from '../components/FollowersModal';
 import { NavPosts } from "../components/NavPosts";
 import FollowButton from "../components/FollowButton.tsx";
 import { UserProfile } from '../types/user.ts';
-import { FollowUser } from '../types/followProps.ts';
 import { Post } from '../types/post.ts';
+import { useAlert } from "../components/AlertContext.tsx";
+import { FollowPropertiesData } from "../types/followProps.ts";
+import { useFollowProperties } from "../components/FollowProperties.ts";
 
 const ForeignProfile = () => {
 
-  const [error, setError] = useState<string | null>(null);
-  const [userData, setUserData] = useState<UserProfile | null>(null);
+  const [userData, setUserData] = useState<UserProfile | null>(null); // donnée du profil de la page
+  const [followData, setFollowData] = useState<FollowPropertiesData | null>(null);
   const { user } = useContext(AuthContext) || {};
   const token = user?.token;
+  const { showAlert } = useAlert();
   const navigate = useNavigate();
-
-  const [isLoadingFollowers, setIsLoadingFollowers] = useState(false)
-
-  const [followers, setFollowers] = useState<FollowUser[]>([]); // liste des utilisateurs 
-  const [followersCount, setFollowersCount] = useState(0); // count (precook in route) 
-
-  const [followed, setFollowed] = useState<FollowUser[]>([]);
-  const [followedCount, setFollowedCount] = useState(0);
-
+  const [isLoading, setIsLoading] = useState(false)
   const [showFollowers, setShowFollowers] = useState(false);
   const [showFollowed, setShowFollowed] = useState(false);
 
@@ -35,15 +29,15 @@ const ForeignProfile = () => {
   const { username } = useParams<{ username: string }>();
   const [post, setPost] = useState<Post[]>([]);
 
+  // setup le profil du frero de la page
   useEffect(() => {
     const fetchProfile = async () => {
+      if (!token || !username) {
+        showAlert("Vous devez etre connecté pour voir votre profil.", "info");
+        navigate("/login");
+        return;
+      }
       try {
-        if (!token) {
-          setError("Vous devez etre connecté pour voir votre profil.");
-          navigate("/login");
-          return;
-        }
-
         const response = await axios.get(
           `${config.serverUrl}/user/profile/${username}`,
           { headers: { Authorization: `Bearer ${token}` } }
@@ -52,63 +46,59 @@ const ForeignProfile = () => {
           username: response.data.username,
           bio: response.data.bio || "Aucune bio disponible.",
           website: response.data.website || "",
-          created_at: new Date(response.data.created_at).toLocaleDateString(),
+          created_at: response.data.created_at || "",
           profile_picture: response.data.profile_picture || "default.jpg",
         });
       } catch (error) {
-        console.error("Erreur lors de la récupération du profil: ", error);
-        setError("Impossible de récupérer les infos du profil.");
+        showAlert("Impossible de récupérer les infos du profil.", "error");
       }
     };
     fetchProfile();
-  }, [token, navigate, username]); // Added username as dependency
+  }, [token, username, navigate]);
 
+  // charge ses données de follower, followed 
   useEffect(() => {
-    const fetchFollowers = async () => {
-      if (!token || !userData) return;
-
+    const fetchFollowData = async () => {
+      if (!userData || !user?.id) return;
       try {
-        setIsLoadingFollowers(true);
+        setIsLoading(true);
+        const followInfo = await useFollowProperties(userData.username);
+        setFollowData(followInfo);
+      } catch (error) {
+        showAlert('Erreur lors du chargement des abonnements et abonnés', 'error');
+      } finally {
+        setIsLoading(false);
+      };
+    };
+    fetchFollowData();
+  }, [userData?.username]);
 
-        const followerResponse = await axios.get(`${config.serverUrl}/follow/get-follow/${userData.username}`);
-        const followedResponse = await axios.get(`${config.serverUrl}/follow/get-followed/${userData.username}`);
+  // fetch les posts de l'utilisateur de la page
+  useEffect(() => {
+    const fetchPosts = async () => {
+      if (!userData?.username || !token) return;
+      try {
+        setIsLoading(true);
         const postResponse = await axios.get(
           `${config.serverUrl}/post/feed/${userData.username}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-
-        setFollowers(followerResponse.data.followers);
-        setFollowersCount(followerResponse.data.count);
-        setFollowed(followedResponse.data.followed);
-        setFollowedCount(followedResponse.data.count);
         setPost(postResponse.data.post || []);
-
-
       } catch (error) {
-        console.error("Erreur lors de la récupération des abonnés/abonnements", error);
+        showAlert('Une erreur est survenue lors du chargement des posts', 'error');
       } finally {
-        setIsLoadingFollowers(false);
+        setIsLoading(false);
       }
     };
-    fetchFollowers();
-  }, [token, userData]);
-
-  if (error) {
-    return (
-      <div className="text-white text-center mt-10">
-        <p>{error}</p>
-        <p>Si vous rencontrez plusieurs erreur à la suite essayez de vous reconnecter</p>
-        <Logout />
-      </div>
-    );
-  }
+    fetchPosts();
+  }, [userData?.username, token]);
 
   if (!userData) {
     return (
       <div className="text-white text-center mt-10">
         <p>Chargement...</p>
       </div>
-    );
+    )
   }
 
   return (
@@ -133,12 +123,12 @@ const ForeignProfile = () => {
 
           <div className="flex-1">
             <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
-              <h2 className="text-xl font-bold text-center sm:text-left mb-3 sm:mb-0">{userData.username}</h2>
-              <FollowButton user={{ id: user?.id || '', username: userData.username }} />
+              <h2 className="text-xl font-bold text-center sm:text-left mb-3 sm:mb-0">{userData?.username}</h2>
+              <FollowButton user={{ id: user?.id || '', username: userData.username } as { id: string, username: string }} />
             </div>
 
             <div className="flex justify-center sm:justify-start space-x-6 mt-4 text-gray-300">
-              {isLoadingFollowers ? (
+              {isLoading ? (
                 <>
                   <span><strong>...</strong> posts</span>
                   <span><strong>...</strong> abonnés</span>
@@ -151,13 +141,13 @@ const ForeignProfile = () => {
                   <span
                     className="hover:text-white cursor-pointer"
                     onClick={() => setShowFollowers(true)}>
-                    <strong>{followersCount}</strong> abonnés
+                    <strong>{followData?.followers?.count ?? 0}</strong> abonnés
                   </span>
 
                   <span
                     className="hover:text-white cursor-pointer"
                     onClick={() => setShowFollowed(true)}>
-                    <strong>{followedCount}</strong> abonnements
+                    <strong>{followData?.followed?.count ?? 0}</strong> abonnements
                   </span>
                 </>
               )}
@@ -187,9 +177,9 @@ const ForeignProfile = () => {
 
       </div>
 
-      {showFollowers && (
+      {showFollowers &&  (
         <FollowersModal
-          users={followers}
+          users={followData?.followers?.users || []}
           title="Abonnés"
           onClose={() => setShowFollowers(false)}
         />
@@ -197,7 +187,7 @@ const ForeignProfile = () => {
 
       {showFollowed && (
         <FollowersModal
-          users={followed}
+          users={followData?.followed?.users || []}
           title="Abonnements"
           onClose={() => setShowFollowed(false)}
         />

@@ -12,6 +12,8 @@ export const LikeButton: React.FC<Like> = ({ postId }) => {
     // utilisation de likeContent pour afficher les informations sur le survol du bouton like
     const { showAlert } = useAlert();
 
+    const [isLiked, setIsLiked] = useState(false);
+
     const likePost = async () => {
         try {
             const response = await axios.put(
@@ -26,6 +28,7 @@ export const LikeButton: React.FC<Like> = ({ postId }) => {
                 createdAt: response.data.created_at
             })
             showAlert("Vous avez liké ce post !", 'success');
+            setIsLiked(!isLiked);
         } catch (error: any) {
             if (error.response) {
                 const { status } = error.response;
@@ -38,7 +41,7 @@ export const LikeButton: React.FC<Like> = ({ postId }) => {
                         break;
                     case 404:
                         showAlert('Post introuvable', 'error');
-                        break; 
+                        break;
                     case 500:
                         showAlert('Une erreur serveur est survenue', 'error');
                         break;
@@ -46,12 +49,14 @@ export const LikeButton: React.FC<Like> = ({ postId }) => {
             }
         }
     };
-    
+
 
     return (
         <>
             <button
-                onClick={likePost}>
+                onClick={likePost}
+                className={`transition-all duration-200 hover:scale-110 ${isLiked ? 'text-red-500' : 'text-white hover:text-red-400'
+                    }`}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"></path>
                 </svg>
