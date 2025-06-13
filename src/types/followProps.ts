@@ -6,6 +6,7 @@ export interface FollowUser {
 
 export interface FollowButtonProps {
     user: FollowUser;
+    isFollowed: boolean;
 }
 
 export interface FollowPropertiesData {

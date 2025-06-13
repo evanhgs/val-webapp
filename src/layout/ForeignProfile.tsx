@@ -62,7 +62,7 @@ const ForeignProfile = () => {
       if (!userData || !user?.id) return;
       try {
         setIsLoading(true);
-        const followInfo = await useFollowProperties(userData.username);
+        const followInfo = await useFollowProperties(userData.username, user?.id);
         setFollowData(followInfo);
       } catch (error) {
         showAlert('Erreur lors du chargement des abonnements et abonnés', 'error');
@@ -125,7 +125,7 @@ const ForeignProfile = () => {
           <div className="flex-1">
             <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
               <h2 className="text-xl font-bold text-center sm:text-left mb-3 sm:mb-0">{userData?.username}</h2>
-              <FollowButton user={{ id: user?.id || '', username: userData.username } as { id: string, username: string }} />
+              <FollowButton user={{ id: user?.id || '', username: userData.username }} isFollowed={followData?.isFollowed || false} />
             </div>
 
             <div className="flex justify-center sm:justify-start space-x-6 mt-4 text-gray-300">

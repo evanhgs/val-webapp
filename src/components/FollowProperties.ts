@@ -8,9 +8,9 @@ import config from '../config';
 
 export const useFollowProperties = async (
     username: string,
-    currentUserId?: string
+    currentUserId: string
 ): Promise<FollowPropertiesData> => {
-    try {
+    try { 
         const [followerResponse, followedResponse] = await Promise.all([
             axios.get(`${config.serverUrl}/follow/get-follow/${username}`),
             axios.get(`${config.serverUrl}/follow/get-followed/${username}`)
@@ -19,7 +19,7 @@ export const useFollowProperties = async (
         const followers = followerResponse.data;
         const followed = followedResponse.data;
 
-        const isFollowed = followers?.followers?.some((f: any) => f.id === currentUserId) ?? false;
+        const isFollowed = followers?.followers?.some((f: any) => f.id === currentUserId);
 
         return {
             followers,
