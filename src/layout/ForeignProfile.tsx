@@ -178,7 +178,7 @@ const ForeignProfile = () => {
 
       </div>
 
-      {showFollowers &&  (
+      {showFollowers && (
         <FollowersModal
           users={followData?.followers?.followers || []}
           title="Abonnés"

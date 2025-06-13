@@ -4,7 +4,7 @@ import { PostSettings } from "./PostSettings";
 import { UserFeedProps } from '../types/feed';
 import { LikeButton } from "./LikeButton";
 
-export const Feed: React.FC<UserFeedProps> = ({ userFeed }) => {
+export const Feed: React.FC<UserFeedProps> = ({ userFeed, followData }) => {
 
   return (
     <div className="flex flex-col space-y-6">
@@ -21,7 +21,7 @@ export const Feed: React.FC<UserFeedProps> = ({ userFeed }) => {
               <span className="font-semibold text-sm">{post.username}</span>
             </div>
             <div className="ml-auto mr-16">
-              <FollowButton user={{ id: post.id, username: post.username }} />
+              <FollowButton user={{ id: post.id , username: post.username }} isFollowed={followData?.isFollowed || false} />
             </div>
             {/* settings of your own post */}
             {post && <PostSettings post={post} />}
@@ -41,7 +41,7 @@ export const Feed: React.FC<UserFeedProps> = ({ userFeed }) => {
             <div className="flex justify-between mb-2">
               <div className="flex space-x-4">
 
-                <LikeButton postId={post?.id} userId="" id="" createdAt=""/>
+                <LikeButton postId={post?.id} userId="" id="" createdAt="" />
                 <button>
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
