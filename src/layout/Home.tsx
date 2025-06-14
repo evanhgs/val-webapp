@@ -8,8 +8,6 @@ import { AuthContext } from "../components/AuthContext";
 import config from "../config";
 import { UserProfile } from '../types/user';
 import { UserFeedProps } from '../types/feed';
-import { FollowPropertiesData } from "../types/followProps";
-import { useFollowProperties } from "../components/FollowProperties";
 
 const Home = () => {
   const [error, setError] = useState<string | null>(null);
@@ -18,7 +16,6 @@ const Home = () => {
   const token = user?.token;
   const [userData, setUserData] = useState<UserProfile | null>(null);
   const [userFeed, setUserFeed] = useState<UserFeedProps | null>(null);
-  const [followData, setFollowData] = useState<FollowPropertiesData | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -50,11 +47,6 @@ const Home = () => {
           currentUsername: userData?.username
         });
 
-        if (response.data.username) {
-          const followInfo = await useFollowProperties(response.data.username, user?.id);
-          setFollowData(followInfo);
-        }
-
       } catch (error) {
         console.error("Erreur lors de la récupération du compte: ", error);
         setError("Impossible de récupérer les infos du compte.");
@@ -84,7 +76,7 @@ const Home = () => {
             <Feed
               userFeed={userFeed?.userFeed || []}
               currentUsername={userData?.username}
-              followData={followData || undefined} />
+            />
             {/* Passe le tableau de posts au composant Feed, ou un tableau vide si les données ne sont pas encore chargées 
              + envoie de l'utilisateur courant dans le feed pour la vérif de la propriété du post */}
           </div>

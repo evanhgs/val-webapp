@@ -25,21 +25,13 @@ const Search: React.FC<SearchProps> = ({ setIsSearch, isCompact }) => {
       setSearchResult({
         users: response.data.users.length > 0
           ? response.data.users
-          : [{
-            id: "0",
-            username: "Personne n'a été trouvé",
-            profilePicture: `${config.serverUrl}/user/picture/default.jpg`
-          }]
+          : []
       });
       setShowSearchResult(true);
     } catch (error) {
       console.error("Erreur lors de la recherche:", error);
       setSearchResult({
-        users: [{
-          id: "0",
-          username: "Personne n'a été trouvé",
-          profile_picture: `${config.serverUrl}/user/picture/default.jpg`
-        }]
+        users: []
       });
       setShowSearchResult(true);
     } finally {
