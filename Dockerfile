@@ -4,7 +4,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-RUN mv .env.test .env
+RUN mv .exemple.env .env
 RUN npm run build
  
 # Production Stage
