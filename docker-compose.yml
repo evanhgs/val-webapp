@@ -2,7 +2,7 @@ name: valenstagram-front
 
 services:
   front:
-    image: evanhs/val-webapp:1.0
+    image: evanhs/val-webapp:latest
     ports:
       - "3000:3000"
     environment:
