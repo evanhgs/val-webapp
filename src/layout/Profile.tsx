@@ -1,111 +1,123 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../components/AuthContext";
 import { Footer } from "../components/FooterComp";
-import { Logout } from "../components/Logout";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import EditProfileForm from "../components/EditProfileForm";
 import UploadButton from "../components/UploadProfilePic";
 import config from '../config';
 import { FollowersModal } from '../components/FollowersModal';
 import { NavPosts } from "../components/NavPosts";
 import { useAlert } from "../components/AlertContext";
-import { UserType } from "../types/auth";
 import { FollowUser } from "../types/followProps";
 import { Post } from "../types/post";
+import { UserProfile } from "../types/user";
+import FollowButton from "../components/FollowButton";
 
 const Profile = () => {
 
-  const [error, setError] = useState<string | null>(null);
-  const [userData, setUserData] = useState<UserType | null>(null);
   const { user } = useContext(AuthContext) || {};
   const token = user?.token;
   const navigate = useNavigate();
-  const [isEditing, setIsEditing] = useState(false); // pour le form du profil 
-  const [isUploading, setIsUploading] = useState(false); // pour l'upload de la pp
-  const [isLoadingFollowers, setIsLoadingFollowers] = useState(false)
-  const [followers, setFollowers] = useState<FollowUser[]>([]); // liste des utilisateurs 
-  const [followersCount, setFollowersCount] = useState(0); // count (precook in route)
-  const [followed, setFollowed] = useState<FollowUser[]>([]);
-  const [followedCount, setFollowedCount] = useState(0);
-  const [showFollowers, setShowFollowers] = useState(false);
-  const [showFollowed, setShowFollowed] = useState(false);
-  const [post, setPost] = useState<Post[]>([]);
   const { showAlert } = useAlert();
 
-  {/** premier hook ajoutat les info de l'affichage du profil */ }
+  // etats pour les modales et formulaire
+  const [userData, setUserData] = useState<UserProfile | null>(null); // utilisateur affiché
+  const [isEditing, setIsEditing] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [showFollowers, setShowFollowers] = useState(false);
+  const [showFollowed, setShowFollowed] = useState(false);
+
+  // etats pour les followers data et posts 
+  const [isLoadingFollowers, setIsLoadingFollowers] = useState(false)
+  const [followers, setFollowers] = useState<FollowUser[]>([]);
+  const [followed, setFollowed] = useState<FollowUser[]>([]);
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followedCount, setFollowedCount] = useState(0);
+  const [post, setPost] = useState<Post[]>([]);
+
+  const { username: urlUsername } = useParams<{ username: string }>();
+
+  const isOwnProfile = !urlUsername || urlUsername === user?.username;
+  const targetUsername = urlUsername || user?.username; // own user to default (mieux que rien) 
+
+  // setup axios
+  const axiosInstance = axios.create({
+    baseURL: config.serverUrl,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer: ${token}` })
+    }
+  });
+
+  /** tout en parallèle
+   * fetch les posts (plus lourd)
+   * fetch les données du profil
+   * fetch les abonnés et abonnements
+   * gestion des erreurs
+  */
+
+  // récupérer les données du profil
   useEffect(() => {
     const fetchProfile = async () => {
+      if (!token) {
+        showAlert('Vous devez être connecté pour voir se profil', 'info');
+        navigate('/login');
+        return;
+      }
+
+      if (!targetUsername) {
+        showAlert('Nom d\'utilisateur introuvable', 'error');
+        return;
+      }
 
       try {
-        if (!token) {
-          setError("Vous devez etre connecté pour voir votre profil.");
-          navigate("/login");
-          return;
-        }
+        const endpoint = isOwnProfile ? "/user/profile" : `/user/profile/${targetUsername}`;
+        const response = await axiosInstance.get(endpoint);
 
-        const response = await axios.get(
-          `${config.serverUrl}/user/profile`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
         setUserData({
           username: response.data.username,
           email: response.data.email,
           bio: response.data.bio || "Aucune bio disponible.",
           website: response.data.website || "",
           created_at: response.data.created_at || "",
-          profilePicture: response.data.profile_picture || "default.jpg",
-          id: response.data.id,
-          token: token,
+          profile_picture: response.data.profile_picture || "default.jpg",
         });
       } catch (error) {
-        console.error("Erreur lors de la récupération du profil: ", error);
-        setError("Impossible de récupérer les infos du profil.");
+        showAlert('mpossible de récupérer les informations du profil.', 'error');
       }
     };
+
     fetchProfile();
-  }, [token, navigate]);
+  }, [token, targetUsername, isOwnProfile, navigate]);
 
 
+  // récupération des abonnés abonnements et posts
   useEffect(() => {
-    const fetchFollowers = async () => {
-      if (!token || !userData) return;
+    const fetchProfileData = async () => {
+      if (!token || !userData?.username) return;
 
       try {
         setIsLoadingFollowers(true);
+        const [followerResponse, followedResponse, postResponse] = await Promise.all([
+          axiosInstance.get(`/follow/get-follow/${userData?.username}`),
+          axiosInstance.get(`/follow/get-followed/${userData?.username}`),
+          axiosInstance.get(`/post/feed/${userData?.username}`)
+        ]);
 
-        const followerResponse = await axios.get(`${config.serverUrl}/follow/get-follow/${userData.username}`);
-        const followedResponse = await axios.get(`${config.serverUrl}/follow/get-followed/${userData.username}`);
-        const postResponse = await axios.get(
-          `${config.serverUrl}/post/feed/${userData.username}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        //console.log(postResponse);
-
-        setFollowers(followerResponse.data.followers);
-        setFollowersCount(followerResponse.data.count);
-        setFollowed(followedResponse.data.followed);
-        setFollowedCount(followedResponse.data.count);
+        setFollowers(followerResponse.data.followers || []);
+        setFollowersCount(followerResponse.data.count || 0);
+        setFollowed(followedResponse.data.followed || []);
+        setFollowedCount(followedResponse.data.count || 0);
         setPost(postResponse.data.post || []);
-
       } catch (error) {
-        console.error("Erreur lors de la récupération des abonnés/abonnements", error);
+        showAlert('Une erreur est survenue lors de la récupération des données de l\'utilisateur', 'error');
       } finally {
         setIsLoadingFollowers(false);
       }
     };
-    fetchFollowers();
-  }, [token, userData]);
-
-  if (error) {
-    return (
-      <div className="text-white text-center mt-10">
-        <p>{error}</p>
-        <p>Si vous rencontrez plusieurs erreur à la suite essayez de vous reconnecter</p>
-        < Logout />
-      </div>
-    );
-  }
+    fetchProfileData();
+  }, [token, userData?.username]);
 
   if (!userData) {
     return (
@@ -115,68 +127,85 @@ const Profile = () => {
     );
   }
 
-
-  // fonction de callback pour envoyer l'alert à l'enfant (-> récupérer le message et le type )
-  // et ensuite le conserver puis l'afficher ici
-  // Interface for the alert popup handler parameters
-  interface AlertHandlerParams {
-    message: string;
-    type: 'success' | 'error' | 'info';
-  }
-
-
-  const handleAlertPopup = ({ message, type }: AlertHandlerParams): void => {
-    showAlert(message, type);
-  };
-
   return (
     <div className="min-h-screen bg-black text-white w-full md:ml-[20px] ml-0">
-      {/* page de profil */}
-      {isEditing ? (
+      {/* Formulaires modaux pour le profil personnel uniquement */}
+      {isOwnProfile && isEditing ? (
         <EditProfileForm
-          userData={userData}
+          userData={userData as UserProfile}
           setIsEditing={setIsEditing}
-          onUpdateAlert={handleAlertPopup} />
-      ) : isUploading ? (
+          onUpdateAlert={showAlert}
+        />
+      ) : isOwnProfile && isUploading ? (
         <UploadButton
-          userData={userData}
+          userData={userData as UserProfile}
           setIsUploading={setIsUploading}
-        />) : (
-
+        />
+      ) : (
         <div className="max-w-4xl mx-auto p-4">
-          {/* Section du profil header*/}
+          {/* Bouton retour */}
+          <div className="mb-4 pl-2">
+            <button
+              onClick={() => navigate(-1)}
+              className="inline-flex items-center text-white bg-gray-800 hover:bg-gray-700 rounded-full px-4 py-2 transition duration-200"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Retour
+            </button>
+          </div>
+
+          {/* Section header du profil */}
           <div className="flex flex-col sm:flex-row sm:items-start sm:space-x-8">
-            {/* Photo de profil  */}
+            {/* Photo de profil */}
             <div className="flex justify-center sm:justify-start mb-6 sm:mb-0">
               <img
-                src={`${config.serverUrl}/user/picture/${userData.profilePicture}` || `${config.serverUrl}/user/picture/default.jpg`}
+                src={`${config.serverUrl}/user/picture/${userData.profile_picture}`}
                 alt="Profile"
                 className="w-20 h-20 sm:w-28 sm:h-28 rounded-full border-2 border-gray-600"
+                onError={(e) => {
+                  e.currentTarget.src = `${config.serverUrl}/user/picture/default.jpg`;
+                }}
               />
             </div>
 
-            {/* Infos du profil */}
+            {/* Informations du profil */}
             <div className="flex-1">
               <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
-                <h2 className="text-xl font-bold text-center sm:text-left mb-3 sm:mb-0">{userData.username}</h2>
+                <h2 className="text-xl font-bold text-center sm:text-left mb-3 sm:mb-0">
+                  {userData.username}
+                </h2>
+
+                {/* Boutons d'action selon le type de profil */}
                 <div className="flex flex-wrap justify-center sm:justify-start gap-2">
-                  <button
-                    onClick={() => setIsEditing(true)}
-                    className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm cursor-pointer">
-                    Modifier le profil
-                  </button>
-
-                  <button
-                    onClick={() => setIsUploading(true)}
-                    className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm cursor-pointer">
-                    Photo de profil
-                  </button>
-
-                  <button className="text-gray-400 text-xl cursor-pointer">⚙️</button>
+                  {isOwnProfile ? (
+                    // Boutons pour son propre profil
+                    <>
+                      <button
+                        onClick={() => setIsEditing(true)}
+                        className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm hover:bg-gray-700 transition-colors"
+                      >
+                        Modifier le profil
+                      </button>
+                      <button
+                        onClick={() => setIsUploading(true)}
+                        className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm hover:bg-gray-700 transition-colors"
+                      >
+                        Photo de profil
+                      </button>
+                      <button className="text-gray-400 text-xl hover:text-white transition-colors cursor-pointer">
+                        ⚙️
+                      </button>
+                    </>
+                  ) : (
+                    // Bouton de suivi pour les autres profils
+                    <FollowButton username={userData.username} />
+                  )}
                 </div>
               </div>
 
-              {/* Statistiques  */}
+              {/* Statistiques */}
               <div className="flex justify-center sm:justify-start space-x-6 mt-4 text-gray-300">
                 {isLoadingFollowers ? (
                   <>
@@ -186,17 +215,17 @@ const Profile = () => {
                   </>
                 ) : (
                   <>
-                    <span><strong>{(post?.length ?? 0)}</strong> posts</span>
-
+                    <span><strong>{post?.length ?? 0}</strong> posts</span>
                     <span
-                      className="hover:text-white cursor-pointer"
-                      onClick={() => setShowFollowers(true)}>
+                      className="hover:text-white cursor-pointer transition-colors"
+                      onClick={() => setShowFollowers(true)}
+                    >
                       <strong>{followersCount}</strong> abonnés
                     </span>
-
                     <span
-                      className="hover:text-white cursor-pointer"
-                      onClick={() => setShowFollowed(true)}>
+                      className="hover:text-white cursor-pointer transition-colors"
+                      onClick={() => setShowFollowed(true)}
+                    >
                       <strong>{followedCount}</strong> abonnements
                     </span>
                   </>
@@ -205,32 +234,49 @@ const Profile = () => {
 
               {/* Bio et site web */}
               <div className="mt-4 text-center sm:text-left">
-                <p>{userData.bio || "Vous n'avez pas de bio !"}</p>
-                <p className="text-sm mt-2 text-blue-400">{userData.website || ""}</p>
+                <p>{userData.bio}</p>
+                {userData.website && (
+                  <p className="text-sm mt-2 text-blue-400 hover:text-blue-300 transition-colors">
+                    {userData.website}
+                  </p>
+                )}
               </div>
             </div>
           </div>
 
-          {/* Stories Highlights */}
-          <div className="mt-8 flex justify-center sm:justify-start space-x-6 overflow-x-auto pb-2">
-            <div className="flex flex-col items-center">
-              <div className="w-16 h-16 border-2 border-gray-600 flex items-center justify-center rounded-full">
-                <span className="text-2xl">➕</span>
+          {/* Stories Highlights (affiché uniquement sur son propre profil) */}
+          {isOwnProfile && (
+            <div className="mt-8 flex justify-center sm:justify-start space-x-6 overflow-x-auto pb-2">
+              <div className="flex flex-col items-center">
+                <div className="w-16 h-16 border-2 border-gray-600 flex items-center justify-center rounded-full hover:border-gray-500 transition-colors cursor-pointer">
+                  <span className="text-2xl">➕</span>
+                </div>
+                <p className="text-sm mt-2">Nouveau</p>
               </div>
-              <p className="text-sm mt-2">Nouveau</p>
             </div>
-          </div>
+          )}
 
           {/* Navigation Posts */}
           <div className="border-t border-gray-700 mt-8 flex justify-center space-x-2 sm:space-x-10 py-2 overflow-x-auto">
-            <span className="text-white font-bold p-2 hover:border hover:border-white rounded-lg cursor-pointer whitespace-nowrap">📷 POSTS</span>
-            <span className="text-gray-500 p-2 hover:border hover:border-white rounded-lg cursor-pointer whitespace-nowrap">🔖 SAUVEGARDÉS</span>
-            <span className="text-gray-500 p-2 hover:border hover:border-white rounded-lg cursor-pointer whitespace-nowrap">🏷️ IDENTIFIÉ</span>
+            <span className="text-white font-bold p-2 hover:border hover:border-white rounded-lg cursor-pointer whitespace-nowrap transition-all">
+              📷 POSTS
+            </span>
+            {isOwnProfile && (
+              <span className="text-gray-500 p-2 hover:border hover:border-white hover:text-white rounded-lg cursor-pointer whitespace-nowrap transition-all">
+                🔖 SAUVEGARDÉS
+              </span>
+            )}
+            <span className="text-gray-500 p-2 hover:border hover:border-white hover:text-white rounded-lg cursor-pointer whitespace-nowrap transition-all">
+              🏷️ IDENTIFIÉ
+            </span>
           </div>
+
+          {/* Grille des posts */}
           <NavPosts post={post} />
         </div>
       )}
 
+      {/* Modales des abonnés/abonnements */}
       {showFollowers && (
         <FollowersModal
           users={followers}

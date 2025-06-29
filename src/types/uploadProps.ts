@@ -1,6 +1,6 @@
-import { UserType } from '../types/auth';
+import { UserProfile } from './user';
 
 export interface UploadButtonProps {
-  userData: UserType;
+  userData: UserProfile;
   setIsUploading: React.Dispatch<React.SetStateAction<boolean>>;
 }
