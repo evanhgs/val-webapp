@@ -7,7 +7,6 @@ import Login from "./layout/Login";
 import Register from "./layout/Register";
 import Layout from "./layout/Layout";
 import Profile from "./layout/Profile";
-import ForeignProfile from "./layout/ForeignProfile";
 import UploadPost from "./layout/UploadPost";
 import ShowPost from "./layout/Post";
 import { AlertProvider } from "./components/AlertContext.tsx";
@@ -26,7 +25,7 @@ const App: React.FC = () => {
               <Route element={<Layout />}>
                 <Route path="/" element={<Home />} />
                 <Route path="/profile" element={<Profile />} />
-                <Route path="/profile/:username" element={<ForeignProfile />} />
+                <Route path="/profile/:username" element={<Profile />} />
                 <Route path="/upload" element={<UploadPost />} />
                 <Route path="/post/:id" element={<ShowPost />} />
                 <Route path="/explorer" element={<Explorer />} />
