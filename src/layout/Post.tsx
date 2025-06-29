@@ -1,16 +1,12 @@
 import axios from 'axios';
 import config from '../config';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import FollowButton from '../components/FollowButton';
 import { PostSettings } from "../components/PostSettings";
 import { Post } from "../types/post";
 import { useAlert } from '../components/AlertContext';
 import { LikeButton } from '../components/LikeButton';
-import { FollowPropertiesData } from '../types/followProps';
-import { AuthContext } from '../components/AuthContext';
-import { useFollowProperties } from '../components/FollowProperties';
-
 
 // id du post en parametre GET sinon retourne 404 not found a faire
 const ShowPost = () => {
@@ -18,27 +14,7 @@ const ShowPost = () => {
     const { showAlert } = useAlert();
     const [post, setPost] = useState<Post | null>(null);
     const { id } = useParams<{ id: string }>();
-    const navigate = useNavigate();const [followData, setFollowData] = useState<FollowPropertiesData | undefined>(undefined);
-      const { user } = useContext(AuthContext) || {};
-      
-      useEffect(() => {
-        if (!post || !user?.id) return;
-        const fetchFollowData = async () => {
-          const username = post?.username;
-          if (username) {
-            try {
-              const followInfo = await useFollowProperties(username, user.id);
-              setFollowData(followInfo);
-            } catch (error) {
-              console.error('Error fetching follow data:', error);
-            }
-          }
-        };
-        
-        fetchFollowData();
-      }, [post, user?.id]);
-    
-
+    const navigate = useNavigate();
 
     useEffect(() => {
         const displayPostfromId = async () => {
@@ -94,7 +70,7 @@ const ShowPost = () => {
                             <button className="font-bold text-sm" onClick={() => { navigate(`/profile/${post.username}`) }}>{post?.username}</button>
                         </div>
                         <div className="ml-auto mr-4">
-                            <FollowButton user={{ id: post.id, username: post.username }} isFollowed={followData?.isFollowed || false} />
+                            <FollowButton username={post.username}/>
                         </div>
                         {/* settings of your own post */}
                         {post && <PostSettings post={post} />}
