@@ -19,11 +19,12 @@ const FollowButton: React.FC<FollowButtonProps> = ({ username }) => {
 
     //refactor axios
     const axiosInstance = axios.create({
-        baseURL: config.serverUrl,
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    });
+    baseURL: config.serverUrl,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer: ${token}` })
+    }
+  });
 
     useEffect(() => {
         if (username && user?.username) {
@@ -36,8 +37,7 @@ const FollowButton: React.FC<FollowButtonProps> = ({ username }) => {
         try {
             setIsLoading(true);
             const response = await axiosInstance.get(`${config.serverUrl}/follow/get-follow/${username}`);
-            const followers = response.data?.followers?.username || [];
-
+            const followers = response.data?.followers || [];
             // regarde si le current user est abonné à l'utilisateur qu'on affiche le bouton follow
             const checkFollow = followers.some((follower: any) => follower.username === user?.username);
             setIsFollowed(checkFollow);
@@ -49,7 +49,8 @@ const FollowButton: React.FC<FollowButtonProps> = ({ username }) => {
     };
 
     // action de follow
-    const followUser = async () => {
+    const followUser = async (e: React.MouseEvent) => {
+        e.stopPropagation(); // évite la redirection sur le profil
         if (!token) {
             showAlert("Vous devez être connecté pour suivre un utilisateur", "error");
             return;
@@ -71,7 +72,8 @@ const FollowButton: React.FC<FollowButtonProps> = ({ username }) => {
     };
 
     // action d'unfollow
-    const unFollowUser = async () => {
+    const unFollowUser = async (e: React.MouseEvent) => {
+        e.stopPropagation();
         if (!token) {
             showAlert("Vous devez être connecté pour ne plus suivre un utilisateur", "error");
             return;

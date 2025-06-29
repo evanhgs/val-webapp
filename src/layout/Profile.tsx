@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../components/AuthContext";
 import { Footer } from "../components/FooterComp";
-import { Logout } from "../components/Logout";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import EditProfileForm from "../components/EditProfileForm";
