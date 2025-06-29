@@ -4,34 +4,10 @@ import { PostSettings } from "./PostSettings";
 import { UserFeedProps } from '../types/feed';
 import { LikeButton } from "./LikeButton";
 import { useNavigate } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
-import { FollowPropertiesData } from "../types/followProps";
-import { useFollowProperties } from "./FollowProperties";
-import { AuthContext } from "./AuthContext";
 
 export const Feed: React.FC<UserFeedProps> = ({ userFeed }) => {
 
   const navigate = useNavigate();
-  const [followData, setFollowData] = useState<FollowPropertiesData | undefined>(undefined);
-  const { user } = useContext(AuthContext) || {};
-  
-  useEffect(() => {
-    if (!userFeed.length || !user?.id) return;
-    
-    const fetchFollowData = async () => {
-      const username = userFeed[0]?.username;
-      if (username) {
-        try {
-          const followInfo = await useFollowProperties(username, user.id);
-          setFollowData(followInfo);
-        } catch (error) {
-          console.error('Error fetching follow data:', error);
-        }
-      }
-    };
-    
-    fetchFollowData();
-  }, [userFeed, user?.id]);
 
   return (
     <div className="flex flex-col space-y-6">
@@ -50,7 +26,7 @@ export const Feed: React.FC<UserFeedProps> = ({ userFeed }) => {
               </div>
             </div>
             <div className="ml-auto mr-16">
-              <FollowButton user={{ id: post.id, username: post.username }} isFollowed={followData?.isFollowed || false} />
+              <FollowButton username={post.username}/>
             </div>
             {/* settings of your own post */}
             {post && <PostSettings post={post} />}

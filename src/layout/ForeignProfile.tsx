@@ -11,7 +11,6 @@ import { UserProfile } from '../types/user.ts';
 import { Post } from '../types/post.ts';
 import { useAlert } from "../components/AlertContext.tsx";
 import { FollowPropertiesData } from "../types/followProps.ts";
-import { useFollowProperties } from "../components/FollowProperties.ts";
 
 const ForeignProfile = () => {
 
@@ -56,22 +55,6 @@ const ForeignProfile = () => {
     fetchProfile();
   }, [token, username, navigate]);
 
-  // charge ses données de follower, followed 
-  useEffect(() => {
-    const fetchFollowData = async () => {
-      if (!userData || !user?.id) return;
-      try {
-        setIsLoading(true);
-        const followInfo = await useFollowProperties(userData.username, user?.id);
-        setFollowData(followInfo);
-      } catch (error) {
-        showAlert('Erreur lors du chargement des abonnements et abonnés', 'error');
-      } finally {
-        setIsLoading(false);
-      };
-    };
-    fetchFollowData();
-  }, [userData?.username]);
 
   // fetch les posts de l'utilisateur de la page
   useEffect(() => {
@@ -125,7 +108,7 @@ const ForeignProfile = () => {
           <div className="flex-1">
             <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
               <h2 className="text-xl font-bold text-center sm:text-left mb-3 sm:mb-0">{userData?.username}</h2>
-              <FollowButton user={{ id: user?.id || '', username: userData.username }} isFollowed={followData?.isFollowed || false} />
+              <FollowButton username={userData?.username}/>
             </div>
 
             <div className="flex justify-center sm:justify-start space-x-6 mt-4 text-gray-300">
