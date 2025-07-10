@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
-import config from '../config';
+import { ApiEndpoints } from "../services/apiEndpoints";
+import { UserEditProfile } from "../types/user";
 
 
 const EditProfileForm = ({ userData, setIsEditing, onUpdateAlert }: any) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<UserEditProfile>({
     username: userData.username,
+    email: userData.email,
     bio: userData.bio || "",
     website: userData.website || "",
     gender: userData.gender || "Autre",
@@ -18,19 +20,14 @@ const EditProfileForm = ({ userData, setIsEditing, onUpdateAlert }: any) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post(`${config.serverUrl}/user/edit`, formData, {
+      await axios.post(ApiEndpoints.user.edit(), formData, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
+      
       setIsEditing(false);
-      onUpdateAlert({
-        message: "Profil mis à jour avec succès",
-        type: "success"
-      });
+      onUpdateAlert("Profil mis à jour avec succès", "success");
     } catch (error) {
-      onUpdateAlert({
-        message: "Erreur lors de la mise à jour",
-        type: "error"
-      });
+      onUpdateAlert("Erreur lors de la mise à jour", "error");
     }
   };
 
@@ -64,6 +61,22 @@ const EditProfileForm = ({ userData, setIsEditing, onUpdateAlert }: any) => {
           </p>
         </div>
 
+        {/* email */}
+        <div>
+          <label className="text-gray-400">Ton email</label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            maxLength={200}
+            className="w-full p-2 rounded-md bg-gray-800 text-white"
+          />
+          <p className="text-gray-500 text-sm">
+            {formData.email.length} / 200
+          </p>
+        </div>
+
         {/* Website */}
         <div>
           <label className="text-gray-400">Site web</label>
@@ -76,7 +89,7 @@ const EditProfileForm = ({ userData, setIsEditing, onUpdateAlert }: any) => {
             className="w-full p-2 rounded-md bg-gray-800 text-white"
           />
           <p className="text-gray-500 text-sm">
-            {formData.website.length} / 20
+            {formData.website.length} / 32
           </p>
         </div>
 
