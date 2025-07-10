@@ -13,3 +13,11 @@ export interface UserLiteProfile {
   username: string;
   profile_picture: string;
 }
+
+export interface UserEditProfile {
+  username: string;
+  email: string;
+  bio: string;
+  website: string;
+  gender: string;
+}

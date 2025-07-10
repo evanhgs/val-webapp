@@ -13,6 +13,7 @@ import { FollowUser } from "../types/followProps";
 import { Post } from "../types/post";
 import { UserProfile } from "../types/user";
 import FollowButton from "../components/FollowButton";
+import { ApiEndpoints } from "../services/apiEndpoints";
 
 const Profile = () => {
 
@@ -46,7 +47,7 @@ const Profile = () => {
     baseURL: config.serverUrl,
     headers: {
       'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer: ${token}` })
+      ...({ Authorization: `Bearer: ${token}` }) 
     }
   });
 
@@ -72,7 +73,8 @@ const Profile = () => {
       }
 
       try {
-        const endpoint = isOwnProfile ? "/user/profile" : `/user/profile/${targetUsername}`;
+        const endpoint = isOwnProfile ? ApiEndpoints.user.profile("") : ApiEndpoints.user.profile(targetUsername);
+        
         const response = await axiosInstance.get(endpoint);
 
         setUserData({
@@ -84,7 +86,7 @@ const Profile = () => {
           profile_picture: response.data.profile_picture || "default.jpg",
         });
       } catch (error) {
-        showAlert('mpossible de récupérer les informations du profil.', 'error');
+        showAlert('Impossible de récupérer les informations du profil.', 'error');
       }
     };
 
@@ -99,10 +101,11 @@ const Profile = () => {
 
       try {
         setIsLoadingFollowers(true);
+
         const [followerResponse, followedResponse, postResponse] = await Promise.all([
-          axiosInstance.get(`/follow/get-follow/${userData?.username}`),
-          axiosInstance.get(`/follow/get-followed/${userData?.username}`),
-          axiosInstance.get(`/post/feed/${userData?.username}`)
+          axiosInstance.get(ApiEndpoints.follow.getFollowed(userData?.username)),
+          axiosInstance.get(ApiEndpoints.follow.getFollowers(userData?.username)),
+          axiosInstance.get(ApiEndpoints.post.feed(userData?.username))
         ]);
 
         setFollowers(followerResponse.data.followers || []);
