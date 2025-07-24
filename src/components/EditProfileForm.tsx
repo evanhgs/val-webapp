@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
-import { ApiEndpoints } from "../services/apiEndpoints";
+import {ApiEndpoints, AxiosInstance} from "../services/apiEndpoints";
 import { UserEditProfile } from "../types/user";
 
 
@@ -20,14 +19,12 @@ const EditProfileForm = ({ userData, setIsEditing, onUpdateAlert }: any) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post(ApiEndpoints.user.edit(), formData, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+      await AxiosInstance.post(ApiEndpoints.user.edit(), formData);
       
       setIsEditing(false);
       onUpdateAlert("Profil mis à jour avec succès", "success");
     } catch (error) {
-      onUpdateAlert("Erreur lors de la mise à jour", "error");
+      onUpdateAlert(`Erreur lors de la mise à jour: ${error}`, "error");
     }
   };
 
