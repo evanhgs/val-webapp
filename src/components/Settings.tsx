@@ -1,5 +1,5 @@
 import React from 'react';
-import { Logout } from "../components/Logout";
+import { Logout } from "./Logout.tsx";
 import UseOutsideClickDetector from './OutsideClickDetector'
 import { SearchProps } from '../types/searchProps';
 

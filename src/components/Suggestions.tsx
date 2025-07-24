@@ -1,5 +1,5 @@
 import React from "react";
-import { Footer } from "../components/FooterComp";
+import { Footer } from "./FooterComp.tsx";
 
 export const Suggestions: React.FC = () => {
   return (

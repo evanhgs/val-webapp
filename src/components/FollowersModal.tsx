@@ -1,16 +1,12 @@
-import config from "../config";
 import { useNavigate } from 'react-router-dom';
 import FollowButton from "./FollowButton";
 import UseOutsideClickDetector from "./OutsideClickDetector";
-import { FollowPropertiesData, FollowUser } from '../types/followProps';
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "./AuthContext";
-import { useFollowProperties } from "./FollowProperties";
+import { FollowUser } from '../types/followProps';
+import {ApiEndpoints} from "../services/apiEndpoints.ts";
 
 // pop up des listes des abonnés / abonnements
 export const FollowersModal = ({ users, title, onClose }: { users: FollowUser[], title: string, onClose: () => void }) => {
     const navigate = useNavigate();
-    const { user } = useContext(AuthContext) || {};
     const foreignProfile = (username: string): void => {
         navigate(`/profile/${username}`);
     };
@@ -18,24 +14,6 @@ export const FollowersModal = ({ users, title, onClose }: { users: FollowUser[],
         onClose();
     });
 
-    const [followDataMap, setFollowDataMap] = useState<Record<string, FollowPropertiesData | undefined>>({});
-
-    useEffect(() => {                // users => list 
-        if (!users || !user) return; // user => current user 
-        const fetchAllFollowData = async () => {
-            const newMap: Record<string, FollowPropertiesData | undefined> = {};
-            await Promise.all(users.map(async (u) => { // lance en meme temps toutes les requetes 
-                try {
-                    const followInfo = await useFollowProperties(u?.username, user?.id);
-                    newMap[u.id] = followInfo;
-                } catch {
-                    newMap[u.id] = undefined;
-                }
-            }));
-            setFollowDataMap(newMap);
-        };
-        fetchAllFollowData();
-    }, [users, user?.id]);
 
 
     return (
@@ -59,14 +37,12 @@ export const FollowersModal = ({ users, title, onClose }: { users: FollowUser[],
                                 }}
                             >
                                 <img
-                                    src={userFetched.profile_picture ? `${config.serverUrl}/user/picture/${userFetched.profile_picture}` : `${config.serverUrl}/user/picture/default.jpg`}
+                                    src={userFetched.profile_picture ? ApiEndpoints.user.picture(userFetched.profile_picture) : ApiEndpoints.user.defaultPicture()}
                                     alt={userFetched.username}
                                     className="w-10 h-10 rounded-full"
                                 />
                                 <span>{userFetched.username}</span>
-                                <FollowButton
-                                    user={userFetched}
-                                    isFollowed={followDataMap[userFetched.id]?.isFollowed || false} />
+                                <FollowButton username={userFetched.username}/>
                             </div>
                         ))
                     )}

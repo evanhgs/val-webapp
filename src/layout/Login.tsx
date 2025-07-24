@@ -1,10 +1,8 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { AuthContext } from '../components/AuthContext';
-import config from '../config';
 import PhoneCarousel from '../components/Carousel';
-
+import {ApiEndpoints, AxiosInstance} from "../services/apiEndpoints.ts";
 
 
 const Login: React.FC = () => {
@@ -14,14 +12,13 @@ const Login: React.FC = () => {
   const { login } = useContext(AuthContext) || {};
   const navigate = useNavigate();
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
     try {
       if (username && password) {
-        const response = await axios.post(`${config.serverUrl}/auth/login`, { username, password });
+        const response = await AxiosInstance.post(ApiEndpoints.auth.login(), { username, password });
         if (login) {
           login(
             response.data.token,
@@ -38,7 +35,7 @@ const Login: React.FC = () => {
       }
     } catch (error) {
       console.error('Error: ', error);
-      setError("Une erreur s'est produite lors de la connexion.");
+      setError("Nom d'utilisateur ou mot de passe incorrect.");
     }
   };
 
