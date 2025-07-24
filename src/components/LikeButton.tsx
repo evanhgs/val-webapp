@@ -1,13 +1,11 @@
-import { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Like, LikeContent } from "../types/like";
-import axios from "axios";
-import config from "../config";
-import { AuthContext } from "../components/AuthContext";
+import { AuthContext } from "./AuthContext.tsx";
 import { useAlert } from './AlertContext';
+import {ApiEndpoints, AxiosInstance} from "../services/apiEndpoints.ts";
 
 export const LikeButton: React.FC<Like> = ({ postId }) => {
     const { user } = useContext(AuthContext) || {};
-    const token = user?.token;
     const [likeContent, setLikeContent] = useState<LikeContent | undefined>(undefined);
 
     // utilisation de likeContent pour afficher les informations sur le survol du bouton like
@@ -17,11 +15,7 @@ export const LikeButton: React.FC<Like> = ({ postId }) => {
 
     const likePost = async () => {
         try {
-            await axios.put(
-                `${config.serverUrl}/like/${postId}`,
-                {},
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            await AxiosInstance.put(ApiEndpoints.like.likePost(postId));
 
             showAlert("Vous avez liké ce post !", 'success');
             setIsLiked(!isLiked);
@@ -48,10 +42,7 @@ export const LikeButton: React.FC<Like> = ({ postId }) => {
 
     const unlikePost = async () => {
         try {
-            await axios.delete(
-                `${config.serverUrl}/like/${postId}/unlike`,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            await AxiosInstance.delete(ApiEndpoints.like.unlikePost(postId));
 
             showAlert("Vous avez unlike ce post !", 'success');
             setIsLiked(!isLiked);
@@ -79,10 +70,7 @@ export const LikeButton: React.FC<Like> = ({ postId }) => {
 
     useEffect(() => {
         const likeContentFetch = async () => {
-            const response = await axios.get(
-                `${config.serverUrl}/like/get-likes/${postId}`,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            const response = await AxiosInstance.get(ApiEndpoints.like.getLikePost(postId))
             setLikeContent({
                 postId: response.data.post_id,
                 users: response.data.users,

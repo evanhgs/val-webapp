@@ -1,11 +1,9 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../components/AuthContext";
 import { Footer } from "../components/FooterComp";
-import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import EditProfileForm from "../components/EditProfileForm";
 import UploadButton from "../components/UploadProfilePic";
-import config from '../config';
 import { FollowersModal } from '../components/FollowersModal';
 import { NavPosts } from "../components/NavPosts";
 import { useAlert } from "../components/AlertContext";
@@ -13,7 +11,7 @@ import { FollowUser } from "../types/followProps";
 import { Post } from "../types/post";
 import { UserProfile } from "../types/user";
 import FollowButton from "../components/FollowButton";
-import { ApiEndpoints } from "../services/apiEndpoints";
+import { ApiEndpoints, AxiosInstance } from "../services/apiEndpoints";
 
 const Profile = () => {
 
@@ -42,14 +40,7 @@ const Profile = () => {
   const isOwnProfile = !urlUsername || urlUsername === user?.username;
   const targetUsername = urlUsername || user?.username; // own user to default (mieux que rien) 
 
-  // setup axios
-  const axiosInstance = axios.create({
-    baseURL: config.serverUrl,
-    headers: {
-      'Content-Type': 'application/json',
-      ...({ Authorization: `Bearer: ${token}` }) 
-    }
-  });
+
 
   /** tout en parallèle
    * fetch les posts (plus lourd)
@@ -75,7 +66,7 @@ const Profile = () => {
       try {
         const endpoint = isOwnProfile ? ApiEndpoints.user.profile("") : ApiEndpoints.user.profile(targetUsername);
         
-        const response = await axiosInstance.get(endpoint);
+        const response = await AxiosInstance.get(endpoint);
 
         setUserData({
           username: response.data.username,
@@ -103,9 +94,9 @@ const Profile = () => {
         setIsLoadingFollowers(true);
 
         const [followerResponse, followedResponse, postResponse] = await Promise.all([
-          axiosInstance.get(ApiEndpoints.follow.getFollowed(userData?.username)),
-          axiosInstance.get(ApiEndpoints.follow.getFollowers(userData?.username)),
-          axiosInstance.get(ApiEndpoints.post.feed(userData?.username))
+          AxiosInstance.get(ApiEndpoints.follow.getFollowed(userData?.username)),
+          AxiosInstance.get(ApiEndpoints.follow.getFollowers(userData?.username)),
+          AxiosInstance.get(ApiEndpoints.post.feed(userData?.username))
         ]);
 
         setFollowers(followerResponse.data.followers || []);
@@ -114,7 +105,7 @@ const Profile = () => {
         setFollowedCount(followedResponse.data.count || 0);
         setPost(postResponse.data.post || []);
       } catch (error) {
-        showAlert('Une erreur est survenue lors de la récupération des données de l\'utilisateur', 'error');
+        showAlert(`Une erreur est survenue lors de la récupération des données de l'utilisateur: ${error}`, 'error');
       } finally {
         setIsLoadingFollowers(false);
       }
@@ -164,12 +155,9 @@ const Profile = () => {
             {/* Photo de profil */}
             <div className="flex justify-center sm:justify-start mb-6 sm:mb-0">
               <img
-                src={`${config.serverUrl}/user/picture/${userData.profile_picture}`}
+                src={userData.profile_picture ? ApiEndpoints.user.picture(userData.profile_picture) : ApiEndpoints.user.defaultPicture()}
                 alt="Profile"
                 className="w-20 h-20 sm:w-28 sm:h-28 rounded-full border-2 border-gray-600"
-                onError={(e) => {
-                  e.currentTarget.src = `${config.serverUrl}/user/picture/default.jpg`;
-                }}
               />
             </div>
 

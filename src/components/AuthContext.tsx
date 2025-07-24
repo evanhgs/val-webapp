@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
-import config from '../config';
 import { UserType, AuthContextType } from '../types/auth';
+import {ApiEndpoints} from "../services/apiEndpoints.ts";
 
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -30,7 +30,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Fonction pour valider le token (envoie au backend)
   const validateToken = async (token: string) => {
     try {
-      const response = await axios.post(`${config.serverUrl}/auth/token`, { token });
+      const response = await axios.post(ApiEndpoints.auth.authToken(), { token });
       return response.data.valid;
     } catch (error) {
       return false;
