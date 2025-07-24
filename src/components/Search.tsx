@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import axios from "axios";
-import config from "../config";
 import { FollowersModal } from './FollowersModal';
 import UseOutsideClickDetector from './OutsideClickDetector'
 import { FollowUser } from '../types/followProps';
 import { SearchProps } from '../types/searchProps';
+import {ApiEndpoints} from "../services/apiEndpoints.ts";
 
 const Search: React.FC<SearchProps> = ({ setIsSearch, isCompact }) => {
   const [showSearchResult, setShowSearchResult] = useState(false);
@@ -19,9 +19,7 @@ const Search: React.FC<SearchProps> = ({ setIsSearch, isCompact }) => {
 
     setIsLoading(true);
     try {
-      const response = await axios.get(
-        `${config.serverUrl}/user/search/${input}`
-      );
+      const response = await axios.get(ApiEndpoints.user.search(input));
       setSearchResult({
         users: response.data.users.length > 0
           ? response.data.users

@@ -1,8 +1,9 @@
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import config from "../config";
 import { useAlert } from './AlertContext';
 import axios, { AxiosError } from 'axios';
 import { AuthContext } from './AuthContext';
+import {ApiEndpoints} from "../services/apiEndpoints.ts";
 
 interface FollowButtonProps {
     username: string;
@@ -36,13 +37,13 @@ const FollowButton: React.FC<FollowButtonProps> = ({ username }) => {
     const fetchFollowStatus = async () => {
         try {
             setIsLoading(true);
-            const response = await axiosInstance.get(`${config.serverUrl}/follow/get-follow/${username}`);
+            const response = await axiosInstance.get(ApiEndpoints.follow.getFollowers(username));
             const followers = response.data?.followers || [];
             // regarde si le current user est abonné à l'utilisateur qu'on affiche le bouton follow
             const checkFollow = followers.some((follower: any) => follower.username === user?.username);
             setIsFollowed(checkFollow);
         } catch (error) {
-            showAlert('Une erreur est survenue lors du chargement de l\'abonnement', 'error');
+            showAlert(`Une erreur est survenue lors du chargement de l'abonnement, ${error}`, 'error');
         } finally {
             setIsLoading(false);
         }
@@ -58,8 +59,8 @@ const FollowButton: React.FC<FollowButtonProps> = ({ username }) => {
 
         try {
             setIsLoading(true);
-            await axiosInstance.post('/follow/user', {
-                username_other: username
+            await axiosInstance.put(ApiEndpoints.follow.follow(username), {
+
             });
 
             setIsFollowed(true);
@@ -81,9 +82,7 @@ const FollowButton: React.FC<FollowButtonProps> = ({ username }) => {
 
         try {
             setIsLoading(true);
-            await axiosInstance.post('/follow/unfollow', {
-                username_other: username
-            });
+            await axiosInstance.put(ApiEndpoints.follow.unfollow(username));
 
             setIsFollowed(false);
             showAlert("Désabonnement réussi", 'success');
