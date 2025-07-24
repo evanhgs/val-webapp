@@ -27,7 +27,7 @@ const App: React.FC = () => {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/profile/:username" element={<Profile />} />
                 <Route path="/upload" element={<UploadPost />} />
-                <Route path="/post/:id" element={<ShowPost />} />
+                <Route path="/post/:postId" element={<ShowPost />} />
                 <Route path="/explorer" element={<Explorer />} />
               </Route>
             </Route>

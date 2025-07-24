@@ -1,17 +1,15 @@
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "./AuthContext";
 import clsx from "clsx";
-import axios from "axios";
-import config from "../config";
 import UseOutsideClickDetector from "./OutsideClickDetector";
 import { Post } from "../types/post";
 import { useAlert } from './AlertContext';
 import { useNavigate } from "react-router-dom";
+import {ApiEndpoints, AxiosInstance} from "../services/apiEndpoints.ts";
 
-export const PostSettings = ({ post }: { post?: Post }) => {
+export const PostSettings = ({ post }: { post: Post }) => {
 
     const { user } = useContext(AuthContext) || {};
-    const token = user?.token;
     const { showAlert } = useAlert();
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
@@ -39,13 +37,10 @@ export const PostSettings = ({ post }: { post?: Post }) => {
     const handleEditCaption = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await axios.post(
-                `${config.serverUrl}/post/edit/${post?.id}`,
-                formData,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            await AxiosInstance.post(ApiEndpoints.post.edit(post.id), formData);
             setIsEditFormPostOpen(false);
             showAlert('Post modifié avec succès', 'success');
+
         } catch (error: any) {
             if (error.response) {
                 const { data, status } = error.response;
@@ -83,12 +78,10 @@ export const PostSettings = ({ post }: { post?: Post }) => {
 
     const handleDeletePost = async () => {
         try {
-            await axios.delete(
-                `${config.serverUrl}/post/delete/${post?.id}`,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            await AxiosInstance.delete(ApiEndpoints.post.delete(post.id));
             showAlert('Post supprimé avec succès', 'success');
             navigate("/profile");
+
         } catch (error: any) {
             if (error.response) {
                 const status = error.response.status;

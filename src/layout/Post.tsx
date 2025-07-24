@@ -1,5 +1,3 @@
-import axios from 'axios';
-import config from '../config';
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import FollowButton from '../components/FollowButton';
@@ -7,30 +5,38 @@ import { PostSettings } from "../components/PostSettings";
 import { Post } from "../types/post";
 import { useAlert } from '../components/AlertContext';
 import { LikeButton } from '../components/LikeButton';
+import {ApiEndpoints, AxiosInstance} from "../services/apiEndpoints.ts";
 
 // id du post en parametre GET sinon retourne 404 not found a faire
 const ShowPost = () => {
 
     const { showAlert } = useAlert();
     const [post, setPost] = useState<Post | null>(null);
-    const { id } = useParams<{ id: string }>();
+    const { postId } = useParams<{ postId: string }>();
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
+
 
     useEffect(() => {
+        if (!postId) return;
         const displayPostfromId = async () => {
+            setLoading(true);
+            setError(false);
             try {
-                const response = await axios.get(
-                    `${config.serverUrl}/post/${id}`
-                );
+                const response = await AxiosInstance.get(ApiEndpoints.post.postObject(postId));
                 setPost(response.data.post);
+
             } catch (error: any) {
+                setError(true);
                 if (error.response) {
                     const status = error.response.status;
                     switch (status) {
                         case 400:
-                            showAlert('Le format de l\id n\'est pas en UUID, veuillez réssayer avec un bon format', 'error');
+                            showAlert('Le format de l\'id n\'est pas en UUID, veuillez réssayer avec un bon format', 'error');
                             break;
                         case 404:
+                        case 422:
                             showAlert('Le post n\'a pas été trouvé', 'error');
                             break;
                         case 500:
@@ -40,10 +46,13 @@ const ShowPost = () => {
                             showAlert('Une erreur inattendue s\'est produite', 'error');
                     }
                 }
+            } finally {
+                setLoading(false);
             }
         }
-        displayPostfromId().then(r => console.log(r));
-    }, [id]);
+
+        displayPostfromId();
+    }, [postId]);
 
 
     return (
@@ -56,13 +65,21 @@ const ShowPost = () => {
                     Retour
                 </button>
             </div>
-            {post ? (
+            {loading ? (
+                <div className="p-8 text-center bg-gray-700">
+                    <p className="text-gray-300">Chargement du post...</p>
+                </div>
+            ) : error || !post ? (
+                <div className="p-8 text-center bg-gray-700">
+                    <p className="text-gray-300">Le post n'a pas été trouvé...</p>
+                </div>
+            ): (
                 <div className="post-container">
 
                     {/** header  */}
                     <div className="flex items-center p-4 border-b">
                         <img
-                            src={`${config.serverUrl}/user/picture/${post.user_profile_url}` || `${config.serverUrl}/user/picture/default.jpg`}
+                            src={post.user_profile ? ApiEndpoints.user.picture(post.user_profile) : ApiEndpoints.user.defaultPicture()}
                             alt={post?.username || 'Utilisateur'}
                             className="w-10 h-10 rounded-full object-cover"
                         />
@@ -78,7 +95,7 @@ const ShowPost = () => {
 
                     <div className="post-image-container mt-10">
                         <img
-                            src={`${config.serverUrl}/user/picture/${post.image_url}` || `${config.serverUrl}/user/picture/default.jpg`}
+                            src={post.image_url ? ApiEndpoints.user.picture(post.image_url) : ApiEndpoints.user.defaultPicture()}
                             alt="Post content"
                             className="w-full object-cover max-h-[600px] rounded-md"
                         />
@@ -117,13 +134,10 @@ const ShowPost = () => {
                     )}
 
                 </div>
-            ) : (
-                <div className="p-8 text-center bg-gray-700">
-                    <p className="text-gray-300">Loading post...</p>
-                </div>
             )}
         </div>
     );
 }
+
 
 export default ShowPost;

@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
-import config from '../config';
 import { NavPostsProps } from '../types/post';
+import {ApiEndpoints} from "../services/apiEndpoints.ts";
 
 export const NavPosts = ({ post }: NavPostsProps) => {
   return (
@@ -15,7 +15,7 @@ export const NavPosts = ({ post }: NavPostsProps) => {
               <div key={`post-${index}`} className="aspect-square relative group cursor-pointer">
                 <NavLink to={`/post/${p.id}`}>
                   <img
-                    src={`${config.serverUrl}/user/picture/${p.image_url}`}
+                    src={ApiEndpoints.user.picture(p.image_url)}
                     alt={p.caption}
                     className="w-full h-full object-cover"
                   />

@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import {ApiEndpoints, AxiosInstance} from "../services/apiEndpoints";
 import { UserEditProfile } from "../types/user";
+import {useNavigate} from "react-router-dom";
 
 
 const EditProfileForm = ({ userData, setIsEditing, onUpdateAlert }: any) => {
+
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<UserEditProfile>({
     username: userData.username,
     email: userData.email,
@@ -26,6 +29,7 @@ const EditProfileForm = ({ userData, setIsEditing, onUpdateAlert }: any) => {
     } catch (error) {
       onUpdateAlert(`Erreur lors de la mise à jour: ${error}`, "error");
     }
+    navigate("/profile");
   };
 
   return (

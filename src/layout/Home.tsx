@@ -3,11 +3,11 @@ import { Feed } from "../components/Feed";
 import { Suggestions } from "../components/Suggestions";
 import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { AuthContext } from "../components/AuthContext";
-import config from "../config";
 import { UserProfile } from '../types/user';
 import { UserFeedProps } from '../types/feed';
+import {ApiEndpoints, AxiosInstance} from "../services/apiEndpoints.ts";
+import {useAlert} from "../components/AlertContext.tsx";
 
 const Home = () => {
   const [error, setError] = useState<string | null>(null);
@@ -16,6 +16,7 @@ const Home = () => {
   const token = user?.token;
   const [userData, setUserData] = useState<UserProfile | null>(null);
   const [userFeed, setUserFeed] = useState<UserFeedProps | null>(null);
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -26,15 +27,11 @@ const Home = () => {
           return;
         }
         // récupération du profil de l'utilisateur connecté
-        const response = await axios.get(
-          `${config.serverUrl}/user/profile`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const response = await AxiosInstance.get(ApiEndpoints.user.profile("")); // ne rien mettre = currentUser
+
         // récupération du feed personnalisé en fonction de l'utilisateur connecté
-        const responseFeed = await axios.get(
-          `${config.serverUrl}/post/feed`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const responseFeed = await AxiosInstance.get(ApiEndpoints.post.feedPerso());
+
         setUserData({
           username: response.data.username,
           profile_picture: response.data.profile_picture || "default.jpg",
@@ -48,7 +45,7 @@ const Home = () => {
         });
 
       } catch (error) {
-        console.error("Erreur lors de la récupération du compte: ", error);
+        showAlert(`Erreur lors de la récupération du compte: ${error}`, 'error')
         setError("Impossible de récupérer les infos du compte.");
       }
     };
