@@ -86,7 +86,7 @@ const Profile = () => {
           profile_picture: response.data.profile_picture || "default.jpg",
         });
       } catch (error) {
-        showAlert('Impossible de récupérer les informations du profil.', 'error');
+        showAlert(`Impossible de récupérer les informations du profil : ${error}`, 'error');
       }
     };
 

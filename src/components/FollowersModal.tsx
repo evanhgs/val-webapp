@@ -1,8 +1,8 @@
-import config from "../config";
 import { useNavigate } from 'react-router-dom';
 import FollowButton from "./FollowButton";
 import UseOutsideClickDetector from "./OutsideClickDetector";
 import { FollowUser } from '../types/followProps';
+import {ApiEndpoints} from "../services/apiEndpoints.ts";
 
 // pop up des listes des abonnés / abonnements
 export const FollowersModal = ({ users, title, onClose }: { users: FollowUser[], title: string, onClose: () => void }) => {
@@ -37,7 +37,7 @@ export const FollowersModal = ({ users, title, onClose }: { users: FollowUser[],
                                 }}
                             >
                                 <img
-                                    src={userFetched.profile_picture ? `${config.serverUrl}/user/picture/${userFetched.profile_picture}` : `${config.serverUrl}/user/picture/default.jpg`}
+                                    src={userFetched.profile_picture ? ApiEndpoints.user.picture(userFetched.profile_picture) : ApiEndpoints.user.defaultPicture()}
                                     alt={userFetched.username}
                                     className="w-10 h-10 rounded-full"
                                 />

@@ -11,6 +11,9 @@ export const ApiEndpoints = {
     follow: {
         getFollowers: (username: string) => url(`/follow/get-follow/${username}`),
         getFollowed: (username: string) => url(`/follow/get-followed/${username}`),
+        follow: (username: string) => url(`/follow/${username}`),
+        unfollow: (username: string) => url(`/follow/unfollow/${username}`),
+
     },
     post: {
         feed: (username: string) => url(`/post/feed/${username}`),
@@ -18,5 +21,8 @@ export const ApiEndpoints = {
     user: {
         profile: (username: string) => url(`/user/profile/${username}`),
         edit: () => url('/user/edit'),
+        search: (username: string) => url(`/user/search/${username}`),
+        picture: (profilePicture: string) => url(`/user/picture/${profilePicture}`),
+        defaultPicture: () => url('/user/picture/default.jpg'),
     },
 };
