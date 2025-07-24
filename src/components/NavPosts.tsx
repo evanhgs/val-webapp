@@ -23,11 +23,11 @@ export const NavPosts = ({ post }: NavPostsProps) => {
                     <div className="text-white flex items-center space-x-4">
                       <div className="flex items-center">
                         <span className="mr-1">❤️</span>
-                        <span className="font-semibold">0</span>
+                        <span className="font-semibold">{p.likes?.count}</span>
                       </div>
                       <div className="flex items-center">
                         <span className="mr-1">💬</span>
-                        <span className="font-semibold">0</span>
+                        <span className="font-semibold">{p.comments?.count}</span>
                       </div>
                     </div>
                   </div>
