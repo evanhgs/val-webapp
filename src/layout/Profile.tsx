@@ -8,7 +8,7 @@ import { FollowersModal } from '../components/FollowersModal';
 import { NavPosts } from "../components/NavPosts";
 import { useAlert } from "../components/AlertContext";
 import { FollowUser } from "../types/followProps";
-import { Post } from "../types/post";
+import { PostDetails} from "../types/post";
 import { UserProfile } from "../types/user";
 import FollowButton from "../components/FollowButton";
 import { ApiEndpoints, AxiosInstance } from "../services/apiEndpoints";
@@ -33,7 +33,7 @@ const Profile = () => {
   const [followed, setFollowed] = useState<FollowUser[]>([]);
   const [followersCount, setFollowersCount] = useState(0);
   const [followedCount, setFollowedCount] = useState(0);
-  const [post, setPost] = useState<Post[]>([]);
+  const [post, setPost] = useState<PostDetails[]>([]);
 
   const { username: urlUsername } = useParams<{ username: string }>();
 
@@ -71,10 +71,10 @@ const Profile = () => {
         setUserData({
           username: response.data.username,
           email: response.data.email,
-          bio: response.data.bio || "Aucune bio disponible.",
+          bio: response.data.bio || "",
           website: response.data.website || "",
-          created_at: response.data.created_at || "",
-          profile_picture: response.data.profile_picture || "default.jpg",
+          created_at: response.data.created_at,
+          profile_picture: response.data.profile_picture,
         });
       } catch (error) {
         showAlert(`Impossible de récupérer les informations du profil : ${error}`, 'error');
@@ -87,23 +87,28 @@ const Profile = () => {
 
   // récupération des abonnés abonnements et posts
   useEffect(() => {
+    if (!token || !userData?.username) return;
     const fetchProfileData = async () => {
-      if (!token || !userData?.username) return;
-
       try {
         setIsLoadingFollowers(true);
 
-        const [followerResponse, followedResponse, postResponse] = await Promise.all([
-          AxiosInstance.get(ApiEndpoints.follow.getFollowed(userData?.username)),
-          AxiosInstance.get(ApiEndpoints.follow.getFollowers(userData?.username)),
-          AxiosInstance.get(ApiEndpoints.post.feed(userData?.username))
+        const [followedResponse, followerResponse, postResponse] = await Promise.all([ // ordre very important ^^
+          AxiosInstance.get(ApiEndpoints.follow.getFollowed(userData.username)),
+          AxiosInstance.get(ApiEndpoints.follow.getFollowers(userData.username)),
+          AxiosInstance.get(ApiEndpoints.post.feed(userData.username))
         ]);
 
-        setFollowers(followerResponse.data.followers || []);
-        setFollowersCount(followerResponse.data.count || 0);
         setFollowed(followedResponse.data.followed || []);
         setFollowedCount(followedResponse.data.count || 0);
-        setPost(postResponse.data.post || []);
+        setFollowers(followerResponse.data.followers || []);
+        setFollowersCount(followerResponse.data.count || 0);
+        const posts = (postResponse.data.content || []).map((item: any) => ({
+          ...item.post,
+          likes: item.likes,
+          comments: item.comments,
+        }));
+        setPost(posts);
+
       } catch (error) {
         showAlert(`Une erreur est survenue lors de la récupération des données de l'utilisateur: ${error}`, 'error');
       } finally {
