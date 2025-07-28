@@ -11,7 +11,7 @@ export interface UserProfile {
 export interface UserLiteProfile {
   id: string;
   username: string;
-  profile_picture: string;
+  profile_picture?: string | null;
 }
 
 export interface UserEditProfile {

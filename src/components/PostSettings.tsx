@@ -41,13 +41,14 @@ export const PostSettings = ({ post }: { post: Post }) => {
             setIsEditFormPostOpen(false);
             showAlert('Post modifié avec succès', 'success');
 
-        } catch (error: any) {
-            if (error.response) {
-                const { data, status } = error.response;
+        } catch (error) {
+            const err = error as { response?: { data?: { error?: string }; status?: number } };
+            if (err.response) {
+                const { data, status } = err.response;
 
                 switch (status) {
                     case 400:
-                        if (data.error && data.error.includes('caption is too long')) {
+                        if (data?.error && data?.error.includes('caption is too long')) {
                             showAlert('La légende est trop longue (max 200 caractères)', 'error');
                         } else {
                             showAlert('Format de post invalide', 'error');
@@ -82,9 +83,10 @@ export const PostSettings = ({ post }: { post: Post }) => {
             showAlert('Post supprimé avec succès', 'success');
             navigate("/profile");
 
-        } catch (error: any) {
-            if (error.response) {
-                const status = error.response.status;
+        } catch (error) {
+            const err = error as { response?: { status: number } };
+            if (err.response) {
+                const { status } = err.response;
                 switch (status) {
                     case 401:
                         showAlert('Vous devez être connecté pour supprimer ce post', 'error');
