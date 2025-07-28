@@ -19,9 +19,10 @@ export const LikeButton: React.FC<Like> = ({ postId }) => {
 
             showAlert("Vous avez liké ce post !", 'success');
             setIsLiked(!isLiked);
-        } catch (error: any) {
-            if (error.response) {
-                const { status } = error.response;
+        } catch (error: unknown) {
+            const err = error as { response?: { status: number } };
+            if (err.response) {
+                const { status } = err.response;
                 switch (status) {
                     case 400:
                         showAlert('Vous avez déjà liké ce post', 'info');
@@ -46,9 +47,10 @@ export const LikeButton: React.FC<Like> = ({ postId }) => {
 
             showAlert("Vous avez unlike ce post !", 'success');
             setIsLiked(!isLiked);
-        } catch (error: any) {
-            if (error.response) {
-                const { status } = error.response;
+        } catch (error: unknown) {
+            const err = error as { response?: { status: number } };
+            if (err.response) {
+                const { status } = err.response;
                 switch (status) {
                     case 400:
                         showAlert('Vous avez déjà unliké ce post', 'info');
@@ -66,7 +68,7 @@ export const LikeButton: React.FC<Like> = ({ postId }) => {
             }
         }
     };
-    const likedByUser = likeContent?.users?.some((u: any) => u.id === user?.id); // boolean check true => déjà liké
+    const likedByUser = likeContent?.users?.some((u) => u.id === user?.id); // boolean check true => déjà liké
 
     useEffect(() => {
         const likeContentFetch = async () => {

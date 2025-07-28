@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import {ApiEndpoints, AxiosInstance} from "../services/apiEndpoints";
-import { UserEditProfile } from "../types/user";
+import {UserEditProfile} from "../types/user";
 import {useNavigate} from "react-router-dom";
+
 
 
 const EditProfileForm = ({ userData, setIsEditing, onUpdateAlert }: any) => {

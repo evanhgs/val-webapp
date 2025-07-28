@@ -81,7 +81,14 @@ export const Sidebar: React.FC = () => {
   };
 
   // Fonction qui génère l'affichage de chaque élément du menu
-  const renderMenuItem = (item: any, index: number) => {
+  const renderMenuItem = (item: {
+    icon: string;
+    label: string;
+    link?: string;
+    isNavLink?: boolean;
+    onClick?: () => void;
+    isActive?: boolean;
+  }, index: number) => {
     // Obtenir les styles correspondant au mode d'affichage actuel
     const currentStyle = menuItemStyles[displayMode];
 
@@ -108,7 +115,7 @@ export const Sidebar: React.FC = () => {
       return (
         <li key={index}>
           <NavLink
-            to={item.link}
+            to={item.link ?? "/"}
             className={({ isActive }) => `${currentStyle.item} ${isActive ? activeClasses : hoverClasses}`}
           >
             {content}
