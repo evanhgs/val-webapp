@@ -27,10 +27,11 @@ const ShowPost = () => {
                 const response = await AxiosInstance.get(ApiEndpoints.post.postObject(postId));
                 setPost(response.data.post);
 
-            } catch (error: any) {
+            } catch (error) {
                 setError(true);
-                if (error.response) {
-                    const status = error.response.status;
+                const err = error as { response?: { status: number } };
+                if (err.response) {
+                    const { status } = err.response;
                     switch (status) {
                         case 400:
                             showAlert('Le format de l\'id n\'est pas en UUID, veuillez réssayer avec un bon format', 'error');

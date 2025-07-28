@@ -102,7 +102,7 @@ const Profile = () => {
         setFollowedCount(followedResponse.data.count || 0);
         setFollowers(followerResponse.data.followers || []);
         setFollowersCount(followerResponse.data.count || 0);
-        const posts = (postResponse.data.content || []).map((item: any) => ({
+        const posts = (postResponse.data.content || []).map((item) => ({
           ...item.post,
           likes: item.likes,
           comments: item.comments,

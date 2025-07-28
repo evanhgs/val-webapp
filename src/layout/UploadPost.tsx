@@ -63,10 +63,11 @@ const UploadPost = () => {
             setCaption("");
             showAlert('Post publié avec succès', 'success');
             navigate("/profile")
-        } catch (error: any) {
+        } catch (error) {
             console.error("Error fetching post:", error);
-            if (error.response) {
-                const status = error.response.status;
+            const err = error as { response?: { status: number } };
+            if (err.response) {
+                const { status } = err.response;
                 switch (status) {
                     case 401:
                         showAlert('Vous devez être connecté pour modifier ce post', 'error');
