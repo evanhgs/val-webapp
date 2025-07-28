@@ -1,16 +1,13 @@
 // Check if API server URL is properly defined
 import axios from "axios";
 
-
-if (import.meta.env.DEV && !import.meta.env.VITE_API_SERVER_URL) {
-    console.error("Warning: VITE_API_SERVER_URL is not defined in your environment variables!");
-}
-
-export const API_BASE_URL: string = import.meta.env.VITE_API_SERVER_URL; // crash
+export const API_BASE_URL: string = import.meta.env.DEV
+    ? import.meta.env.VITE_API_SERVER_URL_DEV
+    : import.meta.env.VITE_API_SERVER_URL_PROD;
 
 const url = (path: string) => `${API_BASE_URL}${path}`
 
-// setup axios pour envoyer des requetes
+// setup axios pour le headers
 export const AxiosInstance = axios.create({
     headers: {
         'Content-Type': 'application/json',

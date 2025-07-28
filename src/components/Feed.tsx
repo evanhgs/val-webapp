@@ -18,7 +18,7 @@ export const Feed: React.FC<UserFeedProps> = ({ userFeed }) => {
           <div className="flex items-center justify-between p-3">
             <div className="flex items-center">
               <img
-                src={post.user_profile_url ? ApiEndpoints.user.picture(post.user_profile_url) : ApiEndpoints.user.defaultPicture()}
+                src={post.user_profile ? ApiEndpoints.user.picture(post.user_profile) : ApiEndpoints.user.defaultPicture()}
                 alt={post.username}
                 className="w-8 h-8 rounded-full object-cover mr-2 border border-gray-700"
               />
