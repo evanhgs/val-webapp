@@ -1,5 +1,5 @@
 {
-  "name": "client",
+  "name": "valenstagram-webapp-client",
   "private": true,
   "proxy": "http://localhost:5000",
   "version": "0.0.0",
