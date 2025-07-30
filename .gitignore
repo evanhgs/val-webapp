@@ -29,5 +29,4 @@ client/dist-ssr
 node_modules/
 images/
 .env
-.env.production
 dist/
