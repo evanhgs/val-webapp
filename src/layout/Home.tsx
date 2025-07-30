@@ -10,7 +10,6 @@ import {ApiEndpoints, AxiosInstance} from "../services/apiEndpoints.ts";
 import {useAlert} from "../components/AlertContext.tsx";
 
 const Home = () => {
-  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { user } = useContext(AuthContext) || {};
   const token = user?.token;
@@ -19,15 +18,16 @@ const Home = () => {
   const { showAlert } = useAlert();
 
   useEffect(() => {
+
     const fetchProfile = async () => {
       try {
         if (!token) {
-          setError("Vous devez être connecté pour voir votre profil.");
+          showAlert("Vous devez être connecté pour voir votre profil.", 'info');
           navigate("/login");
           return;
         }
         // récupération du profil de l'utilisateur connecté
-        const response = await AxiosInstance.get(ApiEndpoints.user.profile("")); // ne rien mettre = currentUser
+        const response = await AxiosInstance.get(ApiEndpoints.user.currentUserProfile());
 
         // récupération du feed personnalisé en fonction de l'utilisateur connecté
         const responseFeed = await AxiosInstance.get(ApiEndpoints.post.feedPerso());
@@ -46,7 +46,6 @@ const Home = () => {
 
       } catch (error) {
         showAlert(`Erreur lors de la récupération du compte: ${error}`, 'error')
-        setError("Impossible de récupérer les infos du compte.");
       }
     };
     fetchProfile();
@@ -54,11 +53,6 @@ const Home = () => {
 
   return (
     <div className="flex flex-col w-full items-center pt-4">
-      {error && (
-        <div className="bg-red-500 text-white p-4 rounded max-w-[600px] w-full mb-4 relative z-10">
-          {error}
-        </div>
-      )}
 
       <div className="w-full max-w-[470px] md:max-w-[600px] lg:max-w-[820px] xl:max-w-[1000px] px-2 md:px-4 relative z-10">
         <div className="mb-6">

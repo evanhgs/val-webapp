@@ -4,7 +4,7 @@ import {UserEditProfile} from "../types/user";
 import {useNavigate} from "react-router-dom";
 
 
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const EditProfileForm = ({ userData, setIsEditing, onUpdateAlert }: any) => {
 
   const navigate = useNavigate();
