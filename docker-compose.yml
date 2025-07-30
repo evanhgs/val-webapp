@@ -1,12 +1,14 @@
-name: valenstagram-front
+name: val-frontend-prod
 
 services:
-  front:
-    image: evanhs/val-webapp:latest
+  val-webapp:
+    container_name: val-webapp
+    build:
+      dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3000:80"
     environment:
-      - VITE_API_SERVER_URL='https://api.albumfamille.site/'
+      - VITE_API_SERVER_URL_PROD=${VITE_API_SERVER_URL_PROD}
     networks:
       - frontend
 
