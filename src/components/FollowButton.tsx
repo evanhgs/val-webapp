@@ -4,6 +4,7 @@ import { useAlert } from './AlertContext';
 import axios, { AxiosError } from 'axios';
 import { AuthContext } from './AuthContext';
 import {ApiEndpoints} from "../services/apiEndpoints.ts";
+import {Follower} from "../types/followProps.ts";
 
 interface FollowButtonProps {
     username: string;
@@ -38,9 +39,9 @@ const FollowButton: React.FC<FollowButtonProps> = ({ username }) => {
         try {
             setIsLoading(true);
             const response = await axiosInstance.get(ApiEndpoints.follow.getFollowers(username));
-            const followers = response.data?.followers || [];
+            const followers: Follower[] = response.data?.followers || [];
             // regarde si le current user est abonné à l'utilisateur qu'on affiche le bouton follow
-            const checkFollow = followers.some((follower: unknown) => follower.username === user?.username);
+            const checkFollow = followers.some((follower: Follower) => follower.username === user?.username);
             setIsFollowed(checkFollow);
         } catch (error) {
             showAlert(`Une erreur est survenue lors du chargement de l'abonnement, ${error}`, 'error');
