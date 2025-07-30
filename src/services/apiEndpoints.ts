@@ -33,6 +33,7 @@ export const ApiEndpoints = {
     },
     user: {
         profile: (username: string) => url(`/user/profile/${username}`),
+        currentUserProfile: () => url('/user/profile'),
         edit: () => url('/user/edit'),
         search: (username: string) => url(`/user/search/${username}`),
         picture: (profilePicture: string) => url(`/user/picture/${profilePicture}`),

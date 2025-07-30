@@ -16,3 +16,7 @@ export interface FollowPropertiesData {
     }
     isFollowed: boolean;
 }
+
+export type Follower = {
+    username: string;
+}
