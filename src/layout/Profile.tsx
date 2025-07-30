@@ -64,7 +64,7 @@ const Profile = () => {
       }
 
       try {
-        const endpoint = isOwnProfile ? ApiEndpoints.user.profile("") : ApiEndpoints.user.profile(targetUsername);
+        const endpoint = isOwnProfile ? ApiEndpoints.user.currentUserProfile() : ApiEndpoints.user.profile(targetUsername);
         
         const response = await AxiosInstance.get(endpoint);
 

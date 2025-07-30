@@ -10,10 +10,18 @@ const url = (path: string) => `${API_BASE_URL}${path}`
 // setup axios pour le headers
 export const AxiosInstance = axios.create({
     headers: {
-        'Content-Type': 'application/json',
-        ...({ Authorization: `Bearer ${localStorage.getItem('token') || ''}` })
+        'Content-Type': 'application/json'
     }
 });
+
+// récupère le token à chaque requete
+AxiosInstance.interceptors.request.use(config => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+} );
 
 export const ApiEndpoints = {
     follow: {
