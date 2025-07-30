@@ -30,6 +30,7 @@ export const ApiEndpoints = {
         feedGlobal: () => url('/post/feed/global'), // feed global (page explorer)
         feedPerso: () => url('/post/feed'), // feed personnalisé (page home)
         postObject: (postId: string) => url(`/post/${postId}`),
+        postUpload: () => url('/post/upload'),
     },
     user: {
         profile: (username: string) => url(`/user/profile/${username}`),
@@ -43,6 +44,7 @@ export const ApiEndpoints = {
     auth: {
         authToken: () => url('/auth/token'),
         login: () => url('/auth/login'),
+        register: () => url('/auth/register'),
     },
     like: {
         likePost: (postId: string) => url(`/like/${postId}`),

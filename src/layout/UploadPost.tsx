@@ -1,9 +1,8 @@
 import { AuthContext } from "../components/AuthContext.tsx";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import config from "../config.ts";
 import { useAlert } from "../components/AlertContext.tsx";
+import {ApiEndpoints, AxiosInstance} from "../services/apiEndpoints.ts";
 
 const UploadPost = () => {
 
@@ -48,21 +47,13 @@ const UploadPost = () => {
             const formData = new FormData();
             formData.append("file", file);
             formData.append("caption", caption);
-            await axios.post(
-                `${config.serverUrl}/post/upload`,
-                formData,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "multipart/form-data",
-                    },
-                }
-            );
+            await AxiosInstance.post(ApiEndpoints.post.postUpload(), formData);
             setFile(null);
             setError("");
             setCaption("");
             showAlert('Post publié avec succès', 'success');
             navigate("/profile")
+
         } catch (error) {
             console.error("Error fetching post:", error);
             const err = error as { response?: { status: number } };
