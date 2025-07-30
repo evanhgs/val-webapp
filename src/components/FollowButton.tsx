@@ -1,9 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
-import config from "../config";
 import { useAlert } from './AlertContext';
-import axios, { AxiosError } from 'axios';
+import  { AxiosError } from 'axios';
 import { AuthContext } from './AuthContext';
-import {ApiEndpoints} from "../services/apiEndpoints.ts";
+import {ApiEndpoints, AxiosInstance} from "../services/apiEndpoints.ts";
 import {Follower} from "../types/followProps.ts";
 
 interface FollowButtonProps {
@@ -19,15 +18,6 @@ const FollowButton: React.FC<FollowButtonProps> = ({ username }) => {
     const [isFollowed, setIsFollowed] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    //refactor axios
-    const axiosInstance = axios.create({
-    baseURL: config.serverUrl,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer: ${token}` })
-    }
-  });
-
     useEffect(() => {
         if (username && user?.username) {
             fetchFollowStatus();
@@ -38,7 +28,7 @@ const FollowButton: React.FC<FollowButtonProps> = ({ username }) => {
     const fetchFollowStatus = async () => {
         try {
             setIsLoading(true);
-            const response = await axiosInstance.get(ApiEndpoints.follow.getFollowers(username));
+            const response = await AxiosInstance.get(ApiEndpoints.follow.getFollowers(username));
             const followers: Follower[] = response.data?.followers || [];
             // regarde si le current user est abonné à l'utilisateur qu'on affiche le bouton follow
             const checkFollow = followers.some((follower: Follower) => follower.username === user?.username);
@@ -60,7 +50,7 @@ const FollowButton: React.FC<FollowButtonProps> = ({ username }) => {
 
         try {
             setIsLoading(true);
-            await axiosInstance.put(ApiEndpoints.follow.follow(username), {
+            await AxiosInstance.put(ApiEndpoints.follow.follow(username), {
 
             });
 
@@ -83,7 +73,7 @@ const FollowButton: React.FC<FollowButtonProps> = ({ username }) => {
 
         try {
             setIsLoading(true);
-            await axiosInstance.put(ApiEndpoints.follow.unfollow(username));
+            await AxiosInstance.put(ApiEndpoints.follow.unfollow(username));
 
             setIsFollowed(false);
             showAlert("Désabonnement réussi", 'success');
