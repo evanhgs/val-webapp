@@ -14,8 +14,22 @@ export const AxiosInstance = axios.create({
     }
 });
 
+export const AxiosInstanceFormData = axios.create({
+    headers: {
+        'Content-Type': 'multipart/form-data'
+    }
+})
+
 // récupère le token à chaque requete
 AxiosInstance.interceptors.request.use(config => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+} );
+
+AxiosInstanceFormData.interceptors.request.use(config => {
     const token = localStorage.getItem('token');
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;

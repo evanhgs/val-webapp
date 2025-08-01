@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { AuthContext } from "./AuthContext";
 import { UploadButtonProps } from '../types/uploadProps';
-import {ApiEndpoints, AxiosInstance} from "../services/apiEndpoints.ts";
+import {ApiEndpoints, AxiosInstanceFormData} from "../services/apiEndpoints.ts";
 
 const UploadButton: React.FC<UploadButtonProps> = ({ setIsUploading }) => {
 
@@ -30,9 +30,9 @@ const UploadButton: React.FC<UploadButtonProps> = ({ setIsUploading }) => {
             const formData = new FormData();
             formData.append("file", selectedFile); // wait "file" api side
 
-            const response = await AxiosInstance.post(ApiEndpoints.user.uploadPicture(), formData);
+            const response = await AxiosInstanceFormData.post(ApiEndpoints.user.uploadPicture(), formData);
 
-            console.log(response.data);
+            console.log(response);
             setIsUploading(false);
         } catch (error) {
             console.error(error);
