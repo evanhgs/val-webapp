@@ -2,7 +2,7 @@ import { AuthContext } from "../components/AuthContext.tsx";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAlert } from "../components/AlertContext.tsx";
-import {ApiEndpoints, AxiosInstance} from "../services/apiEndpoints.ts";
+import {ApiEndpoints, AxiosInstanceFormData} from "../services/apiEndpoints.ts";
 
 const UploadPost = () => {
 
@@ -47,7 +47,7 @@ const UploadPost = () => {
             const formData = new FormData();
             formData.append("file", file);
             formData.append("caption", caption);
-            await AxiosInstance.post(ApiEndpoints.post.postUpload(), formData);
+            await AxiosInstanceFormData.post(ApiEndpoints.post.postUpload(), formData);
             setFile(null);
             setError("");
             setCaption("");
