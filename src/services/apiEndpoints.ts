@@ -1,9 +1,9 @@
 // Check if API server URL is properly defined
 import axios from "axios";
 
-export const API_BASE_URL: string = import.meta.env.DEV
-    ? import.meta.env.VITE_API_SERVER_URL_DEV
-    : import.meta.env.VITE_API_SERVER_URL_PROD;
+export const API_BASE_URL: string = import.meta.env.VITE_API_URL;
+
+console.log(API_BASE_URL)
 
 const url = (path: string) => `${API_BASE_URL}${path}`
 

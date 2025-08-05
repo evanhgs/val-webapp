@@ -6,8 +6,6 @@ services:
     image: evanhs/val-webapp:latest
     ports:
       - "3000:80"
-    environment:
-      - VITE_API_SERVER_URL_PROD=${VITE_API_SERVER_URL_PROD}
     networks:
       - frontend
 
