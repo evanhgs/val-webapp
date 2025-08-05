@@ -71,5 +71,5 @@ jobs:
           script: |
             cd /home/joker/val-webapp
             git pull
-            docker compose -f docker-compose.prd.yml pull
-            docker compose -f docker-compose.prd.yml up -d --build
+            docker compose -f docker-compose.yml pull
+            docker compose -f docker-compose.yml up -d --build
