@@ -1,7 +1,8 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Logout } from "./Logout.tsx";
 import UseOutsideClickDetector from './OutsideClickDetector'
 import { SearchProps } from '../types/searchProps';
+import {ApiEndpoints, AxiosInstance} from "../services/apiEndpoints.ts";
 
 
 const Settings: React.FC<SearchProps> = ({ setIsSetting, isCompact }) => {
@@ -9,6 +10,17 @@ const Settings: React.FC<SearchProps> = ({ setIsSetting, isCompact }) => {
   const settingContainerRef = UseOutsideClickDetector(() => {
     setIsSetting(false);
   });
+
+  const [apiVersion, setApiVersion] = useState<string>('');
+
+
+  useEffect(() => {
+      const fetchApiVersion = async () => {
+          const resp = await AxiosInstance.get(ApiEndpoints.version.getVersion());
+          setApiVersion(resp.data.version);
+      };
+      fetchApiVersion()
+  }, []);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-80 z-40">
@@ -23,6 +35,10 @@ const Settings: React.FC<SearchProps> = ({ setIsSetting, isCompact }) => {
               ✕
             </button>
           </div>
+            <div className="mb-4 px-3 py-2 bg-gray-700 rounded text-white flex items-center justify-between">
+                <span className="font-medium">Version de l&#39;api :</span>
+                <span className="ml-2 text-sm text-gray-300">{apiVersion}</span>
+            </div>
           <div className="relative">
             <Logout />
           </div>

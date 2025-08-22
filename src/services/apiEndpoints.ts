@@ -73,4 +73,7 @@ export const ApiEndpoints = {
         unlikePost: (postId: string) => url(`/like/${postId}/unlike`),
         getLikePost: (postId: string) => url(`/like/get-likes/${postId}`),
     },
+    version: {
+        getVersion: () => url('/version'),
+    }
 };
