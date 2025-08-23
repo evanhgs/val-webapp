@@ -105,7 +105,7 @@ const ShowPost = () => {
 
                     {/* Post actions */}
                     <div className="p-4 border-b">
-                        <div className="flex space-x-4 mb-2">
+                        <div className="flex items-center">
 
                             <PostActions postId={post?.id}/>
 
