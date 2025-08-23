@@ -47,11 +47,11 @@ export const ApiEndpoints = {
     },
     post: {
         feed: (username: string) => url(`/post/feed/${username}`), // feed d'une personne
-        edit: (postId: string) => url(`/post/edit/${postId}`),
-        delete: (postId: string) => url(`/post/delete/${postId}`),
+        edit: (postId: number) => url(`/post/edit/${postId}`),
+        delete: (postId: number) => url(`/post/delete/${postId}`),
         feedGlobal: () => url('/post/feed/global'), // feed global (page explorer)
         feedPerso: () => url('/post/feed'), // feed personnalisé (page home)
-        postObject: (postId: string) => url(`/post/${postId}`),
+        postObject: (postId: number) => url(`/post/${postId}`),
         postUpload: () => url('/post/upload'),
     },
     user: {
@@ -69,9 +69,16 @@ export const ApiEndpoints = {
         register: () => url('/auth/register'),
     },
     like: {
-        likePost: (postId: string) => url(`/like/${postId}`),
-        unlikePost: (postId: string) => url(`/like/${postId}/unlike`),
-        getLikePost: (postId: string) => url(`/like/get-likes/${postId}`),
+        likePost: (postId: number) => url(`/like/${postId}`),
+        unlikePost: (postId: number) => url(`/like/${postId}`),
+        getLikedPostsByUser: (userId: number) => url(`/like/liked-posts/${userId}`), // display all posts liked by a user
+        getPostLikes: (postId: number) => url(`/like/get-likes/${postId}`),
+    },
+    comment: {
+        addComment: (postId: number) => url(`/comment/${postId}`),
+        deleteComment: (commentId: number) => url(`/comment/${commentId}`),
+        getComments: (postId: number) => url(`/comment/${postId}`),
+        getCurrentAll: () => url('/comment/current/all'), // get all comments of current user
     },
     version: {
         getVersion: () => url('/version'),
