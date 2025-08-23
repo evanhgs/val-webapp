@@ -4,7 +4,7 @@ import FollowButton from '../components/FollowButton';
 import { PostSettings } from "../components/PostSettings";
 import { Post } from "../types/post";
 import { useAlert } from '../components/AlertContext';
-import { LikeButton } from '../components/LikeButton';
+import { PostActions } from '../components/PostActions.tsx';
 import {ApiEndpoints, AxiosInstance} from "../services/apiEndpoints.ts";
 import {pipeDate} from "../components/PipeDate.ts";
 
@@ -25,7 +25,7 @@ const ShowPost = () => {
             setLoading(true);
             setError(false);
             try {
-                const response = await AxiosInstance.get(ApiEndpoints.post.postObject(postId));
+                const response = await AxiosInstance.get(ApiEndpoints.post.postObject(Number(postId)));
                 setPost(response.data.post);
 
             } catch (error) {
@@ -107,7 +107,7 @@ const ShowPost = () => {
                     <div className="p-4 border-b">
                         <div className="flex space-x-4 mb-2">
 
-                            <LikeButton postId={post?.id} userId="" id="" createdAt=""/>
+                            <PostActions postId={post?.id}/>
 
                         </div>
                         <p className="text-xs text-gray-500 mt-2">
