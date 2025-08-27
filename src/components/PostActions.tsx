@@ -5,6 +5,7 @@
     import {LikesFromPost} from "../types/like.ts";
     import {Comment, CommentsContent} from "../types/comment.ts";
     import {pipeDate} from "./PipeDate.ts";
+    import {CommentSettings} from "./CommentSettings.tsx";
 
     export const PostActions = ({ postId }: { postId: number}) => {
 
@@ -125,8 +126,6 @@
             fetchComments();
         }, [postId]);
 
-        console.log(commentContent)
-
         return (
             <div className="flex items-center justify-between px-4 w-full">
                 {/** likes logo & modal */}
@@ -168,7 +167,7 @@
                 </div>
 
                 {/** comments logo & modal */}
-                <div className="">
+                <div className="flex items-center gap-4">
                     <button className="btn btn-ghost flex" onClick={()=>
                         (document.getElementById('comment_modal') as HTMLDialogElement).showModal()}>{commentContent?.count}
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -176,17 +175,17 @@
                         </svg>
                     </button>
                     <dialog id="comment_modal" className="modal">
-                        <div className="modal-box">
+                        <div className="modal-box" >
                             <form method="dialog">
                                 {/* if there is a button in form, it will close the modal */}
                                 <button className="btn btn-ghost btn-sm btn-circle absolute right-2 top-2">✕</button>
                                 {/* display all comments */}
-                                <div className="">
+                                <>
                                     <h3 className="p-3 text-lg">Tous les commentaires</h3>
                                     {commentContent?.comments && commentContent.count > 0 ? (
                                         <div className="max-h-96 overflow-y-auto">
                                             {commentContent?.comments.map((c: Comment) => (
-                                                <div key={c.id} className="chat chat-start">
+                                                <div key={c.id} className="chat chat-start mb-4">
                                                     <div className="chat-image avatar">
                                                         <div className="w-10 rounded-full">
                                                             <img
@@ -195,25 +194,81 @@
                                                             />
                                                         </div>
                                                     </div>
-                                                    <div className="chat-header">
-                                                        {c.user.username}
-                                                        <time className="text-xs opacity-50">{pipeDate(c.created_at) || 'dd/MM/YYYY'}</time>
+                                                    <div className="flex items-start gap-2">
+                                                        <div className="flex-1">
+                                                            <div className="chat-header">
+                                                                {c.user.username}
+                                                                <time className="text-xs opacity-50 ml-2">
+                                                                    {pipeDate(c.created_at) || 'dd/MM/YYYY'}
+                                                                </time>
+                                                            </div>
+                                                            <div className="chat-bubble">{c.content}</div>
+                                                        </div>
+                                                        <div className="self-center">
+                                                            <CommentSettings comment={c} />
+                                                        </div>
                                                     </div>
-                                                    <div className="chat-bubble">{c.content}</div>
                                                 </div>
                                             ))}
                                         </div>
                                     ) : (
-                                        <p className="py-4">Aucun commentaire pour le moment</p>
+                                        <p className="py-4 italic">Aucun commentaire pour le moment</p>
                                         )}
-                                </div>
+                                </>
                                 {/* add comment */}
                                 <div className="flex items-center border-t border-gray-800 p-3">
-                                    <fieldset className="fieldset w-full">
+                                    <fieldset className="fieldset w-5/6">
                                         <legend className="fieldset-legend">Ecrire un commentaire</legend>
-                                        <input type="text" className="input input-md" placeholder="Partage des bonnes nouvelles" />
+                                        <input type="text"
+                                               id="commentInput"
+                                               className="input input-md input-bordered w-full"
+                                               placeholder="Partage des bonnes nouvelles"
+                                        />
                                     </fieldset>
+                                    <button
+                                        className="btn btn-ghost mt-6"
+                                        type="button"
+                                        onClick={() => {
+                                            const input = document.getElementById("commentInput") as HTMLInputElement | null;
+                                            const value = input?.value.trim() || "";
+                                            if (!value) {
+                                                showAlert("Le commentaire ne peut pas être vide", 'info');
+                                                return;
+                                            }
+                                            AxiosInstance.post(ApiEndpoints.comment.addComment(postId), {
+                                                content: value,
+                                            })
+                                                .then(() => {
+                                                    showAlert("Commentaire ajouté !", 'success');
+                                                    fetchComments();
+                                                    if (input) input.value = "";
+                                                })
+                                                .catch((error: unknown) => {
+                                                    const err = error as { response?: { status: number } };
+                                                    if (err.response) {
+                                                        const { status } = err.response;
+                                                        switch (status) {
+                                                            case 400:
+                                                                showAlert('Le commentaire est invalide', 'info');
+                                                                break;
+                                                            case 401:
+                                                                showAlert('Vous devez être connecté pour commenter ce post', 'info');
+                                                                break;
+                                                            case 404:
+                                                                showAlert('Post introuvable', 'error');
+                                                                break;
+                                                            case 500:
+                                                                showAlert('Une erreur serveur est survenue', 'error');
+                                                                break;
+                                                        }
+                                                    }
+                                                });
+                                        }}
+                                    >
+                                        Envoyer
+                                    </button>
                                 </div>
+
                             </form>
                             <h3 className="font-bold text-lg"></h3>
                             <p className="py-4"></p>

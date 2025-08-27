@@ -1,74 +1,56 @@
-import React, { useContext, useEffect, useState } from "react";
-import { AuthContext } from "./AuthContext";
-import clsx from "clsx";
-import UseOutsideClickDetector from "./OutsideClickDetector";
-import { Post } from "../types/post";
-import { useAlert } from './AlertContext';
-import { useNavigate } from "react-router-dom";
+import React, {useContext, useEffect, useState} from "react";
+import {AuthContext} from "./AuthContext.tsx";
+import {useAlert} from "./AlertContext.tsx";
+import {Comment} from "../types/comment.ts";
+import UseOutsideClickDetector from "./OutsideClickDetector.tsx";
 import {ApiEndpoints, AxiosInstance} from "../services/apiEndpoints.ts";
 
-export const PostSettings = ({ post }: { post: Post }) => {
+export const CommentSettings = ({comment}: {comment: Comment}) => {
 
     const { user } = useContext(AuthContext) || {};
     const { showAlert } = useAlert();
-    const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
-    const [isEditFormPostOpen, setIsEditFormPostOpen] = useState(false);
-    const [formData, setFormData] = useState({
-        caption: "",
-        hidden_tag: false,
-    });
+    const [isEditFormCommentOpen, setIsEditFormCommentOpen] = useState(false);
+    const [formData, setFormData] = useState("");
+
     useEffect(() => {
-        if (post) {
-            setFormData({
-                caption: post?.caption || "",
-                hidden_tag: Boolean(post?.hidden_tag)
-            });
+        if (comment) {
+            setFormData(comment.content);
         }
-    }, [post]);
+    }, [comment]);
 
     const leaveContainerRef = UseOutsideClickDetector(() => {
-        setIsEditFormPostOpen(false);
+        setIsEditFormCommentOpen(false);
     });
+
     const handleEditChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        setFormData(e.target.value);
     }
 
-    const handleEditCaption = async (e: React.FormEvent) => {
+    const handleEditComment = async (e: React.FormEvent) => {
         e.preventDefault();
-        try {
-            await AxiosInstance.post(ApiEndpoints.post.edit(post.id), formData);
-            setIsEditFormPostOpen(false);
-            showAlert('Post modifié avec succès', 'success');
-
+        try{
+            await AxiosInstance.patch(ApiEndpoints.comment.editComment(comment.id), formData);
+            setIsEditFormCommentOpen(false);
+            showAlert('Commentaire modifié avec succès', 'success');
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            window.location.reload();
         } catch (error) {
             const err = error as { response?: { data?: { error?: string }; status?: number } };
             if (err.response) {
-                const { data, status } = err.response;
-
+                const { status, data } = err.response;
                 switch (status) {
                     case 400:
-                        if (data?.error && data?.error.includes('caption is too long')) {
-                            showAlert('La légende est trop longue (max 200 caractères)', 'error');
-                        } else {
-                            showAlert('Format de post invalide', 'error');
-                        }
-                        break;
-                    case 401:
-                        showAlert('Vous devez être connecté pour modifier ce post', 'error');
-                        break;
-                    case 403:
-                        showAlert('Vous n\'êtes pas autorisé à modifier ce post', 'error');
+                        showAlert('Le format du commentaire est invalide', 'error');
                         break;
                     case 404:
-                        showAlert('Post introuvable', 'error');
+                        showAlert('Le commentaire n\'a pas été trouvé', 'error');
+                        break;
+                    case 422:
+                        showAlert(data?.error || 'Le contenu du commentaire est invalide', 'error');
                         break;
                     case 500:
                         showAlert('Une erreur serveur est survenue', 'error');
-                        break;
-                    case 204:
-                        showAlert('Aucune modification détectée', 'info');
-                        setIsEditFormPostOpen(false);
                         break;
                     default:
                         showAlert('Une erreur inattendue s\'est produite', 'error');
@@ -77,25 +59,25 @@ export const PostSettings = ({ post }: { post: Post }) => {
         }
     }
 
-    const handleDeletePost = async () => {
-        try {
-            await AxiosInstance.delete(ApiEndpoints.post.delete(post.id));
-            showAlert('Post supprimé avec succès', 'success');
-            navigate("/profile");
-
+    const handleDeleteComment = async () => {
+        try{
+            await AxiosInstance.delete(ApiEndpoints.comment.deleteComment(comment.id));
+            showAlert('Commentaire supprimé avec succès', 'success');
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            window.location.reload();
         } catch (error) {
-            const err = error as { response?: { status: number } };
+            const err = error as { response?: { data?: { error?: string }; status?: number } };
             if (err.response) {
-                const { status } = err.response;
+                const { status, data } = err.response;
                 switch (status) {
-                    case 401:
-                        showAlert('Vous devez être connecté pour supprimer ce post', 'error');
-                        break;
-                    case 403:
-                        showAlert('Vous n\'êtes pas authorisé à supprimer ce post', 'error');
+                    case 400:
+                        showAlert('Le format du commentaire est invalide', 'error');
                         break;
                     case 404:
-                        showAlert('Le post n\'a pas été trouvé', 'error');
+                        showAlert('Le commentaire n\'a pas été trouvé', 'error');
+                        break;
+                    case 422:
+                        showAlert(data?.error || 'Le contenu du commentaire est invalide', 'error');
                         break;
                     case 500:
                         showAlert('Une erreur serveur est survenue', 'error');
@@ -107,96 +89,63 @@ export const PostSettings = ({ post }: { post: Post }) => {
         }
     }
 
-    const toggleHiddenTag = () => {
-        setFormData(prevData => {
-            const newValue = !prevData.hidden_tag;
-            return {
-                ...prevData,
-                hidden_tag: newValue
-            };
-        });
-    };
-
-    function SwitchBtn({ isOn, onChange }: { isOn: boolean, onChange: () => void }) {
-        return (
-            <div className="mb-4 flex items-center">
-                <label className="flex items-center cursor-pointer transition">
-                    <div
-                        onClick={onChange}
-                        className={clsx(
-                            "cursor-pointer w-12 h-6 flex items-center rounded-full px-1 transition-colors duration-200",
-                            isOn ? "bg-emerald-500" : "bg-gray-500"
-                        )}>
-                        <div className={clsx(
-                            "w-5 h-4 bg-white rounded-full transition-transform duration-200",
-                            isOn ? "translate-x-full" : "translate-x-0"
-                        )} />
-                    </div>
-                    <div className="ml-3 text-sm">Masquer le post</div>
-                </label>
-            </div>
-        )
-    }
-
-    const editFormPost = () => {
+    const editFormComment = () => {
         return (
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                 <div className="bg-gray-800 rounded-lg p-6 w-full max-w-md"
-                    ref={leaveContainerRef}>
+                     ref={leaveContainerRef}>
                     <div className="flex justify-between items-center mb-4">
                         <h3 className="text-lg font-medium">Modifier le post</h3>
                         <button
-                            onClick={() => setIsEditFormPostOpen(false)}
+                            onClick={() => setIsEditFormCommentOpen(false)}
                             className="text-gray-400 hover:text-white">
                             ✕
                         </button>
                     </div>
 
-                    <form onSubmit={handleEditCaption}>
+                    <form onSubmit={handleEditComment}>
                         <div className="mb-4">
-                            <label className="block text-sm font-medium mb-2">Légende</label>
+                            <label className="block text-sm font-medium mb-2">Commentaire</label>
                             <textarea
                                 className="w-full bg-gray-700 border border-gray-600 rounded-md p-2 text-white"
                                 rows={4}
                                 name="caption"
-                                value={formData.caption}
+                                value={formData}
                                 onChange={handleEditChange}
-                                placeholder={post?.caption}
+                                placeholder={comment?.content}
                             />
                         </div>
-
-                        <SwitchBtn isOn={formData.hidden_tag} onChange={toggleHiddenTag} />
 
                         <div className="flex justify-end gap-2">
                             <button
                                 type="button"
-                                onClick={() => setIsEditFormPostOpen(false)}
+                                onClick={() => setIsEditFormCommentOpen(false)}
                                 className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md">
                                 Annuler
                             </button>
                             <button
                                 type="submit"
-                                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-md">
+                                className="btn btn-ghost px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-md">
                                 Enregistrer
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
-        );
+        )
     }
-    if (isEditFormPostOpen == true) {
-        return editFormPost()
+    if (isEditFormCommentOpen == true) {
+        return editFormComment();
     }
 
-    if (post?.username === user?.username) {
+    if (String(comment?.user?.id) === user?.id) { // trash code...
         return (
             <div className="relative">
                 <button onClick={() => setIsOpen(!isOpen)} className="p-1 hover:bg-gray-700 rounded-full">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="6" r="1"></circle>
                         <circle cx="12" cy="12" r="1"></circle>
-                        <circle cx="19" cy="12" r="1"></circle>
-                        <circle cx="5" cy="12" r="1"></circle>
+                        <circle cx="12" cy="18" r="1"></circle>
                     </svg>
                 </button>
 
@@ -210,7 +159,7 @@ export const PostSettings = ({ post }: { post: Post }) => {
                         <button
                             onClick={() => {
                                 setIsOpen(false);
-                                setIsEditFormPostOpen(true);
+                                setIsEditFormCommentOpen(true);
                             }}
                             className="w-full text-left p-2 text-sm hover:bg-gray-700 rounded flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
@@ -222,7 +171,7 @@ export const PostSettings = ({ post }: { post: Post }) => {
 
                         <button
                             onClick={() => {
-                                handleDeletePost();
+                                handleDeleteComment();
                                 setIsOpen(false);
                             }}
                             className="w-full text-left p-2 text-sm text-red-400 hover:bg-gray-700 rounded flex items-center">
@@ -237,11 +186,9 @@ export const PostSettings = ({ post }: { post: Post }) => {
                     </div>
                 )}
             </div>
-        );
-    } else {
-        return (
-            <></>
-        );
+        )
     }
-
-}
+    return (
+        <></>
+    );
+};
