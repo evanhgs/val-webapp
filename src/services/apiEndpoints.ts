@@ -79,6 +79,7 @@ export const ApiEndpoints = {
         deleteComment: (commentId: number) => url(`/comment/${commentId}`),
         getComments: (postId: number) => url(`/comment/${postId}`),
         getCurrentAll: () => url('/comment/current/all'), // get all comments of current user
+        editComment: (commentId: number) => url(`/comment/${commentId}`),
     },
     version: {
         getVersion: () => url('/version'),
