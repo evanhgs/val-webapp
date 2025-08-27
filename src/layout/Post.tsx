@@ -25,7 +25,7 @@ const ShowPost = () => {
             setLoading(true);
             setError(false);
             try {
-                const response = await AxiosInstance.get(ApiEndpoints.post.postObject(Number(postId)));
+                const response = await AxiosInstance.get(ApiEndpoints.post.getPost(Number(postId)));
                 setPost(response.data.post);
 
             } catch (error) {
@@ -86,13 +86,15 @@ const ShowPost = () => {
                             className="w-10 h-10 rounded-full object-cover"
                         />
                         <div className="ml-3 cursor-pointer">
-                            <button className="font-bold text-sm" onClick={() => { navigate(`/profile/${post.username}`) }}>{post?.username}</button>
+                            <button className="font-bold text-sm" onClick={() => {
+                                navigate(`/profile/${post.username}`)
+                            }}>{post?.username}</button>
                         </div>
                         <div className="ml-auto mr-4">
                             <FollowButton username={post.username}/>
                         </div>
                         {/* settings of your own post */}
-                        {post && <PostSettings post={post} />}
+                        {post && <PostSettings post={post}/>}
                     </div>
 
                     <div className="post-image-container mt-10">
@@ -103,28 +105,24 @@ const ShowPost = () => {
                         />
                     </div>
 
-                    {/* Post actions */}
-                    <div className="p-4 border-b">
-                        <div className="flex items-center">
-
-                            <PostActions postId={post?.id}/>
-
-                        </div>
-                        <p className="text-xs text-gray-500 mt-2">
-                            Post publié le : {pipeDate(post?.created_at) || 'dd/mm/YYYY'}
-                        </p>
-                    </div>
-
                     {/* Caption */}
                     {post?.caption && (
-                        <div className="p-4">
+                        <div className="p-4 border-b">
                             <p className="text-sm">
                                 <span className="font-bold mr-1">{post.username || '...'}: </span>
                                 <span>{post.caption || '...'}</span>
                             </p>
+                            <p className="text-xs text-gray-500 mt-2">
+                                Post publié le : {pipeDate(post?.created_at) || 'dd/mm/YYYY'}
+                            </p>
                         </div>
                     )}
-
+                    {/* Post actions */}
+                    <div className="p-4 ">
+                        <div className="flex items-center">
+                            <PostActions postId={post?.id}/>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

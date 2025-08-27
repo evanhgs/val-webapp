@@ -14,6 +14,12 @@ export interface UserLiteProfile {
   profile_picture?: string | null;
 }
 
+export interface UserLightDto {
+    id: number;
+    username: string;
+    profile_picture: string;
+}
+
 export interface UserEditProfile {
   username: string;
   email: string;

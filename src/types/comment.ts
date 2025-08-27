@@ -1,8 +1,10 @@
+import {UserLightDto} from "./user.ts";
+
 export interface Comment {
     id: number;
     content: string;
-    createdAt: string;
-    userId: number;
+    created_at: string;
+    user: UserLightDto
     postId: number;
 }
 

@@ -51,7 +51,7 @@ export const ApiEndpoints = {
         delete: (postId: number) => url(`/post/delete/${postId}`),
         feedGlobal: () => url('/post/feed/global'), // feed global (page explorer)
         feedPerso: () => url('/post/feed'), // feed personnalisé (page home)
-        postObject: (postId: number) => url(`/post/${postId}`),
+        getPost: (postId: number) => url(`/post/${postId}`),
         postUpload: () => url('/post/upload'),
     },
     user: {
