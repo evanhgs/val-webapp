@@ -27,6 +27,8 @@ const EditProfileForm = ({ userData, setIsEditing, onUpdateAlert }: any) => {
       
       setIsEditing(false);
       onUpdateAlert("Profil mis à jour avec succès", "success");
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        window.location.reload();
     } catch (error) {
       onUpdateAlert(`Erreur lors de la mise à jour: ${error}`, "error");
     }

@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import { AuthContext } from "./AuthContext";
 import { UploadButtonProps } from '../types/uploadProps';
 import {ApiEndpoints, AxiosInstanceFormData} from "../services/apiEndpoints.ts";
+import {useAlert} from "./AlertContext.tsx";
 
 const UploadButton: React.FC<UploadButtonProps> = ({ setIsUploading }) => {
 
@@ -9,6 +10,7 @@ const UploadButton: React.FC<UploadButtonProps> = ({ setIsUploading }) => {
     const [error, setError] = useState<string>('');
     const [profilePicture, setProfilePicture] = useState<string>(user?.profilePicture || "");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const { showAlert } = useAlert();
 
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -29,11 +31,11 @@ const UploadButton: React.FC<UploadButtonProps> = ({ setIsUploading }) => {
         try {
             const formData = new FormData();
             formData.append("file", selectedFile); // wait "file" api side
-
-            const response = await AxiosInstanceFormData.post(ApiEndpoints.user.uploadPicture(), formData);
-
-            console.log(response);
+            await AxiosInstanceFormData.post(ApiEndpoints.user.uploadPicture(), formData);
             setIsUploading(false);
+            showAlert('Photo de profil mise à jour avec succès', 'success');
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            window.location.reload();
         } catch (error) {
             console.error(error);
             setError("Erreur lors de l'upload de la photo de profil");
