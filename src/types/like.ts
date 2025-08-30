@@ -17,6 +17,6 @@ export interface LikedPostsByUser {
 
 export interface LikesFromPost {
     postId: number;
-    likesCount: number;
+    likes_count: number;
     users: UserLiteProfile[];
 }

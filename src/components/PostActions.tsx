@@ -1,4 +1,4 @@
-    import { useState, useContext, useEffect } from "react";
+    import React, { useState, useContext, useEffect } from "react";
     import { AuthContext } from "./AuthContext.tsx";
     import { useAlert } from './AlertContext';
     import {ApiEndpoints, AxiosInstance} from "../services/apiEndpoints.ts";
@@ -6,6 +6,8 @@
     import {Comment, CommentsContent} from "../types/comment.ts";
     import {pipeDate} from "./PipeDate.ts";
     import {CommentSettings} from "./CommentSettings.tsx";
+    import {UserLiteProfile} from "../types/user.ts";
+    import {useNavigate} from "react-router-dom";
 
     export const PostActions = ({ postId }: { postId: number}) => {
 
@@ -13,12 +15,14 @@
         const [likeContent, setLikeContent] = useState<LikesFromPost | undefined>(undefined);
         const [commentContent, setCommentContent] = useState<CommentsContent | undefined>(undefined);
         const { showAlert } = useAlert();
+        const navigate = useNavigate();
+        const [valueInside, setValueInside] = useState<string>('');
 
         const fetchLikes = async () => {
             const response = await AxiosInstance.get(ApiEndpoints.like.getPostLikes(postId))
             setLikeContent({
                 postId: response.data.post_id,
-                likesCount: response.data.likes_count,
+                likes_count: response.data.likes_count,
                 users: response.data.users,
             });
         };
@@ -33,6 +37,11 @@
             });
         }
 
+        const handleChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+            e.preventDefault();
+            setValueInside(e.target.value);
+        }
+
         const likePost = async () => {
             if (!user) {
                 showAlert('Vous devez être connecté pour liker ce post', 'info');
@@ -44,7 +53,7 @@
                 prev
                     ? {
                         ...prev,
-                        likesCount: prev.likesCount + 1,
+                        likes_count: prev.likes_count + 1,
                         users: [...prev.users, {
                             id: user.id,
                             username: user.username,
@@ -90,7 +99,7 @@
                 prev
                     ? {
                         ...prev,
-                        likesCount: prev.likesCount - 1,
+                        likes_count: prev.likes_count - 1,
                         users: prev.users.filter((u) => Number(u.id) !== Number(user.id)),
                     }
                     : prev
@@ -152,18 +161,33 @@
 
                         </>
                     )}
-                    <button className="btn btn-ghost" onClick={()=>
-                        (document.getElementById('like_modal') as HTMLDialogElement).showModal()}>{likeContent?.likesCount} likes</button>
-                    <dialog id="like_modal" className="modal">
-                        <div className="modal-box">
-                            <form method="dialog">
-                                {/* if there is a button in form, it will close the modal */}
-                                <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                            </form>
-                            <h3 className="font-bold text-lg">Tous les likes du post</h3>
-                            <p className="py-4">Press ESC key or click on ✕ button to close</p>
-                        </div>
-                    </dialog>
+                    {/** likes modal */}
+                    <div className="dropdown dropdown-top dropdown-center">
+                        <div tabIndex={0} role="button" className="btn btn-ghost m-1">{likeContent?.likes_count} likes️</div>
+                        <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                            {likeContent?.users && likeContent.likes_count > 0 ? (
+                                <div>
+                                    {likeContent.users.map((u: UserLiteProfile) => (
+                                        <div key={u.id}>
+                                            <li>
+                                                <div className="max-w-full rounded-full ml-3 cursor-pointer" onClick={() => { navigate(`/profile/${u.username}`) }}>
+                                                    <img
+                                                        className="max-h-12 max-w-12 rounded-full"
+                                                        alt="Tailwind CSS chat bubble component"
+                                                        src={u.profile_picture ? ApiEndpoints.user.picture(u.profile_picture) : ApiEndpoints.user.defaultPicture()}
+                                                    />
+                                                    <a>{u.username}</a>
+                                                </div>
+
+                                            </li>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="py-4 italic">Aucun like pour le moment</p>
+                            )}
+                        </ul>
+                    </div>
                 </div>
 
                 {/** comments logo & modal */}
@@ -176,14 +200,14 @@
                     </button>
                     <dialog id="comment_modal" className="modal">
                         <div className="modal-box" >
+                            <h3 className="font-bold text-lg">Tous les commentaires</h3>
                             <form method="dialog">
                                 {/* if there is a button in form, it will close the modal */}
                                 <button className="btn btn-ghost btn-sm btn-circle absolute right-2 top-2">✕</button>
                                 {/* display all comments */}
                                 <>
-                                    <h3 className="p-3 text-lg">Tous les commentaires</h3>
                                     {commentContent?.comments && commentContent.count > 0 ? (
-                                        <div className="max-h-96 overflow-y-auto">
+                                        <div className="max-h-96 overflow-y-auto mt-8">
                                             {commentContent?.comments.map((c: Comment) => (
                                                 <div key={c.id} className="chat chat-start mb-4">
                                                     <div className="chat-image avatar">
@@ -202,10 +226,10 @@
                                                                     {pipeDate(c.created_at) || 'dd/MM/YYYY'}
                                                                 </time>
                                                             </div>
-                                                            <div className="chat-bubble">{c.content}</div>
+                                                            <div className="chat-bubble break-all whitespace-pre-wrap">{c.content}</div>
                                                         </div>
                                                         <div className="self-center">
-                                                            <CommentSettings comment={c} />
+                                                            <CommentSettings comment={c} fetchComments={fetchComments} />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -218,11 +242,14 @@
                                 {/* add comment */}
                                 <div className="flex items-center border-t border-gray-800 p-3">
                                     <fieldset className="fieldset w-5/6">
-                                        <legend className="fieldset-legend">Ecrire un commentaire</legend>
-                                        <input type="text"
-                                               id="commentInput"
-                                               className="input input-md input-bordered w-full"
-                                               placeholder="Partage des bonnes nouvelles"
+                                        <legend className="fieldset-legend">Ecrire un commentaire : {valueInside.length} / 500</legend>
+                                        <input
+                                            type="text"
+                                            id="commentInput"
+                                            className="input input-md input-bordered w-full"
+                                            placeholder="Partage des bonnes nouvelles"
+                                            maxLength={500}
+                                            onChange={handleChange}
                                         />
                                     </fieldset>
                                     <button
@@ -270,8 +297,6 @@
                                 </div>
 
                             </form>
-                            <h3 className="font-bold text-lg"></h3>
-                            <p className="py-4"></p>
                         </div>
                     </dialog>
                 </div>
