@@ -2,8 +2,9 @@
 import axios from "axios";
 
 export const API_BASE_URL: string = import.meta.env.VITE_API_URL;
+export const FRONTEND_URL: string = import.meta.env.VITE_FRONT_URL;
 
-console.log(API_BASE_URL)
+// console.log(API_BASE_URL)
 
 const url = (path: string) => `${API_BASE_URL}${path}`
 
