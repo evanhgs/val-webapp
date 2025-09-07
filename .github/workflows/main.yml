@@ -54,7 +54,7 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          build-args: VITE_API_URL=${{ secrets.VITE_API_URL }}
+          build-args: VITE_API_URL=${{ secrets.VITE_API_URL }} VITE_FRONT_URL=${{ secret.VITE_FRONT_URL }}
 
 
   remote-ssh-build:

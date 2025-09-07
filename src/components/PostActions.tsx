@@ -1,7 +1,7 @@
     import React, { useState, useContext, useEffect } from "react";
     import { AuthContext } from "./AuthContext.tsx";
     import { useAlert } from './AlertContext';
-    import {ApiEndpoints, AxiosInstance} from "../services/apiEndpoints.ts";
+    import {ApiEndpoints, AxiosInstance, FRONTEND_URL} from "../services/apiEndpoints.ts";
     import {LikesFromPost} from "../types/like.ts";
     import {Comment, CommentsContent} from "../types/comment.ts";
     import {pipeDate} from "./PipeDate.ts";
@@ -306,7 +306,7 @@
                     <button
                         className="btn btn-ghost"
                         onClick={async () => {
-                            await navigator.clipboard.writeText('navigator.client')
+                            await navigator.clipboard.writeText(`${FRONTEND_URL}/post/${postId}`)
                             setCopied(true);
                             setTimeout(() => setCopied(false), 2000);
                         }}

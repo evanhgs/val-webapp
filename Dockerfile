@@ -11,7 +11,8 @@ COPY . .
 # passer la var avant le build sinon vite compile pas
 
 ARG VITE_API_URL
-ENV VITE_API_URL=$VITE_API_URL
+ARG VITE_FRONT_URL
+ENV VITE_API_URL=$VITE_API_URL VITE_FRONT_URL=$VITE_FRONT_URL
 
 RUN npm run build
 
