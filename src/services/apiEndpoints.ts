@@ -82,6 +82,14 @@ export const ApiEndpoints = {
         getCurrentAll: () => url('/comment/current/all'), // get all comments of current user
         editComment: (commentId: number) => url(`/comment/${commentId}`),
     },
+    message: {
+        sendMessage: (username: string) => url (`/message/send/${username}`), // post method
+        deleteMessage: (messageId: number) => url(`/message/${messageId}`),
+        editMessage: (messageId: number) => url(`/message/${messageId}`), // patch method to edit the content of msg
+        getConversationContent: (conversationId: number) => url(`/message/conversation/${conversationId}/content`), // get msg in the conv between 2 users
+        getAllConversation: () => url('/message/conversations'), // display all conversations of current user
+        websocketChat: (userId: number) => url(`/ws/${userId}`),
+    },
     version: {
         getVersion: () => url('/version'),
     }

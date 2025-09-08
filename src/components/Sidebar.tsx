@@ -40,7 +40,7 @@ export const Sidebar: React.FC = () => {
     { icon: "🔍", label: "Chercher", onClick: () => { setIsSetting(false); setIsSearch(true) }, isActive: isSearch },
     { icon: "🧭", label: "Explorer", link: "/explorer", isNavLink: true },
     { icon: "▶️", label: "Reels" },
-    { icon: "📩", label: "Messages" },
+    { icon: "📩", label: "Messages", link: "/messages", isNavLink: true },
     { icon: "❤️", label: "Notifications" },
     { icon: "➕", label: "Créer", link: "/upload", isNavLink: true },
     { icon: "👤", label: "Profil", link: "/profile", isNavLink: true },

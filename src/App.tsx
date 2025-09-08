@@ -12,6 +12,7 @@ import ShowPost from "./layout/Post";
 import { AlertProvider } from "./components/AlertContext.tsx";
 import Explorer from "./layout/Explorer.tsx";
 import {NotFound} from "./components/NotFound.tsx";
+import Messages from "./layout/Messages.tsx";
 
 const App: React.FC = () => {
   return (
@@ -30,6 +31,7 @@ const App: React.FC = () => {
                 <Route path="/upload" element={<UploadPost />} />
                 <Route path="/post/:postId" element={<ShowPost />} />
                 <Route path="/explorer" element={<Explorer />} />
+                <Route path="/messages" element={<Messages />} />
               </Route>
             </Route>
             <Route path="*" element={<NotFound />} />
