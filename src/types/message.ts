@@ -10,7 +10,7 @@ export interface Conversation {
 export interface Message {
     id: number;
     conversationId: number;
-    senderId: number;
+    sender: UserLightDto;
     content: string;
     created_at: Date;
     updated_at: Date;
