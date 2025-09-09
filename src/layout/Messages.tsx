@@ -14,7 +14,7 @@ const Messages = () => {
     const { showAlert } = useAlert();
     const [isLoading, setIsLoading] = useState(false);
     const [conversationList, setConversationList] = useState<Conversation[]>();
-    //const [conversationContent, setConversationContent] = useState<ConversationContent | null>(null);
+    const [selectedConvId, setSelectedConvId] = useState<number | null>(null);
 
     useEffect(() => {
         if (!token) return;
@@ -22,7 +22,6 @@ const Messages = () => {
             try {
                 setIsLoading(true);
                 const allConvResponse = await AxiosInstance.get(ApiEndpoints.message.getAllConversation());
-                console.log("API response:", allConvResponse.data);
                 setConversationList(allConvResponse.data ?? []);
             } catch (error) {
                 showAlert(`Une erreur est survenue: ${error}`, 'error')
@@ -35,19 +34,26 @@ const Messages = () => {
 
     return (
         <div className="max-w-4xl mx-auto my-8 flex min-h-[650px] h-auto rounded-2xl">
-            <div className="w-full">
+            <div className={selectedConvId ? ("w-1/3"): ("w-full")}>
                 { isLoading ? (
                     <span className="loading loading-spinner loading-xl "></span>
                 ) : (
-                    <Conversations conversations={conversationList || []} />
+                    <Conversations
+                        conversations={conversationList || []}
+                        onSelectConv={(id) => setSelectedConvId(id)}
+                    />
                 )}
             </div>
 
             <div className="divider lg:divider-horizontal"></div>
 
-            <div className="w-full">
-                <Chat />
-            </div>
+            {selectedConvId ? (
+                <div className="w-full">
+                    <Chat convId={selectedConvId} />
+                </div>
+            ) : (
+                <></>
+            )}
         </div>
     );
 };

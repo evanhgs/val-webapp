@@ -12,13 +12,13 @@ export interface Message {
     conversationId: number;
     senderId: number;
     content: string;
-    createdAt: Date;
-    updatedAt: Date;
+    created_at: Date;
+    updated_at: Date;
     isRead: boolean;
 }
 
 export interface ConversationContent {
     conversation: Conversation;
-    messages: Message;
+    messages: Message[];
     detail: string;
 }

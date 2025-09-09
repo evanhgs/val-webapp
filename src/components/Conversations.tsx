@@ -3,7 +3,7 @@ import {useContext} from "react";
 import {AuthContext} from "./AuthContext.tsx";
 import {ApiEndpoints} from "../services/apiEndpoints.ts";
 
-export const Conversations = ({conversations}: {conversations: Conversation[] }) => {
+export const Conversations = ({conversations, onSelectConv}: {conversations: Conversation[], onSelectConv: (id: number) => void }) => {
 
     const { user } = useContext(AuthContext) || {};
 
@@ -15,9 +15,6 @@ export const Conversations = ({conversations}: {conversations: Conversation[] })
         return conversation.user1;
     };
 
-    console.log("conv :", conversations);
-
-
     return (
         <>
             <ul className="list bg-base-100 rounded-box shadow-md" key="conversation">
@@ -28,7 +25,11 @@ export const Conversations = ({conversations}: {conversations: Conversation[] })
                     conversations.map((conversation: Conversation) => {
                         const otherUser = getOtherUser(conversation);
                         return (
-                            <li className="list-row" key={conversation.id}>
+                            <li
+                                className="list-row hover:cursor-pointer hover:bg-gray-500"
+                                key={conversation.id}
+                                onClick={() => onSelectConv(conversation.id)}
+                            >
                                 <div>
                                     <img
                                         className="size-10 rounded-box"
