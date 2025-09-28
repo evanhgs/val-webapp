@@ -49,7 +49,7 @@ const Messages = () => {
 
             {selectedConvId ? (
                 <div className="w-full">
-                    <Chat convId={selectedConvId} />
+                    <Chat convId={selectedConvId} /> {/*charge la conversation avec l'utilisateur sélectionné et va s'abonner au topic de la conv*/}
                 </div>
             ) : (
                 <></>

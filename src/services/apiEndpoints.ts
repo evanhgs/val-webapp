@@ -3,6 +3,9 @@ import axios from "axios";
 
 export const API_BASE_URL: string = import.meta.env.VITE_API_URL;
 export const FRONTEND_URL: string = import.meta.env.VITE_FRONT_URL;
+export const API_MQTT_WSS: string = import.meta.env.VITE_API_MQTT_WSS;
+export const API_MQTT_USER: string = import.meta.env.VITE_API_MQTT_USER;
+export const API_MQTT_PASSWORD: string = import.meta.env.VITE_API_MQTT_PASSWORD;
 
 // console.log(API_BASE_URL)
 
@@ -83,12 +86,11 @@ export const ApiEndpoints = {
         editComment: (commentId: number) => url(`/comment/${commentId}`),
     },
     message: {
-        sendMessage: (username: string) => url (`/message/send/${username}`), // post method
+        sendMessage: (userId: number) => url (`/message/send/${userId}`), // post method
         deleteMessage: (messageId: number) => url(`/message/${messageId}`),
         editMessage: (messageId: number) => url(`/message/${messageId}`), // patch method to edit the content of msg
         getConversationContent: (conversationId: number) => url(`/message/conversation/${conversationId}/content`), // get msg in the conv between 2 users
         getAllConversation: () => url('/message/conversations'), // display all conversations of current user
-        websocketChat: (userId: number) => url(`/ws/${userId}`),
     },
     version: {
         getVersion: () => url('/version'),
