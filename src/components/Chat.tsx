@@ -1,29 +1,109 @@
-import { useEffect, useRef, useState, useContext } from "react";
-import { ApiEndpoints, AxiosInstance } from "../services/apiEndpoints";
-import { ConversationContent } from "../types/message";
+import { useEffect, useRef, useState, useContext, useCallback } from "react";
+import {API_MQTT_PASSWORD, API_MQTT_USER, API_MQTT_WSS, ApiEndpoints, AxiosInstance} from "../services/apiEndpoints";
+import { ConversationContent, Message } from "../types/message";
 import { shortPipeDate } from "./PipeDate";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./AuthContext";
+import { useAlert } from "./AlertContext.tsx";
+import mqtt, { MqttClient } from "mqtt";
+import { useMQTTSubscribe } from "./useMQTTSubscribe.tsx";
 
 export const Chat = ({ convId }: { convId: number }) => {
     const [conversationContent, setConversationContent] = useState<ConversationContent | null>(null);
     const navigate = useNavigate();
     const msgEndRef = useRef<HTMLDivElement | null>(null);
     const { user } = useContext(AuthContext) || {};
+    const [newMessage, setNewMessage] = useState("");
+    const { showAlert } = useAlert();
 
+    const mqttClientRef = useRef<MqttClient | null>(null);
+    const topic = `chat/${convId}/messages`;
+
+    // callback pour les messages MQTT
+    const handleMQTTMessage = useCallback(
+        (payload: string) => {
+            try {
+                const parsed: Message = JSON.parse(payload);
+                setConversationContent((prev) =>
+                    prev ? { ...prev, messages: [...prev.messages, parsed] } : prev
+                );
+            } catch (err) {
+                console.error("Invalid MQTT message:", err);
+            }
+        },
+        []
+    );
+
+    // init MQTT
     useEffect(() => {
+        const mqttClient = mqtt.connect(API_MQTT_WSS, {
+            username: API_MQTT_USER,
+            password: API_MQTT_PASSWORD
+        });
+        mqttClientRef.current = mqttClient;
+
+        mqttClient.on("connect", () => {
+            console.log("Connected to broker");
+        });
+
+        // fetch contenu conv initial
         const fetchConvContent = async () => {
-            const response = await AxiosInstance.get(ApiEndpoints.message.getConversationContent(convId));
+            const response = await AxiosInstance.get(
+                ApiEndpoints.message.getConversationContent(convId)
+            );
             setConversationContent(response.data);
         };
         fetchConvContent();
+
+        return () => {
+            mqttClient.end();
+            mqttClientRef.current = null;
+        };
     }, [convId]);
 
+    // souscription via hook custom
+    useMQTTSubscribe(mqttClientRef.current, topic, handleMQTTMessage);
+
+    // scroll auto en bas quand nouveaux messages
     useEffect(() => {
         if (msgEndRef.current) {
-            msgEndRef.current.scrollTo({top: msgEndRef.current.scrollHeight, behavior: "smooth",});
+            msgEndRef.current.scrollTo({
+                top: msgEndRef.current.scrollHeight,
+                behavior: "smooth",
+            });
         }
     }, [conversationContent]);
+
+    const handleSendMessage = async () => {
+        if (!newMessage.trim() || !user || !conversationContent) return;
+
+        const { user1, user2 } = conversationContent.conversation;
+        const otherUserId =
+            Number(user1.id) === Number(user.id) ? Number(user2.id) : Number(user1.id);
+
+        if (!otherUserId) return;
+
+        try {
+            const response = await AxiosInstance.post(
+                ApiEndpoints.message.sendMessage(otherUserId),
+                { content: newMessage }
+            );
+
+            const sentMsg: Message = response.data;
+            setConversationContent((prev) =>
+                prev ? { ...prev, messages: [...prev.messages, sentMsg] } : prev
+            );
+
+            if (mqttClientRef.current) {
+                mqttClientRef.current.publish(topic, JSON.stringify(sentMsg));
+            }
+
+            setNewMessage("");
+            showAlert("Message envoyé !", "success");
+        } catch (err) {
+            showAlert(`${err}`, "error");
+        }
+    };
 
     return (
         <div className="bg-base-100 rounded-box shadow-md w-full max-h-[600px] flex flex-col">
@@ -74,12 +154,18 @@ export const Chat = ({ convId }: { convId: number }) => {
                 )}
             </div>
 
-            <div className="p-4">
+            <div className="p-4 flex gap-2">
                 <input
                     type="text"
                     placeholder="écrire un message..."
                     className="input input-bordered w-full"
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
                 />
+                <button className="btn btn-primary" onClick={handleSendMessage}>
+                    Envoyer
+                </button>
             </div>
         </div>
     );
