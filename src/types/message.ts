@@ -20,5 +20,4 @@ export interface Message {
 export interface ConversationContent {
     conversation: Conversation;
     messages: Message[];
-    detail: string;
 }
