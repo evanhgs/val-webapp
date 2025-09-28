@@ -16,7 +16,8 @@ export const Chat = ({ convId }: { convId: number }) => {
     const [newMessage, setNewMessage] = useState("");
     const { showAlert } = useAlert();
 
-    const mqttClientRef = useRef<MqttClient | null>(null);
+    //const mqttClientRef = useRef<MqttClient | null>(null);
+    const [mqttClient, setMqttClient] = useState<MqttClient | null>(null);
     const topic = `chat/${convId}/messages`;
 
     // callback pour les messages MQTT
@@ -24,6 +25,7 @@ export const Chat = ({ convId }: { convId: number }) => {
         (payload: string) => {
             try {
                 const parsed: Message = JSON.parse(payload);
+                console.log("message envoyé par votre ami:", parsed)
                 setConversationContent((prev) =>
                     prev ? { ...prev, messages: [...prev.messages, parsed] } : prev
                 );
@@ -36,13 +38,16 @@ export const Chat = ({ convId }: { convId: number }) => {
 
     // init MQTT
     useEffect(() => {
-        const mqttClient = mqtt.connect(API_MQTT_WSS, {
+        const client = mqtt.connect(API_MQTT_WSS, {
             username: API_MQTT_USER,
             password: API_MQTT_PASSWORD
         });
-        mqttClientRef.current = mqttClient;
+        //mqttClientRef.current = mqttClient;
+        console.log("MQTT client créé", client.connected);
 
-        mqttClient.on("connect", () => {
+        setMqttClient(client)
+
+        client.on("connect", () => {
             console.log("Connected to broker");
         });
 
@@ -56,13 +61,13 @@ export const Chat = ({ convId }: { convId: number }) => {
         fetchConvContent();
 
         return () => {
-            mqttClient.end();
-            mqttClientRef.current = null;
+            client.end();
+            setMqttClient(null)
         };
     }, [convId]);
 
     // souscription via hook custom
-    useMQTTSubscribe(mqttClientRef.current, topic, handleMQTTMessage);
+    useMQTTSubscribe(mqttClient, topic, handleMQTTMessage);
 
     // scroll auto en bas quand nouveaux messages
     useEffect(() => {
@@ -88,14 +93,15 @@ export const Chat = ({ convId }: { convId: number }) => {
                 ApiEndpoints.message.sendMessage(otherUserId),
                 { content: newMessage }
             );
-
+            console.log("message envoyé coté client")
             const sentMsg: Message = response.data;
             setConversationContent((prev) =>
                 prev ? { ...prev, messages: [...prev.messages, sentMsg] } : prev
             );
-
-            if (mqttClientRef.current) {
-                mqttClientRef.current.publish(topic, JSON.stringify(sentMsg));
+            console.log("console test")
+            if (mqttClient) {
+                mqttClient.publish(topic, JSON.stringify(sentMsg), {qos: 1, retain: true}, () => console.log("abonné"));
+                console.log("message reçu coté client")
             }
 
             setNewMessage("");
