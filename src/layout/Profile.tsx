@@ -12,6 +12,7 @@ import { PostDetails} from "../types/post";
 import { UserProfile } from "../types/user";
 import FollowButton from "../components/FollowButton";
 import { ApiEndpoints, AxiosInstance } from "../services/apiEndpoints";
+import SendMessageButton from "../components/SendMessageButton.tsx";
 
 const Profile = () => {
 
@@ -69,6 +70,7 @@ const Profile = () => {
         const response = await AxiosInstance.get(endpoint);
 
         setUserData({
+          id: response.data.id,
           username: response.data.username,
           email: response.data.email,
           bio: response.data.bio || "",
@@ -200,7 +202,10 @@ const Profile = () => {
                     </>
                   ) : (
                     // Bouton de suivi pour les autres profils
-                    <FollowButton username={userData.username} />
+                      <>
+                          <FollowButton username={userData.username} />
+                          <SendMessageButton username={userData.id} />
+                      </>
                   )}
                 </div>
               </div>

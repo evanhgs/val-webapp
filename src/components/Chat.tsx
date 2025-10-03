@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./AuthContext";
 import { useAlert } from "./AlertContext.tsx";
 import mqtt, { MqttClient } from "mqtt";
-import { useMQTTSubscribe } from "./useMQTTSubscribe.tsx";
 
 export const Chat = ({ convId }: { convId: number }) => {
     const [conversationContent, setConversationContent] = useState<ConversationContent | null>(null);
@@ -67,7 +66,7 @@ export const Chat = ({ convId }: { convId: number }) => {
     }, [convId]);
 
     // souscription via hook custom
-    useMQTTSubscribe(mqttClient, topic, handleMQTTMessage);
+    // useMQTTSubscribe(mqttClient, topic, handleMQTTMessage);
 
     // scroll auto en bas quand nouveaux messages
     useEffect(() => {
