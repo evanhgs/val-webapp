@@ -1,4 +1,4 @@
-import {Chat} from "../components/Chat.tsx";
+import {Chat} from "./Chat.tsx";
 import {useContext, useEffect, useState} from "react";
 import {Conversation} from "../types/message.ts";
 import {AuthContext} from "../components/AuthContext.tsx";
@@ -33,8 +33,8 @@ const Messages = () => {
     }, [token]);
 
     return (
-        <div className="max-w-4xl mx-auto my-8 flex min-h-[650px] h-auto rounded-2xl">
-            <div className={selectedConvId ? ("w-1/3"): ("w-full")}>
+        <div className="max-w-4xl mx-auto my-8 min-h-[650px] h-auto rounded-2xl flex flex-col md:flex-row">
+            <div className={selectedConvId ? ("md:w-1/3 w-full max-h-[100px] overflow-auto"): ("w-full")}>
                 { isLoading ? (
                     <span className="loading loading-spinner loading-xl "></span>
                 ) : (
@@ -48,7 +48,7 @@ const Messages = () => {
             <div className="divider lg:divider-horizontal"></div>
 
             {selectedConvId ? (
-                <div className="w-full">
+                <div className="w-full max-h-[500px] overflow-auto mb-6">
                     <Chat convId={selectedConvId} /> {/*charge la conversation avec l'utilisateur sélectionné et va s'abonner au topic de la conv*/}
                 </div>
             ) : (
