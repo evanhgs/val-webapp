@@ -33,6 +33,7 @@ const Home = () => {
         const responseFeed = await AxiosInstance.get(ApiEndpoints.post.feedPerso());
 
         setUserData({
+          id: response.data.id,
           username: response.data.username,
           profile_picture: response.data.profile_picture || "default.jpg",
           bio: response.data.bio || "",
