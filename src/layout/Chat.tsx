@@ -115,7 +115,7 @@ export const Chat = ({ convId }: { convId: number }) => {
 
 
     return (
-        <div className="bg-base-100 rounded-box shadow-md w-full max-h-[600px] flex flex-col">
+        <div className="bg-base-100 rounded-box shadow-md w-full max-h-[500px] flex flex-col overflow-auto md:max-h-[600px]">
             <div className="flex-1 overflow-y-auto p-4 space-y-4" ref={msgEndRef}>
                 {loading ? (
                     <span className="loading loading-spinner loading-xl"></span>
