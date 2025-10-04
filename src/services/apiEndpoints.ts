@@ -6,6 +6,7 @@ export const FRONTEND_URL: string = import.meta.env.VITE_FRONT_URL;
 export const API_MQTT_WSS: string = import.meta.env.VITE_API_MQTT_WSS;
 export const API_MQTT_USER: string = import.meta.env.VITE_API_MQTT_USER;
 export const API_MQTT_PASSWORD: string = import.meta.env.VITE_API_MQTT_PASSWORD;
+export const REACT_APP_GIT_VERSION: string = import.meta.env.VITE_REACT_APP_GIT_VERSION;
 
 // console.log(API_BASE_URL)
 

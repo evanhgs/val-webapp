@@ -58,7 +58,8 @@ jobs:
             VITE_FRONT_URL=${{ secrets.VITE_FRONT_URL }} 
             VITE_API_MQTT_WSS=${{ secrets.VITE_API_MQTT_WSS }}
             VITE_API_MQTT_USER=${{ secrets.VITE_API_MQTT_USER }}
-            VITE_API_MQTT_PASSWORD=${{ secrets.VITE_API_MQTT_PASSWORD }}
+            VITE_API_MQTT_PASSWORD=${{ secrets.VITE_API_MQTT_PASSWORD }} 
+            VITE_REACT_APP_GIT_VERSION=${{ env.VERSION }}
 
 
   remote-ssh-build:

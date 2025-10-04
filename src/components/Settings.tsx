@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import { Logout } from "./Logout.tsx";
 import UseOutsideClickDetector from './OutsideClickDetector'
 import { SearchProps } from '../types/searchProps';
-import {ApiEndpoints, AxiosInstance} from "../services/apiEndpoints.ts";
+import {ApiEndpoints, AxiosInstance, REACT_APP_GIT_VERSION} from "../services/apiEndpoints.ts";
 
 
 const Settings: React.FC<SearchProps> = ({ setIsSetting, isCompact }) => {
@@ -38,6 +38,10 @@ const Settings: React.FC<SearchProps> = ({ setIsSetting, isCompact }) => {
             <div className="mb-4 px-3 py-2 bg-gray-700 rounded text-white flex items-center justify-between">
                 <span className="font-medium">Version de l&#39;api :</span>
                 <span className="ml-2 text-sm text-gray-300">{apiVersion}</span>
+            </div>
+            <div className="mb-4 px-3 py-2 bg-gray-700 rounded text-white flex items-center justify-between">
+                <span className="font-medium">Version de l'application :</span>
+                <span className="ml-2 text-sm text-gray-300">{REACT_APP_GIT_VERSION}</span>
             </div>
           <div className="relative">
             <Logout />
