@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState, useContext } from "react";
-import {API_MQTT_PASSWORD, API_MQTT_USER, API_MQTT_WSS, ApiEndpoints, AxiosInstance} from "../services/apiEndpoints";
-import { ConversationContent, Message } from "../types/message";
-import { shortPipeDate } from "./PipeDate";
+import {API_MQTT_PASSWORD, API_MQTT_USER, API_MQTT_WSS, ApiEndpoints, AxiosInstance} from "../services/apiEndpoints.ts";
+import { ConversationContent, Message } from "../types/message.ts";
+import { shortPipeDate } from "../components/PipeDate.ts";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "./AuthContext";
-import { useAlert } from "./AlertContext.tsx";
+import { AuthContext } from "../components/AuthContext.tsx";
+import { useAlert } from "../components/AlertContext.tsx";
 import mqtt, {MqttClient} from "mqtt";
 
 export const Chat = ({ convId }: { convId: number }) => {
