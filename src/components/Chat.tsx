@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState, useContext, useCallback } from "react";
+import { useEffect, useRef, useState, useContext } from "react";
 import {API_MQTT_PASSWORD, API_MQTT_USER, API_MQTT_WSS, ApiEndpoints, AxiosInstance} from "../services/apiEndpoints";
 import { ConversationContent, Message } from "../types/message";
 import { shortPipeDate } from "./PipeDate";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./AuthContext";
 import { useAlert } from "./AlertContext.tsx";
-import mqtt, { MqttClient } from "mqtt";
+import mqtt, {MqttClient} from "mqtt";
 
 export const Chat = ({ convId }: { convId: number }) => {
     const [conversationContent, setConversationContent] = useState<ConversationContent | null>(null);
@@ -14,59 +14,16 @@ export const Chat = ({ convId }: { convId: number }) => {
     const { user } = useContext(AuthContext) || {};
     const [newMessage, setNewMessage] = useState("");
     const { showAlert } = useAlert();
-
-    //const mqttClientRef = useRef<MqttClient | null>(null);
+    const [loading, setLoading] = useState(false);
     const [mqttClient, setMqttClient] = useState<MqttClient | null>(null);
-    const topic = `chat/${convId}/messages`;
 
-    // callback pour les messages MQTT
-    const handleMQTTMessage = useCallback(
-        (payload: string) => {
-            try {
-                const parsed: Message = JSON.parse(payload);
-                console.log("message envoyé par votre ami:", parsed)
-                setConversationContent((prev) =>
-                    prev ? { ...prev, messages: [...prev.messages, parsed] } : prev
-                );
-            } catch (err) {
-                console.error("Invalid MQTT message:", err);
-            }
-        },
-        []
-    );
+    /** fonctionnement du chat avec MQTT
+     * ouverture de la conversation
+     * abonnement au topic de la conversation (chat/{convId}/messages)
+     * quand un message est reçu, on l'ajoute à la liste des messages
+     * les messages sont gérés sur l'api
+     * */
 
-    // init MQTT
-    useEffect(() => {
-        const client = mqtt.connect(API_MQTT_WSS, {
-            username: API_MQTT_USER,
-            password: API_MQTT_PASSWORD
-        });
-        //mqttClientRef.current = mqttClient;
-        console.log("MQTT client créé", client.connected);
-
-        setMqttClient(client)
-
-        client.on("connect", () => {
-            console.log("Connected to broker");
-        });
-
-        // fetch contenu conv initial
-        const fetchConvContent = async () => {
-            const response = await AxiosInstance.get(
-                ApiEndpoints.message.getConversationContent(convId)
-            );
-            setConversationContent(response.data);
-        };
-        fetchConvContent();
-
-        return () => {
-            client.end();
-            setMqttClient(null)
-        };
-    }, [convId]);
-
-    // souscription via hook custom
-    // useMQTTSubscribe(mqttClient, topic, handleMQTTMessage);
 
     // scroll auto en bas quand nouveaux messages
     useEffect(() => {
@@ -78,6 +35,23 @@ export const Chat = ({ convId }: { convId: number }) => {
         }
     }, [conversationContent]);
 
+    useEffect(() => {
+        const client = mqtt.connect(API_MQTT_WSS, {
+            username: API_MQTT_USER,
+            password: API_MQTT_PASSWORD,
+        });
+
+        client.on('connect', () => {
+            console.log('Connection à la messagerie');
+            client.subscribe(`chat/${convId}/messages`);
+        });
+        client.on('error', (err) => console.error('MQTT error:', err));
+        setMqttClient(client);
+        return () => {
+            client.end(true);
+        };
+    }, [convId]);
+
     const handleSendMessage = async () => {
         if (!newMessage.trim() || !user || !conversationContent) return;
 
@@ -88,20 +62,10 @@ export const Chat = ({ convId }: { convId: number }) => {
         if (!otherUserId) return;
 
         try {
-            const response = await AxiosInstance.post(
+            await AxiosInstance.post(
                 ApiEndpoints.message.sendMessage(otherUserId),
                 { content: newMessage }
             );
-            console.log("message envoyé coté client")
-            const sentMsg: Message = response.data;
-            setConversationContent((prev) =>
-                prev ? { ...prev, messages: [...prev.messages, sentMsg] } : prev
-            );
-            console.log("console test")
-            if (mqttClient) {
-                mqttClient.publish(topic, JSON.stringify(sentMsg), {qos: 1, retain: true}, () => console.log("abonné"));
-                console.log("message reçu coté client")
-            }
 
             setNewMessage("");
             showAlert("Message envoyé !", "success");
@@ -110,11 +74,54 @@ export const Chat = ({ convId }: { convId: number }) => {
         }
     };
 
+    useEffect(() => {
+        fetchConversation();
+    }, [convId]);
+
+    const fetchConversation = async () => {
+        try {
+            setLoading(true);
+            const response = await AxiosInstance.get(ApiEndpoints.message.getConversationContent(convId));
+            setConversationContent(response.data);
+        } catch (err) {
+            showAlert(`${err}`, "error");
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        if (!mqttClient) return;
+
+        const handleMessage = (topic: string, message: Buffer) => {
+            if (topic === `chat/${convId}/messages`) {
+                try {
+                    const parsed: Message = JSON.parse(message.toString());
+                    setConversationContent((prev) =>
+                        prev ? { ...prev, messages: [...prev.messages, parsed] } : prev
+                    );
+                } catch (e) {
+                    console.error('Erreur de parsing message:', e);
+                }
+            }
+        };
+
+        mqttClient.on('message', handleMessage);
+        return () => {
+            mqttClient.off('message', handleMessage);
+        };
+    }, [mqttClient, convId]);
+
+
+
     return (
         <div className="bg-base-100 rounded-box shadow-md w-full max-h-[600px] flex flex-col">
             <div className="flex-1 overflow-y-auto p-4 space-y-4" ref={msgEndRef}>
-                {conversationContent ? (
+                {loading ? (
+                    <span className="loading loading-spinner loading-xl"></span>
+                ) : conversationContent ? (
                     conversationContent.messages.map((message) => {
+                        if (!message.sender) return null;
                         const isCurrentUser = String(message.sender.id) === String(user?.id);
 
                         return (
