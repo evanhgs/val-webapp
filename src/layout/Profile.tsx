@@ -204,7 +204,7 @@ const Profile = () => {
                     // Bouton de suivi pour les autres profils
                       <>
                           <FollowButton username={userData.username} />
-                          <SendMessageButton username={userData.id} />
+                          <SendMessageButton userId={userData.id} />
                       </>
                   )}
                 </div>
