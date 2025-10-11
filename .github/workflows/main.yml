@@ -54,7 +54,8 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          build-args: VITE_API_URL=${{ secrets.VITE_API_URL }} 
+          build-args: |
+            VITE_API_URL=${{ secrets.VITE_API_URL }} 
             VITE_FRONT_URL=${{ secrets.VITE_FRONT_URL }} 
             VITE_API_MQTT_WSS=${{ secrets.VITE_API_MQTT_WSS }}
             VITE_API_MQTT_USER=${{ secrets.VITE_API_MQTT_USER }}
