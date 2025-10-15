@@ -7,4 +7,4 @@ Dockerfile
 .gitignore
 .idea
 dist
-.env
+.env.local

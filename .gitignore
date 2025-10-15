@@ -28,6 +28,6 @@ client/dist-ssr
 *.vs:
 node_modules/
 images/
-.env
+.env.local
 .env.production
 dist/
