@@ -7,7 +7,7 @@ import React from "react";
 import {Config} from "../../config/config.ts";
 import {pipeDate} from "../../config/PipeDate.ts";
 
-export const Page: React.FC<UserFeedProps> = ({ userFeed }) => {
+export const Feed: React.FC<UserFeedProps> = ({ userFeed }) => {
 
   const navigate = useNavigate();
 
