@@ -1,5 +1,5 @@
 import {Stories} from "../components/UIX/Stories.tsx";
-import {Page} from "./feed/page.tsx";
+import {Feed} from "./feed/page.tsx";
 import {Suggestions} from "../components/UIX/Suggestions.tsx";
 import {useContext, useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
@@ -9,7 +9,7 @@ import {UserFeedProps} from '../types/Feed.ts';
 import {AxiosInstance, Config} from "../config/config.ts";
 import {useAlert} from "../components/Context/AlertContext.tsx";
 
-const Chat = () => {
+export default function Home() {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext) || {};
   const token = user?.token;
@@ -65,7 +65,7 @@ const Chat = () => {
 
         <div className="flex w-full">
           <div className="w-full lg:mr-8">
-            <Page
+            <Feed
               userFeed={userFeed?.userFeed || []}
               currentUsername={userData?.username}
             />
@@ -84,4 +84,3 @@ const Chat = () => {
   );
 };
 
-export default Chat;
