@@ -1,6 +1,6 @@
 'use client';
 
-import {UploadButtonProps} from "@/types/uploadProps";
+import {UploadButtonProps} from "@/types/UploadProps";
 import {AuthContext} from "@/components/providers/AuthProvider";
 import React, {useContext, useState} from "react";
 import {useAlert} from "@/components/providers/AlertContext";

@@ -1,6 +1,7 @@
-import { UserProfile } from './User';
+import {UserDTO} from "@/types/User";
+import React from "react";
 
 export interface UploadButtonProps {
-  userData: UserProfile;
+  userData: UserDTO;
   setIsUploading: React.Dispatch<React.SetStateAction<boolean>>;
 }
