@@ -1,6 +1,4 @@
-'use client';
-
-import { useParams } from "next/navigation";
+import {useParams} from "next/navigation";
 import ProfilePage from "@/components/ui/ProfilePage";
 
 export default function UserProfilePage() {
