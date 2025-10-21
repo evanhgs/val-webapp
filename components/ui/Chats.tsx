@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useContext } from "react";
+import {useContext, useEffect, useRef, useState} from "react";
 import mqtt, {MqttClient} from "mqtt";
 import {ConversationContent, MessageDTO} from "@/types/Message";
 import {useRouter} from "next/navigation";
@@ -130,7 +130,7 @@ export default function Chats({ convId }: { convId: number }) {
                         return (
                             <div
                                 key={message.id}
-                                className={`chat ${isCurrentUser ? "chat-start" : "chat-end"}`}
+                                className={`chat ${isCurrentUser ? "chat-end" : "chat-start"}`}
                             >
                                 <div className="chat-image avatar">
                                     <div className="w-10 rounded-full">

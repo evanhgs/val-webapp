@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState, useContext } from "react";
-import { useRouter } from "next/navigation";
+import {useContext, useEffect, useState} from "react";
+import {useRouter} from "next/navigation";
 import {AuthContext} from "@/components/providers/AuthProvider";
 import {useAlert} from "@/components/providers/AlertContext";
 import {UserDTO} from "@/types/User";
@@ -128,7 +128,7 @@ export default function ProfilePage({ targetUsername }: ProfilePageProps) {
     }
 
     return (
-        <div className="min-h-screen bg-black text-white w-full md:ml-[20px] ml-0">
+        <div className="bg-zinc-800">
             {/* Formulaires modaux pour le profil personnel uniquement */}
             {isOwnProfile && isEditing ? (
                 <EditProfileForm
@@ -142,12 +142,12 @@ export default function ProfilePage({ targetUsername }: ProfilePageProps) {
                     setIsUploading={setIsUploading}
                 />
             ) : (
-                <div className="max-w-4xl mx-auto p-4">
+                <div className="max-w-3xl mx-auto md:p-20 p-4">
                     {/* Bouton retour */}
                     <div className="mb-4 pl-2">
                         <button
                             onClick={() => router.back()}
-                            className="inline-flex items-center text-white bg-gray-800 hover:bg-gray-700 rounded-full px-4 py-2 transition duration-200"
+                            className="inline-flex items-center bg-zinc-900 hover:bg-zinc-500 hover:text-zinc-900 rounded-xl px-4 py-2 transition duration-200"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -157,12 +157,12 @@ export default function ProfilePage({ targetUsername }: ProfilePageProps) {
                     </div>
 
                     {/* Header */}
-                    <div className="flex flex-col sm:flex-row sm:items-start sm:space-x-8">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:space-x-8 bg-zinc-900 rounded-xl p-4">
                         <div className="flex justify-center sm:justify-start mb-6 sm:mb-0">
                             <img
                                 src={userData.profile_picture ? ApiEndpoints.user.picture(userData.profile_picture) : ApiEndpoints.user.defaultPicture()}
                                 alt="Profile"
-                                className="w-20 h-20 sm:w-28 sm:h-28 rounded-full border-2 border-gray-600"
+                                className="w-20 h-20 sm:w-28 sm:h-28 rounded-full border-2 border-zinc-400"
                             />
                         </div>
 
@@ -177,19 +177,17 @@ export default function ProfilePage({ targetUsername }: ProfilePageProps) {
                                         <>
                                             <button
                                                 onClick={() => setIsEditing(true)}
-                                                className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm hover:bg-gray-700 transition-colors"
+                                                className="  px-3 py-1 rounded-md text-sm bg-zinc-600 hover:bg-zinc-700 transition-colors text-zinc-200 cursor-pointer"
                                             >
                                                 Modifier le profil
                                             </button>
                                             <button
                                                 onClick={() => setIsUploading(true)}
-                                                className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm hover:bg-gray-700 transition-colors"
+                                                className="px-3 py-1 rounded-md text-sm bg-zinc-600 hover:bg-zinc-700 transition-colors text-zinc-200 cursor-pointer"
                                             >
                                                 Photo de profil
                                             </button>
-                                            <button className="text-gray-400 text-xl hover:text-white transition-colors cursor-pointer">
-                                                ⚙️
-                                            </button>
+                                            
                                         </>
                                     ) : (
                                         <>
@@ -253,17 +251,17 @@ export default function ProfilePage({ targetUsername }: ProfilePageProps) {
 
                     {/* Navigation posts */}
                     <div className="border-t border-gray-700 mt-8 flex justify-center space-x-2 sm:space-x-10 py-2 overflow-x-auto">
-            <span className="text-white font-bold p-2 hover:border hover:border-white rounded-lg cursor-pointer whitespace-nowrap transition-all">
-              📷 POSTS
-            </span>
-                        {isOwnProfile && (
-                            <span className="text-gray-500 p-2 hover:border hover:border-white hover:text-white rounded-lg cursor-pointer whitespace-nowrap transition-all">
-                🔖 SAUVEGARDÉS
-              </span>
-                        )}
-                        <span className="text-gray-500 p-2 hover:border hover:border-white hover:text-white rounded-lg cursor-pointer whitespace-nowrap transition-all">
-              🏷️ IDENTIFIÉ
-            </span>
+                        <span className="text-white font-bold p-2 hover:border hover:border-white rounded-lg cursor-pointer whitespace-nowrap transition-all">
+                          📷 POSTS
+                        </span>
+                                    {isOwnProfile && (
+                                        <span className="text-gray-500 p-2 hover:border hover:border-white hover:text-white rounded-lg cursor-pointer whitespace-nowrap transition-all">
+                            🔖 SAUVEGARDÉS
+                          </span>
+                                    )}
+                                    <span className="text-gray-500 p-2 hover:border hover:border-white hover:text-white rounded-lg cursor-pointer whitespace-nowrap transition-all">
+                          🏷️ IDENTIFIÉ
+                        </span>
                     </div>
 
                     <NavPosts post={post} />

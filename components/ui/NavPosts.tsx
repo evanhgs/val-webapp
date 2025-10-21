@@ -20,7 +20,7 @@ export const NavPosts = ({ post }: NavPostsProps) => {
                                         alt={p.caption}
                                         className="w-full h-full object-cover"
                                     />
-                                    <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-200">
+                                    <div className="absolute inset-0  bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-200">
                                         <div className="text-white flex items-center space-x-4">
                                             <div className="flex items-center">
                                                 <span className="mr-1">❤️</span>

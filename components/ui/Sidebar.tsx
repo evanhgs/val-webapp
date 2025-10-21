@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import {usePathname} from "next/navigation";
 import Search from "@/components/ui/Search";
 import Settings from "@/components/ui/Settings";
 
@@ -52,9 +52,9 @@ export default function Sidebar() {
 
     // 🎨 Classes CSS pour les différents modes
     const sidebarClasses = {
-        pc: `fixed left-0 top-0 h-screen ${isExpanded ? "w-[250px]" : "w-[70px]"} bg-black text-white p-4 border-r border-gray-800 overflow-y-auto`,
-        compact: "fixed left-0 top-0 h-screen w-[70px] bg-black text-white p-4 border-r border-gray-800 overflow-y-auto",
-        phone: "fixed bottom-0 left-0 w-full h-16 bg-black text-white px-2 py-1 border-t border-gray-800 z-50",
+        pc: `fixed left-0 top-0 h-screen ${isExpanded ? "w-[250px]" : "w-[70px]"} bg-zinc-900 p-4 border-r border-gray-800 overflow-y-auto z-50`,
+        compact: "fixed left-0 top-0 h-screen w-[70px] bg-zinc-900 p-4 border-r border-gray-800 overflow-y-auto z-50",
+        phone: "fixed bottom-0 left-0 w-full h-16 bg-zinc-900 px-2 py-1 border-t border-gray-800 z-50",
     };
 
     const menuItemStyles = {
