@@ -3,9 +3,21 @@ name: val-frontend-prod
 services:
   val-webapp:
     container_name: val-webapp
-    image: evanhs/val-webapp:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+        NEXT_PUBLIC_FRONT_URL: ${NEXT_PUBLIC_FRONT_URL}
+        NEXT_PUBLIC_MQTT_URL: ${NEXT_PUBLIC_MQTT_URL}
+        NEXT_PUBLIC_API_MQTT_USER: ${NEXT_PUBLIC_API_MQTT_USER}
+        NEXT_PUBLIC_API_MQTT_PASSWORD: ${NEXT_PUBLIC_API_MQTT_PASSWORD}
+        NEXT_PUBLIC_REACT_APP_GIT_VERSION: ${NEXT_PUBLIC_REACT_APP_GIT_VERSION}
     ports:
-      - "3000:80"
+      - "3000:3000"
+    env_file:
+      - .env
+    restart: always
     networks:
       - frontend
 
