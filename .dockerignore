@@ -8,3 +8,5 @@ Dockerfile
 .idea
 dist
 .env.local
+.next
+.env
