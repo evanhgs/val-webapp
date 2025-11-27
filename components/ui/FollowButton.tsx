@@ -154,7 +154,7 @@ export default function FollowButton({ username }: { username: string }) {
             className={`ml-auto px-3 py-1 rounded text-sm font-medium text-white transition-colors duration-200 ${isLoading
                 ? 'bg-gray-400 cursor-not-allowed'
                 : isFollowed
-                    ? 'bg-red-600 hover:bg-red-700'
+                    ? 'bg-red-700 hover:bg-red-900'
                     : 'bg-blue-600 hover:bg-blue-700'
             }`}
         >

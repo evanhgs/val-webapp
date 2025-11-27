@@ -36,104 +36,100 @@ export default function EditProfileForm({ userData, setIsEditing, onUpdateAlert 
     };
 
     return (
-        <div className="max-w-2xl mx-auto mt-10 p-6 bg-gray-900 rounded-md">
-            <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-white">Modifier le profil</h2>
-                <button
-                    className="p-2 text-gray-500 hover:text-gray-700 focus:outline-none"
-                    onClick={() => setIsEditing(false)}>
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>
+        <div className="max-w-2xl mx-auto">
+            <div className="relative p-8 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 shadow-[0_0_40px_rgba(255,255,255,0.05)] border border-white/5">
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Username */}
-                <div>
-                    <label className="text-gray-400">Nom d'utilisateur</label>
-                    <input
-                        type="text"
-                        name="username"
-                        value={formData.username}
-                        onChange={handleChange}
-                        maxLength={20}
-                        className="w-full p-2 rounded-md bg-gray-800 text-white"
-                    />
-                    <p className="text-gray-500 text-sm">
-                        {formData.username.length} / 20
-                    </p>
-                </div>
-
-                {/* email */}
-                <div>
-                    <label className="text-gray-400">Ton email</label>
-                    <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        maxLength={200}
-                        className="w-full p-2 rounded-md bg-gray-800 text-white"
-                    />
-                    <p className="text-gray-500 text-sm">
-                        {formData.email.length} / 200
-                    </p>
-                </div>
-
-                {/* Website */}
-                <div>
-                    <label className="text-gray-400">Site web</label>
-                    <input
-                        type="text"
-                        name="website"
-                        value={formData.website}
-                        onChange={handleChange}
-                        maxLength={32}
-                        className="w-full p-2 rounded-md bg-gray-800 text-white"
-                    />
-                    <p className="text-gray-500 text-sm">
-                        {formData.website.length} / 32
-                    </p>
-                </div>
-
-                {/* Bio */}
-                <div>
-                    <label className="text-gray-400">Bio</label>
-                    <textarea
-                        name="bio"
-                        value={formData.bio}
-                        onChange={handleChange}
-                        maxLength={100}
-                        className="w-full p-2 rounded-md bg-gray-800 text-white h-20"
-                    />
-                    <p className="text-gray-500 text-sm">
-                        {formData.bio.length} / 100
-                    </p>
-                </div>
-
-                {/* Gender */}
-                <div>
-                    <label className="text-gray-400">Genre</label>
-                    <select
-                        name="gender"
-                        value={formData.gender}
-                        onChange={handleChange}
-                        className="w-full p-2 rounded-md bg-gray-800 text-white"
+                {/* Header */}
+                <div className="flex justify-between items-center mb-8">
+                    <h2 className="text-2xl font-semibold text-white tracking-wide">
+                        Modifier le profil
+                    </h2>
+                    <button
+                        className="p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10 transition"
+                        onClick={() => setIsEditing(false)}
                     >
-                        <option>Je préfère ne pas le dire</option>
-                        <option>Homme</option>
-                        <option>Femme</option>
-                        <option>Autre</option>
-                    </select>
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
                 </div>
 
+                {/* Form */}
+                <form onSubmit={handleSubmit} className="space-y-6">
 
-                {/* Submit */}
-                <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded-md">
-                    Confirmer
-                </button>
-            </form>
+                    {/* Champ générique */}
+                    {[
+                        { label: "Nom d'utilisateur", name: "username", type: "text", max: 20 },
+                        { label: "Ton email", name: "email", type: "email", max: 200 },
+                        { label: "Site web", name: "website", type: "text", max: 32 },
+                    ].map((field) => (
+                        <div key={field.name} className="space-y-1">
+                            <label className="text-sm text-zinc-300">{field.label}</label>
+                            <input
+                                type={field.type}
+                                name={field.name}
+                                value={(formData as any)[field.name]}
+                                onChange={handleChange}
+                                maxLength={field.max}
+                                className="w-full px-4 py-3 rounded-xl bg-zinc-800 text-white border border-white/5
+                         shadow-inner shadow-black/40
+                         focus:outline-none focus:ring-2 focus:ring-white/10
+                         transition"
+                            />
+                            <p className="text-xs text-zinc-500 text-right">
+                                {(formData as any)[field.name].length} / {field.max}
+                            </p>
+                        </div>
+                    ))}
+
+                    {/* Bio */}
+                    <div className="space-y-1">
+                        <label className="text-sm text-zinc-300">Bio</label>
+                        <textarea
+                            name="bio"
+                            value={formData.bio}
+                            onChange={handleChange}
+                            maxLength={100}
+                            className="w-full px-4 py-3 rounded-xl bg-zinc-800 text-white border border-white/5
+                       shadow-inner shadow-black/40 h-24 resize-none
+                       focus:outline-none focus:ring-2 focus:ring-white/10 transition"
+                        />
+                        <p className="text-xs text-zinc-500 text-right">
+                            {formData.bio.length} / 100
+                        </p>
+                    </div>
+
+                    {/* Genre */}
+                    <div className="space-y-1">
+                        <label className="text-sm text-zinc-300">Genre</label>
+                        <select
+                            name="gender"
+                            value={formData.gender}
+                            onChange={handleChange}
+                            className="w-full px-4 py-3 rounded-xl bg-zinc-800 text-white border border-white/5
+                       shadow-inner shadow-black/40
+                       focus:outline-none focus:ring-2 focus:ring-white/10 transition"
+                        >
+                            <option value="Homme">Homme</option>
+                            <option value="Femme">Femme</option>
+                            <option value="Autre">Autre</option>
+                        </select>
+                    </div>
+
+
+                    {/* Submit */}
+                    <button
+                        type="submit"
+                        className="w-full mt-6 py-3 rounded-xl bg-white text-zinc-900 font-semibold
+                     shadow-[0_10px_30px_rgba(255,255,255,0.25)]
+                     hover:shadow-[0_15px_40px_rgba(255,255,255,0.35)]
+                     active:scale-[0.98] transition"
+                    >
+                        Confirmer
+                    </button>
+                </form>
+            </div>
         </div>
     );
+
 };

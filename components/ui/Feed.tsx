@@ -27,7 +27,7 @@ export const Feed: React.FC<UserFeedProps> = ({ userFeed }) => {
     return (
         <div className="flex flex-col space-y-6">
             {userFeed.map((post) => (
-                <div key={post.id} className="bg-gray-900 rounded-lg overflow-hidden border border-gray-800">
+                <div key={post.id} className="bg-zinc-900 rounded-lg overflow-hidden border border-gray-800">
                     {/* Header du post */}
                     <div className="flex items-center justify-between p-3">
                         <div className="flex items-center">

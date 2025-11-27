@@ -128,7 +128,7 @@ export default function ProfilePage({ targetUsername }: ProfilePageProps) {
     }
 
     return (
-        <div className="bg-zinc-800">
+        <div className="bg-zinc-800 min-h-screen">
             {/* Formulaires modaux pour le profil personnel uniquement */}
             {isOwnProfile && isEditing ? (
                 <EditProfileForm
@@ -283,7 +283,9 @@ export default function ProfilePage({ targetUsername }: ProfilePageProps) {
                     onClose={() => setShowFollowed(false)}
                 />
             )}
-            <Footer />
+            <div className="flex flex-col items-center">
+                <Footer />
+            </div>
         </div>
     );
 }

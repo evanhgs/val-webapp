@@ -45,60 +45,88 @@ export default function UploadButton({ setIsUploading }: UploadButtonProps) {
     };
 
     return (
-        <div className="max-w-2xl mx-auto mt-10 p-6 bg-gray-900 rounded-md">
-            <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-white">Modifier la photo de profil</h2>
-                <button
-                    className="p-2 text-gray-500 hover:text-gray-700 focus:outline-none"
-                    onClick={() => setIsUploading(false)}>
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>
+        <div className="max-w-2xl mx-auto">
+            <div className="relative p-8 rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 shadow-[0_0_40px_rgba(255,255,255,0.05)] border border-white/5">
 
-            {/* section pour afficher l'aperçu */}
-            <div className="mb-4">
-                <h3 className="text-white mb-2">Aperçu de l'image:</h3>
-                <div className="w-24 h-24 rounded-full overflow-hidden mx-auto">
-                    {profilePicture ? (
-                        <img
-                            src={profilePicture}
-                            alt="Aperçu"
-                            className="w-full h-full object-cover"
-                        />
-                    ) : (
-                        <div className="w-full h-full bg-gray-700 flex items-center justify-center">
-                            <span className="text-gray-400">Aucune image</span>
-                        </div>
+                {/* Header */}
+                <div className="flex justify-between items-center mb-8">
+                    <h2 className="text-2xl font-semibold text-white tracking-wide">
+                        Modifier la photo de profil
+                    </h2>
+                    <button
+                        className="p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10 transition"
+                        onClick={() => setIsUploading(false)}
+                    >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                {/* Aperçu */}
+                <div className="mb-8 text-center">
+                    <p className="text-sm text-zinc-300 mb-3">Aperçu de l'image</p>
+                    <div className="w-28 h-28 rounded-full overflow-hidden mx-auto border border-white/10 shadow-lg bg-zinc-800">
+                        {profilePicture ? (
+                            <img
+                                src={profilePicture}
+                                alt="Aperçu"
+                                className="w-full h-full object-cover"
+                            />
+                        ) : (
+                            <div className="w-full h-full flex items-center justify-center text-zinc-500 text-sm">
+                                Aucune image
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Input file */}
+                <div className="mb-6 space-y-2">
+                    <label className="text-sm text-zinc-300">
+                        Sélectionner une image
+                    </label>
+
+                    <input
+                        type="file"
+                        onChange={handleChange}
+                        className="w-full cursor-pointer rounded-xl border border-white/5 bg-zinc-800 text-white
+                     shadow-inner shadow-black/40 outline-none transition
+                     file:mr-4 file:border-0 file:bg-white file:text-zinc-900
+                     file:px-5 file:py-2 file:rounded-lg file:font-medium
+                     hover:file:shadow-[0_5px_20px_rgba(255,255,255,0.25)]"
+                    />
+
+                    {error && (
+                        <p className="text-sm text-red-400">{error}</p>
                     )}
                 </div>
-            </div>
 
-            <div className='mb-4'>
-                <input
-                    type='file'
-                    className='w-full cursor-pointer rounded-md border border-gray-600 bg-gray-800 text-white outline-none transition file:mr-5 file:border-collapse file:cursor-pointer file:border-0 file:border-r file:border-solid file:border-gray-600 file:bg-gray-700 file:py-3 file:px-5 file:text-white file:hover:bg-blue-500 file:hover:bg-opacity-20'
-                    onChange={handleChange}
-                />
-                {error && <p className='text-red-500 mt-2'>{error}</p>}
-            </div>
+                {/* Actions */}
+                <div className="flex justify-end gap-3 pt-2">
+                    <button
+                        onClick={() => setIsUploading(false)}
+                        className="px-5 py-2.5 rounded-xl bg-zinc-700 text-white
+                     hover:bg-zinc-600 transition"
+                    >
+                        Annuler
+                    </button>
 
-            {/* Boutons d'action */}
-            <div className="flex justify-end space-x-3">
-                <button
-                    className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition"
-                    onClick={() => setIsUploading(false)}
-                >
-                    Annuler
-                </button>
-                <button
-                    className={`px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition flex items-center justify-center ${!selectedFile ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    onClick={handleSubmit}
-                    disabled={!selectedFile}
-                >  Valider et enregistrer
-                </button>
+                    <button
+                        onClick={handleSubmit}
+                        disabled={!selectedFile}
+                        className={`px-6 py-2.5 rounded-xl font-semibold transition
+            ${selectedFile
+                            ? "bg-white text-zinc-900 shadow-[0_10px_30px_rgba(255,255,255,0.25)] hover:shadow-[0_15px_40px_rgba(255,255,255,0.35)] active:scale-[0.98]"
+                            : "bg-white/40 text-zinc-700 cursor-not-allowed"
+                        }`}
+                    >
+                        Valider et enregistrer
+                    </button>
+                </div>
+
             </div>
         </div>
     );
+
 }
