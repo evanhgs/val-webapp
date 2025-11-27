@@ -118,7 +118,7 @@ export default function Chats({ convId }: { convId: number }) {
 
 
     return (
-        <div className="bg-base-100 rounded-box shadow-md w-full max-h-[500px] flex flex-col overflow-auto md:max-h-[600px]">
+        <div className="shadow-md w-full max-h-[500px] flex flex-col overflow-auto md:max-h-[600px]">
             <div className="flex-1 overflow-y-auto p-4 space-y-4" ref={msgEndRef}>
                 {loading ? (
                     <span className="loading loading-spinner loading-xl"></span>
@@ -154,7 +154,7 @@ export default function Chats({ convId }: { convId: number }) {
                                     </time>
                                 </div>
 
-                                <div className="chat-bubble">{message.content}</div>
+                                <div className="chat-bubble break-words">{message.content}</div>
 
                                 <div className="chat-footer opacity-50">
                                     {message.isRead && (
@@ -169,16 +169,24 @@ export default function Chats({ convId }: { convId: number }) {
                 )}
             </div>
 
-            <div className="p-4 flex gap-2">
+            <div className="border-t border-white/5 p-4 flex gap-3 bg-zinc-900">
                 <input
                     type="text"
-                    placeholder="écrire un message..."
-                    className="input input-bordered w-full"
+                    placeholder="Écrire un message..."
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
+                    className="flex-1 px-4 py-2 rounded-xl bg-zinc-800 text-white
+                   border border-white/5 shadow-inner
+                   focus:outline-none focus:ring-2 focus:ring-white/10"
                 />
-                <button className="btn btn-primary" onClick={handleSendMessage}>
+                <button
+                    onClick={handleSendMessage}
+                    className="px-6 py-2 rounded-xl bg-white text-zinc-900 font-semibold
+                   shadow-[0_10px_30px_rgba(255,255,255,0.25)]
+                   hover:shadow-[0_15px_40px_rgba(255,255,255,0.35)]
+                   active:scale-[0.98] transition"
+                >
                     Envoyer
                 </button>
             </div>

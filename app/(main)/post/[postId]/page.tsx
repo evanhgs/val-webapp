@@ -59,73 +59,95 @@ export default function PostPage(){
 
 
     return (
-        <div className="max-w-2xl mx-auto my-8 bg-black rounded-lg shadow-lg overflow-hidden">
-            <div className="mb-4 pl-2">
-                <button onClick={() => navigate.back()} className="inline-flex items-center text-white bg-gray-800 hover:bg-gray-700 rounded-full px-4 py-2 transition duration-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
-                    Retour
-                </button>
+        <div className="max-w-2xl mx-auto my-12 px-4">
+            <div className="relative rounded-2xl overflow-hidden
+                    bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900
+                    border border-white/5
+                    shadow-[0_0_40px_rgba(255,255,255,0.05)]">
+
+                {/* Bouton retour */}
+                <div className="p-4">
+                    <button
+                        onClick={() => navigate.back()}
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl
+                     bg-zinc-800 text-white border border-white/5
+                     hover:bg-zinc-700 transition"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                  d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        Retour
+                    </button>
+                </div>
+
+                {/* États */}
+                {loading ? (
+                    <div className="p-12 text-center text-zinc-400">
+                        Chargement du post...
+                    </div>
+                ) : error || !post ? (
+                    <div className="p-12 text-center text-zinc-400">
+                        Le post n'a pas été trouvé...
+                    </div>
+                ) : (
+                    <div>
+
+                        {/* Header */}
+                        <div className="flex items-center gap-3 px-5 py-4 border-b border-white/5">
+                            <img
+                                src={post.user_profile
+                                    ? ApiEndpoints.user.picture(post.user_profile)
+                                    : ApiEndpoints.user.defaultPicture()}
+                                alt={post?.username || 'Utilisateur'}
+                                className="w-11 h-11 rounded-full object-cover border border-white/10"
+                            />
+
+                            <button
+                                onClick={() => navigate.push(`/profile/${post.username}`)}
+                                className="font-semibold text-white hover:underline text-sm"
+                            >
+                                {post?.username}
+                            </button>
+
+                            <div className="ml-auto flex items-center gap-3">
+                                <FollowButton username={post.username} />
+                                {post && <PostSettings post={post} />}
+                            </div>
+                        </div>
+
+                        {/* Image */}
+                        <div className="relative bg-zinc-950">
+                            <img
+                                src={post.image_url
+                                    ? ApiEndpoints.user.picture(post.image_url)
+                                    : ApiEndpoints.user.defaultPicture()}
+                                alt="Post content"
+                                className="w-full max-h-[600px] object-cover"
+                            />
+                        </div>
+
+                        {/* Caption */}
+                        {post?.caption && (
+                            <div className="px-5 py-4 border-b border-white/5">
+                                <p className="text-sm text-white">
+                                    <span className="font-semibold mr-1">{post.username}:</span>
+                                    <span>{post.caption}</span>
+                                </p>
+                                <p className="text-xs text-zinc-500 mt-2">
+                                    Post publié le : {pipeDate(post?.created_at) || 'dd/mm/YYYY'}
+                                </p>
+                            </div>
+                        )}
+
+                        {/* Actions */}
+                        <div className="px-5 py-4">
+                            <PostActions postId={post?.id} />
+                        </div>
+                    </div>
+                )}
             </div>
-            {loading ? (
-                <div className="p-8 text-center bg-gray-700">
-                    <p className="text-gray-300">Chargement du post...</p>
-                </div>
-            ) : error || !post ? (
-                <div className="p-8 text-center bg-gray-700">
-                    <p className="text-gray-300">Le post n'a pas été trouvé...</p>
-                </div>
-            ): (
-                <div className="post-container">
-
-                    {/** header  */}
-                    <div className="flex items-center p-4 border-b">
-                        <img
-                            src={post.user_profile ? ApiEndpoints.user.picture(post.user_profile) : ApiEndpoints.user.defaultPicture()}
-                            alt={post?.username || 'Utilisateur'}
-                            className="w-10 h-10 rounded-full object-cover"
-                        />
-                        <div className="ml-3 cursor-pointer">
-                            <button className="font-bold text-sm" onClick={() => {
-                                navigate.push(`/profile/${post.username}`)
-                            }}>{post?.username}</button>
-                        </div>
-                        <div className="ml-auto mr-4">
-                            <FollowButton username={post.username}/>
-                        </div>
-                        {/* settings of your own post */}
-                        {post && <PostSettings post={post}/>}
-                    </div>
-
-                    <div className="post-image-container mt-10">
-                        <img
-                            src={post.image_url ? ApiEndpoints.user.picture(post.image_url) : ApiEndpoints.user.defaultPicture()}
-                            alt="Post content"
-                            className="w-full object-cover max-h-[600px] rounded-md"
-                        />
-                    </div>
-
-                    {/* Caption */}
-                    {post?.caption && (
-                        <div className="p-4 border-b">
-                            <p className="text-sm">
-                                <span className="font-bold mr-1">{post.username || '...'}: </span>
-                                <span>{post.caption || '...'}</span>
-                            </p>
-                            <p className="text-xs text-gray-500 mt-2">
-                                Post publié le : {pipeDate(post?.created_at) || 'dd/mm/YYYY'}
-                            </p>
-                        </div>
-                    )}
-                    {/* Post actions */}
-                    <div className="p-4 ">
-                        <div className="flex items-center">
-                            <PostActions postId={post?.id}/>
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
+
 }
