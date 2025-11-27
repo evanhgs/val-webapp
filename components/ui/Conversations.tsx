@@ -16,44 +16,54 @@ export const Conversations = ({conversations, onSelectConv}: {conversations: Con
     };
 
     return (
-        <>
-            <ul className="list bg-base-100 rounded-box shadow-md" key="conversation">
-                <li className="p-4 pb-2 text-xs opacity-60 tracking-wide" key="title">Mes conversations</li>
-                {conversations.length === 0 ? (
-                    <li className="p-4 text-sm opacity-70" key="nothing">Aucune conversation pour l'instant</li>
-                ) : (
-                    conversations.map((conversation: Conversation) => {
-                        const otherUser = getOtherUser(conversation);
-                        return (
-                            <li
-                                className="list-row hover:cursor-pointer hover:bg-gray-500"
-                                key={conversation.id}
-                                onClick={() => onSelectConv(conversation.id)}
-                            >
-                                <div>
-                                    <img
-                                        className="size-10 rounded-box"
-                                        src={ApiEndpoints.user.picture(otherUser.profile_picture) ?? ApiEndpoints.user.defaultPicture()}
-                                        alt={otherUser.username}
-                                    />
-                                </div>
-                                <div>
-                                    <div>{otherUser.username}</div>
-                                    <div className="text-xs uppercase font-semibold opacity-60"></div> {/*put the last message sent?*/}
-                                </div>
-                                <button className="btn btn-square btn-ghost">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <circle cx="12" cy="6" r="1"></circle>
-                                        <circle cx="12" cy="12" r="1"></circle>
-                                        <circle cx="12" cy="18" r="1"></circle>
-                                    </svg>
-                                </button>
+        <ul className="divide-y divide-white/5">
 
-                            </li>
-                        );
-                    })
-                )}
-            </ul>
-        </>
+            <li className="p-4 text-xs text-zinc-400 tracking-wide">
+                Mes conversations
+            </li>
+
+            {conversations.length === 0 ? (
+                <li className="p-4 text-sm text-zinc-500">
+                    Aucune conversation pour l’instant
+                </li>
+            ) : (
+                conversations.map((conversation: Conversation) => {
+                    const otherUser = getOtherUser(conversation);
+
+                    return (
+                        <li
+                            key={conversation.id}
+                            onClick={() => onSelectConv(conversation.id)}
+                            className="flex items-center gap-3 p-4 cursor-pointer
+                       hover:bg-zinc-800 transition"
+                        >
+                            <img
+                                src={ApiEndpoints.user.picture(otherUser.profile_picture) ?? ApiEndpoints.user.defaultPicture()}
+                                alt={otherUser.username}
+                                className="w-11 h-11 rounded-full object-cover border border-white/10"
+                            />
+
+                            <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-white truncate">
+                                    {otherUser.username}
+                                </p>
+                                <p className="text-xs text-zinc-500 truncate">
+                                    {conversation?.last_message || "Aucun message"}
+                                </p>
+                            </div>
+
+                            <button className="p-2 rounded-lg hover:bg-white/10 transition text-zinc-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                     viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <circle cx="12" cy="6" r="1"></circle>
+                                    <circle cx="12" cy="12" r="1"></circle>
+                                    <circle cx="12" cy="18" r="1"></circle>
+                                </svg>
+                            </button>
+                        </li>
+                    );
+                })
+            )}
+        </ul>
     );
 };

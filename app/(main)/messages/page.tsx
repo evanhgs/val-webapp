@@ -34,27 +34,40 @@ export default function MessagesPage(){
     }, [token]);
 
     return (
-        <div className="max-w-4xl mx-auto my-8 min-h-[650px] h-auto rounded-2xl flex flex-col md:flex-row">
-            <div className={selectedConvId ? ("md:w-1/3 w-full overflow-auto max-h-[100px] md:max-h-none "): ("w-full")}>
-                { isLoading ? (
-                    <span className="loading loading-spinner loading-xl "></span>
-                ) : (
-                    <Conversations
-                        conversations={conversationList || []}
-                        onSelectConv={(id) => setSelectedConvId(id)}
-                    />
-                )}
-            </div>
+        <div className="max-w-5xl mx-auto my-12 px-4">
+            <div className="relative rounded-2xl overflow-hidden
+                    bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900
+                    border border-white/5
+                    shadow-[0_0_40px_rgba(255,255,255,0.05)]
+                    min-h-[650px] flex flex-col md:flex-row">
 
-            <div className="divider lg:divider-horizontal"></div>
+                {/* Liste conversations */}
+                <div className={`${selectedConvId ? "md:w-1/3 w-full max-h-[160px] md:max-h-none" : "w-full md:w-1/3"}
+                       border-r border-white/5 overflow-y-auto`}>
 
-            {selectedConvId ? (
-                <div className="w-full mb-6">
-                    <Chats convId={selectedConvId} /> {/*charge la conversation avec l'utilisateur sélectionné et va s'abonner au topic de la conv*/}
+                    {isLoading ? (
+                        <div className="flex items-center justify-center h-full text-zinc-400">
+                            Chargement...
+                        </div>
+                    ) : (
+                        <Conversations
+                            conversations={conversationList || []}
+                            onSelectConv={(id) => setSelectedConvId(id)}
+                        />
+                    )}
                 </div>
-            ) : (
-                <></>
-            )}
+
+                {/* Chat */}
+                <div className="flex-1">
+                    {selectedConvId ? (
+                        <Chats convId={selectedConvId} />
+                    ) : (
+                        <div className="flex items-center justify-center h-full text-zinc-500">
+                            Sélectionne une conversation
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
     );
 };

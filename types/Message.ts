@@ -5,6 +5,7 @@ export interface Conversation {
     user1: UserLightDTO;
     user2: UserLightDTO;
     created_at: string;
+    last_message: string;
 }
 
 export interface MessageDTO {
