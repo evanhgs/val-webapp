@@ -177,13 +177,17 @@ export default function ProfilePage({ targetUsername }: ProfilePageProps) {
                                         <>
                                             <button
                                                 onClick={() => setIsEditing(true)}
-                                                className="  px-3 py-1 rounded-md text-sm bg-zinc-600 hover:bg-zinc-700 transition-colors text-zinc-200 cursor-pointer"
+                                                className="px-3 py-1 text-sm rounded-xl bg-zinc-800 text-white border border-white/5
+                                                            shadow-inner shadow-black/40 focus:outline-none focus:ring-2 focus:ring-white/10
+                                                            transition cursor-pointer hover:bg-zinc-400 hover:text-zinc-900"
                                             >
                                                 Modifier le profil
                                             </button>
                                             <button
                                                 onClick={() => setIsUploading(true)}
-                                                className="px-3 py-1 rounded-md text-sm bg-zinc-600 hover:bg-zinc-700 transition-colors text-zinc-200 cursor-pointer"
+                                                className="px-3 py-1 text-sm rounded-xl bg-zinc-800 text-white border border-white/5
+                                                            shadow-inner shadow-black/40 focus:outline-none focus:ring-2 focus:ring-white/10
+                                                            transition cursor-pointer hover:bg-zinc-400 hover:text-zinc-900"
                                             >
                                                 Photo de profil
                                             </button>
