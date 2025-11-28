@@ -83,7 +83,7 @@ export default function UploadPage(){
 
 
     return (
-        <div className="max-w-2xl mx-auto mt-16 px-4">
+        <div className="max-w-2xl mx-auto px-4 min-h-screen content-center">
 
             <div className="relative rounded-2xl
                     bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900
