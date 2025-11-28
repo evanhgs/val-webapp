@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useContext, useState } from 'react';
+import React, {useContext, useState} from 'react';
 import {AuthContext} from "@/components/providers/AuthProvider";
 import {ApiEndpoints, AxiosInstance} from "@/lib/endpoints";
 import PhoneCarousel from "@/components/ui/Carousel";
-import { useRouter } from 'next/navigation';
+import {useRouter} from 'next/navigation';
 import {useAlert} from "@/components/providers/AlertContext";
 import {AxiosError} from "axios";
 
@@ -101,13 +101,16 @@ export default function RegisterForm(){
                 <PhoneCarousel />
 
                 {/* Formulaire d'inscription */}
-                <div className="bg-zinc-900 p-8 rounded-lg w-80 border border-white/60 shadow-[0_0_18px_rgba(255,255,255,0.35)]">
+                <div className="bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 shadow-[0_0_40px_rgba(255,255,255,0.05)] p-8 rounded-2xl w-80 border border-white/20">
                     <h1 className="text-3xl font-bold text-center mb-6 text-zinc-300">Inscription</h1>
                     <form onSubmit={handleSubmit} >
                         <input
                             type="text"
                             placeholder="Nom d'utilisateur"
-                            className="w-full p-3 rounded bg-zinc-800 focus:outline-none mb-3"
+                            className="w-full px-4 py-3 rounded-xl mb-5 bg-zinc-800 text-white border border-white/5
+                         shadow-inner shadow-black/40
+                         focus:outline-none focus:ring-2 focus:ring-white/10
+                         transition"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                         />
@@ -115,7 +118,10 @@ export default function RegisterForm(){
                         <input
                             type="text"
                             placeholder="Adresse mail"
-                            className="w-full p-3 rounded bg-zinc-800 focus:outline-none mb-3"
+                            className="w-full px-4 py-3 rounded-xl mb-5 bg-zinc-800 text-white border border-white/5
+                         shadow-inner shadow-black/40
+                         focus:outline-none focus:ring-2 focus:ring-white/10
+                         transition"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
@@ -123,21 +129,33 @@ export default function RegisterForm(){
                         <input
                             type="password"
                             placeholder="Mot de passe"
-                            className="w-full p-3 rounded bg-zinc-800 focus:outline-none mb-3"
+                            className="w-full px-4 py-3 rounded-xl mb-5 bg-zinc-800 text-white border border-white/5
+                         shadow-inner shadow-black/40
+                         focus:outline-none focus:ring-2 focus:ring-white/10
+                         transition"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
                         <input
                             type="password"
                             placeholder="Valider le mot de passe"
-                            className="w-full p-3 rounded bg-zinc-800 focus:outline-none mb-3"
+                            className="w-full px-4 py-3 rounded-xl mb-5 bg-zinc-800 text-white border border-white/5
+                         shadow-inner shadow-black/40
+                         focus:outline-none focus:ring-2 focus:ring-white/10
+                         transition"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                         />
                         <button
                             type="submit"
                             disabled={loading}
-                            className={`w-full p-3 rounded font-bold transition-colors ${
+                            className={`w-full cursor-pointer rounded-xl
+                             bg-zinc-800 border border-white/10
+                             text-white px-4 py-3
+                             file:mr-4 file:bg-white file:text-zinc-900
+                             file:border-0 file:rounded-lg
+                             file:px-4 file:py-2
+                             hover:file:bg-gray-200 transition ${
                                 loading
                                     ? "bg-zinc-500 cursor-not-allowed"
                                     : "bg-zinc-700 hover:bg-zinc-400 hover:text-zinc-900 cursor-pointer text-zinc-200"

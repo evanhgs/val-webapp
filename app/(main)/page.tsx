@@ -76,7 +76,7 @@ export default function Home() {
                     </div>
 
                     <div className="hidden lg:block w-[320px] flex-shrink-0">
-                        <div className="sticky top-20">
+                        <div className="">
                             <Suggestions />
                         </div>
                     </div>

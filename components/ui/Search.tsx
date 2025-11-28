@@ -47,7 +47,7 @@ export default function Search({ setIsSearch, isCompact }: SearchProps) {
     });
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-80 z-40">
+        <div className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm">
             <div className={`search-container fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 z-50`}
                  ref={searchContainerRef}>
                 <div className={`bg-gray-800 p-4 rounded-lg shadow-lg ${isCompact ? 'w-[250px]' : 'w-[350px]'}`}>
