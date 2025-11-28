@@ -169,7 +169,7 @@ export default function Chats({ convId }: { convId: number }) {
                 )}
             </div>
 
-            <div className="border-t border-white/5 p-4 flex gap-3 bg-zinc-900">
+            <div className="border-t border-white/5 p-4 flex gap-3 bg-zinc-900/50 backdrop-blur-sm">
                 <input
                     type="text"
                     placeholder="Écrire un message..."

@@ -34,7 +34,7 @@ export default function MessagesPage(){
     }, [token]);
 
     return (
-        <div className="max-w-5xl mx-auto my-12 px-4">
+        <div className="max-w-5xl mx-auto px-4 min-h-screen">
             <div className="relative rounded-2xl overflow-hidden
                     bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900
                     border border-white/5
@@ -42,7 +42,7 @@ export default function MessagesPage(){
                     min-h-[650px] flex flex-col md:flex-row">
 
                 {/* Liste conversations */}
-                <div className={`${selectedConvId ? "md:w-1/3 w-full max-h-[160px] md:max-h-none" : "w-full md:w-1/3"}
+                <div className={`${selectedConvId ? "md:w-1/3 w-full max-h-[160px] md:max-h-none " : "w-full md:w-1/3"}
                        border-r border-white/5 overflow-y-auto`}>
 
                     {isLoading ? (
