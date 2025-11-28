@@ -5,7 +5,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <>
         <Sidebar />
-        {children}
+        <div className="bg-zinc-800">
+            {children}
+        </div>
     </>
   );
 }

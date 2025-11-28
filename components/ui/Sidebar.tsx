@@ -52,25 +52,25 @@ export default function Sidebar() {
 
     // 🎨 Classes CSS pour les différents modes
     const sidebarClasses = {
-        pc: `fixed left-0 top-0 h-screen ${isExpanded ? "w-[250px]" : "w-[70px]"} bg-zinc-900 p-4 border-r border-gray-800 overflow-y-auto z-50`,
-        compact: "fixed left-0 top-0 h-screen w-[70px] bg-zinc-900 p-4 border-r border-gray-800 overflow-y-auto z-50",
-        phone: "fixed bottom-0 left-0 w-full h-16 bg-zinc-900 px-2 py-1 border-t border-gray-800 z-50",
+        pc: `fixed left-0 top-0 h-screen ${isExpanded ? "w-[250px]" : "w-[70px]"} bg-gradient-to-b from-zinc-900 via-zinc-900 to-zinc-800 p-4 border-r border-white/5 overflow-y-auto z-50 shadow-[4px_0_24px_rgba(0,0,0,0.5)]`,
+        compact: "fixed left-0 top-0 h-screen w-[70px] bg-gradient-to-b from-zinc-900 via-zinc-900 to-zinc-800 p-4 border-r border-white/5 overflow-y-auto z-50 shadow-[4px_0_24px_rgba(0,0,0,0.5)]",
+        phone: "fixed bottom-0 left-0 w-full h-16 bg-gradient-to-t from-zinc-900 via-zinc-900 to-zinc-800 px-2 py-2 border-t border-white/5 z-50 shadow-[0_-4px_24px_rgba(0,0,0,0.5)] backdrop-blur-lg",
     };
 
     const menuItemStyles = {
         pc: {
-            container: "space-y-4",
-            item: `flex items-center ${isExpanded ? "space-x-3" : "justify-center"} p-2 rounded-lg`,
+            container: "space-y-2",
+            item: `flex items-center ${isExpanded ? "space-x-3 px-4" : "justify-center px-2"} py-3 rounded-xl transition-all duration-200 font-medium text-sm`,
             showLabel: isExpanded,
         },
         compact: {
-            container: "space-y-4",
-            item: "flex items-center justify-center p-2 rounded-lg",
+            container: "space-y-2",
+            item: "flex items-center justify-center p-3 rounded-xl transition-all duration-200",
             showLabel: false,
         },
         phone: {
-            container: "flex justify-around",
-            item: "flex flex-col items-center justify-center p-1 rounded-lg",
+            container: "flex justify-around items-center h-full",
+            item: "flex flex-col items-center justify-center p-2 rounded-xl transition-all duration-200 min-w-[60px]",
             showLabel: false,
         },
     };
@@ -80,24 +80,26 @@ export default function Sidebar() {
         if (displayMode === "pc") setIsExpanded(!isExpanded);
     };
 
-    // 🧭 Rendu d’un item du menu
+    // 🧭 Rendu d'un item du menu
     const renderMenuItem = (item: MenuItem, index: number) => {
         const currentStyle = menuItemStyles[displayMode];
         const isActive = item.isNavLink && item.link ? pathname.startsWith(item.link) : item.isActive;
 
-        const activeClasses = "border border-white cursor-pointer";
-        const hoverClasses = "hover:border hover:border-white cursor-pointer";
+        const activeClasses = "bg-white text-zinc-900 shadow-[0_4px_16px_rgba(255,255,255,0.25)] scale-105";
+        const hoverClasses = "hover:bg-zinc-800 hover:scale-105 text-zinc-300 hover:text-white hover:shadow-[0_4px_16px_rgba(255,255,255,0.1)]";
 
         const content = (
             <>
-        <span
-            role="img"
-            aria-label={item.label.toLowerCase()}
-            className={`text-xl ${displayMode === "phone" ? "text-lg" : ""}`}
-        >
-          {item.icon}
-        </span>
-                {currentStyle.showLabel && <span>{item.label}</span>}
+                <span
+                    role="img"
+                    aria-label={item.label.toLowerCase()}
+                    className={`text-xl ${displayMode === "phone" ? "text-lg" : ""} transition-transform duration-200`}
+                >
+                    {item.icon}
+                </span>
+                {currentStyle.showLabel && (
+                    <span className="truncate">{item.label}</span>
+                )}
             </>
         );
 
@@ -118,7 +120,7 @@ export default function Sidebar() {
             <li key={index}>
                 <div
                     onClick={item.onClick}
-                    className={`${currentStyle.item} ${item.isActive ? activeClasses : hoverClasses}`}
+                    className={`${currentStyle.item} cursor-pointer ${item.isActive ? activeClasses : hoverClasses}`}
                 >
                     {content}
                 </div>
@@ -139,12 +141,25 @@ export default function Sidebar() {
             {/* 🧭 Sidebar */}
             <div className={`transition-all duration-300 ${sidebarClasses[displayMode]}`}>
                 {displayMode !== "phone" && (
-                    <div className="flex justify-end mb-4">
+                    <div className="flex justify-end mb-6">
                         <button
-                            className="text-gray-400 hover:text-white focus:outline-none"
+                            className="p-2 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-all duration-200 hover:scale-110 active:scale-95"
                             onClick={toggleSidebar}
                         >
-                            {isExpanded ? "←" : "→"}
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className={`transition-transform duration-300 ${isExpanded ? "" : "rotate-180"}`}
+                            >
+                                <polyline points="15 18 9 12 15 6"></polyline>
+                            </svg>
                         </button>
                     </div>
                 )}
@@ -155,7 +170,7 @@ export default function Sidebar() {
             </div>
 
             {/* ⚙️ Search / Settings */}
-            <div className={`fixed transition-all duration-300 ${floatingBoxPosition} flex flex-col space-y-4`}>
+            <div className={`fixed transition-all duration-300 ${floatingBoxPosition} flex flex-col space-y-4 z-40`}>
                 {isSearch && <Search setIsSearch={setIsSearch} setIsSetting={setIsSetting} isCompact={false} />}
                 {isSetting && <Settings setIsSetting={setIsSetting} setIsSearch={setIsSearch} isCompact={false} />}
             </div>

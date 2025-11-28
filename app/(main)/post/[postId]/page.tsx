@@ -59,7 +59,7 @@ export default function PostPage(){
 
 
     return (
-        <div className="max-w-2xl mx-auto my-12 px-4">
+        <div className="max-w-2xl mx-auto  px-4">
             <div className="relative rounded-2xl overflow-hidden
                     bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900
                     border border-white/5
