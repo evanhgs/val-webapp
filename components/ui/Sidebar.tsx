@@ -4,12 +4,13 @@ import {useEffect, useState} from "react";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
 import Search from "@/components/ui/Search";
-import Settings from "@/components/ui/Settings";
+import {Bell, House, Send, Settings, Telescope, Upload, User, UserSearch, Video,} from "lucide-react";
+import SettingsUI from "@/components/ui/SettingsUI";
 
 type DisplayMode = "pc" | "compact" | "phone";
 
 interface MenuItem {
-    icon: string;
+    icon: any;
     label: string;
     link?: string;
     isNavLink?: boolean;
@@ -25,7 +26,6 @@ export default function Sidebar() {
 
     const pathname = usePathname();
 
-    // 📐 Détection dynamique de la taille de l'écran
     useEffect(() => {
         const handleResize = () => {
             if (window.innerWidth < 640) setDisplayMode("phone");
@@ -37,17 +37,16 @@ export default function Sidebar() {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    // 📋 Liste des éléments du menu
     const menuItems: MenuItem[] = [
-        { icon: "🏠", label: "Home", link: "/", isNavLink: true },
-        { icon: "🔍", label: "Chercher", onClick: () => { setIsSetting(false); setIsSearch(true); }, isActive: isSearch },
-        { icon: "🧭", label: "Explorer", link: "/explorer", isNavLink: true },
-        { icon: "▶️", label: "Reels" },
-        { icon: "📩", label: "Messages", link: "/messages", isNavLink: true },
-        { icon: "❤️", label: "Notifications" },
-        { icon: "➕", label: "Créer", link: "/upload", isNavLink: true },
-        { icon: "👤", label: "Profil", link: "/profile", isNavLink: true },
-        { icon: "⚙️", label: "Paramètres", onClick: () => { setIsSearch(false); setIsSetting(true); }, isActive: isSetting },
+        { icon: <House />, label: "Home", link: "/", isNavLink: true },
+        { icon: <UserSearch />, label: "Chercher", onClick: () => { setIsSetting(false); setIsSearch(true); }, isActive: isSearch },
+        { icon: <Telescope />, label: "Explorer", link: "/explorer", isNavLink: true },
+        { icon: <Video />, label: "Reels" },
+        { icon: <Send />, label: "Messages", link: "/messages", isNavLink: true },
+        { icon: <Bell />, label: "Notifications" },
+        { icon: <Upload />, label: "Créer", link: "/upload", isNavLink: true },
+        { icon: <User />, label: "Profil", link: "/profile", isNavLink: true },
+        { icon: <Settings />, label: "Paramètres", onClick: () => { setIsSearch(false); setIsSetting(true); }, isActive: isSetting },
     ];
 
     // 🎨 Classes CSS pour les différents modes
@@ -172,7 +171,7 @@ export default function Sidebar() {
             {/* ⚙️ Search / Settings */}
             <div className={`fixed transition-all duration-300 ${floatingBoxPosition} flex flex-col space-y-4 z-40`}>
                 {isSearch && <Search setIsSearch={setIsSearch} setIsSetting={setIsSetting} isCompact={false} />}
-                {isSetting && <Settings setIsSetting={setIsSetting} setIsSearch={setIsSearch} isCompact={false} />}
+                {isSetting && <SettingsUI setIsSetting={setIsSetting} setIsSearch={setIsSearch} isCompact={false} />}
             </div>
 
             {displayMode === "phone" && <div className="pb-16"></div>}

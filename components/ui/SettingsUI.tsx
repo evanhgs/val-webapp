@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import {ApiEndpoints, AxiosInstance, REACT_APP_GIT_VERSION} from "@/lib/endpoints";
 import Link from "next/link";
 
-export default function Settings({ setIsSetting, isCompact }: SearchProps){
+export default function SettingsUI({ setIsSetting, isCompact }: SearchProps){
 
     const settingContainerRef = outsideClick(() => {
         setIsSetting(false);
