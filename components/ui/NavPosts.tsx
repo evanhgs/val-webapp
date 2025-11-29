@@ -1,6 +1,7 @@
 import {ApiEndpoints} from "@/lib/endpoints";
 import {NavPostsProps} from "@/types/Post";
 import Link from "next/link";
+import {Heart, MessageCircle} from "lucide-react";
 
 
 export const NavPosts = ({ post }: NavPostsProps) => {
@@ -31,12 +32,10 @@ export const NavPosts = ({ post }: NavPostsProps) => {
                             flex items-center justify-center">
                                 <div className="flex items-center gap-6 text-white font-semibold text-sm">
                                     <div className="flex items-center gap-1">
-                                        <span>❤️</span>
-                                        <span>{p.likes?.count}</span>
+                                        <span><Heart /></span>
                                     </div>
                                     <div className="flex items-center gap-1">
-                                        <span>💬</span>
-                                        <span>{p.comments?.count}</span>
+                                        <span><MessageCircle /></span>
                                     </div>
                                 </div>
                             </div>

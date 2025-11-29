@@ -29,16 +29,30 @@ export const PostActions = ({ postId }: { postId: number}) => {
             users: response.data.users,
         });
     };
-    // boolean check true => already liked by current user
     const likedByUser = likeContent?.users?.some((u) => Number(u.id) === Number(user?.id));
 
     const fetchComments = async () => {
-        const response = await AxiosInstance.get(ApiEndpoints.comment.getComments(postId))
-        setCommentContent({
-            comments: response.data.contents,
-            count: response.data.count,
-        });
-    }
+        try {
+            const response = await AxiosInstance.get(ApiEndpoints.comment.getComments(postId));
+
+            if (response.status === 401) {
+                showAlert('Vous devez vous connecter pour voir les commentaires', 'info');
+            } else {
+                setCommentContent({
+                    comments: response.data.contents,
+                    count: response.data.count,
+                });
+            }
+        } catch (error) {
+            const err = error as { response?: { status: number } };
+            if (err.response?.status === 401) {
+                showAlert('Vous devez vous connecter pour voir les commentaires', 'info');
+            } else {
+                showAlert('Erreur lors du chargement des commentaires', 'error');
+            }
+            console.error('Error fetching comments:', error);
+        }
+    };
 
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         e.preventDefault();

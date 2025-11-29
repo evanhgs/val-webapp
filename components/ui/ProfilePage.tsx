@@ -15,13 +15,14 @@ import Footer from "@/components/ui/Footer";
 import EditProfileForm from "@/components/forms/EditProfileForm";
 import UploadButton from "@/components/forms/UploadProfilePictureForm";
 import SendMessageButton from "@/components/ui/SendMessageButton";
+import {BookMarked, Tag} from "lucide-react";
 
 interface ProfilePageProps {
     targetUsername?: string;
 }
 
 export default function ProfilePage({ targetUsername }: ProfilePageProps) {
-    const { user } = useContext(AuthContext) || {};
+    const { user, isLoading } = useContext(AuthContext) || {};
     const token = user?.token;
     const router = useRouter();
     const { showAlert } = useAlert();
@@ -45,6 +46,7 @@ export default function ProfilePage({ targetUsername }: ProfilePageProps) {
     // Récupération du profil
     useEffect(() => {
         const fetchProfile = async () => {
+            if (isLoading) return;
             if (!token) {
                 showAlert('Vous devez être connecté pour vous suivre ce profil', 'info');
                 return;
@@ -271,15 +273,15 @@ export default function ProfilePage({ targetUsername }: ProfilePageProps) {
                     {/* Navigation posts */}
                     <div className="border-t border-white/5 mb-6 flex justify-center space-x-4 sm:space-x-12 py-3 overflow-x-auto">
                         <button className="text-white font-semibold px-4 py-2 border-b-2 border-white rounded-t-lg whitespace-nowrap transition-all duration-200 text-sm flex items-center gap-2">
-                            <span>📷</span> POSTS
+                            <span></span> POSTS
                         </button>
                         {isOwnProfile && (
                             <button className="text-zinc-400 hover:text-white font-medium px-4 py-2 hover:bg-zinc-800/50 rounded-lg whitespace-nowrap transition-all duration-200 text-sm flex items-center gap-2">
-                                <span>🔖</span> SAUVEGARDÉS
+                                <span><BookMarked /></span> SAUVEGARDÉS
                             </button>
                         )}
                         <button className="text-zinc-400 hover:text-white font-medium px-4 py-2 hover:bg-zinc-800/50 rounded-lg whitespace-nowrap transition-all duration-200 text-sm flex items-center gap-2">
-                            <span>🏷️</span> IDENTIFIÉ
+                            <span><Tag /></span> IDENTIFIÉ
                         </button>
                     </div>
 

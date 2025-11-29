@@ -39,6 +39,8 @@ export default function PostPage(){
                             showAlert('Le format de l\'id n\'est pas en UUID, veuillez réssayer avec un bon format', 'error');
                             break;
                         case 404:
+                            showAlert('Le post n\'a pas été trouvé', 'error');
+                            break;
                         case 422:
                             showAlert('Le post n\'a pas été trouvé', 'error');
                             break;

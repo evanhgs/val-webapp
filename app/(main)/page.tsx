@@ -12,7 +12,7 @@ import {Feed} from "@/components/ui/Feed";
 import {Suggestions} from "@/components/ui/Suggestions";
 
 export default function Home() {
-    const { user } = useContext(AuthContext) || {};
+    const { user, isLoading } = useContext(AuthContext) || {};
     const token = user?.token;
     const [userData, setUserData] = useState<UserDTO | null>(null);
     const [userFeed, setUserFeed] = useState<UserFeedProps | null>(null);
@@ -23,6 +23,7 @@ export default function Home() {
 
         const fetchProfile = async () => {
             try {
+                if (isLoading) return;
                 if (!token) {
                     showAlert("Vous devez être connecté pour voir votre profil.", 'info');
                     router.push("/login");
