@@ -1,11 +1,12 @@
 import axios from "axios";
+import versionData from '@/version.json';
 
 export const API_BASE_URL: string = process.env.NEXT_PUBLIC_API_URL ?? '';
 export const FRONTEND_URL: string = process.env.NEXT_PUBLIC_FRONT_URL ?? '';
 export const API_MQTT_WSS: string = process.env.NEXT_PUBLIC_MQTT_URL ?? '';
 export const API_MQTT_USER: string = process.env.NEXT_PUBLIC_API_MQTT_USER ?? '';
 export const API_MQTT_PASSWORD: string = process.env.NEXT_PUBLIC_API_MQTT_PASSWORD ?? '';
-export const REACT_APP_GIT_VERSION: string = process.env.NEXT_PUBLIC_REACT_APP_GIT_VERSION ?? '';
+export const REACT_APP_GIT_VERSION: string = versionData.version;
 // console.log(API_BASE_URL)
 
 const url = (path: string) => `${API_BASE_URL}${path}`
