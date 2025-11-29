@@ -10,24 +10,25 @@ import {Conversations} from "@/components/ui/Conversations";
 
 export default function MessagesPage(){
 
-    const { user } = useContext(AuthContext) || {};
+    const { user, isLoading } = useContext(AuthContext) || {};
     const token = user?.token;
     const { showAlert } = useAlert();
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingMessage, setIsLoadingMessage] = useState(false);
     const [conversationList, setConversationList] = useState<Conversation[]>();
     const [selectedConvId, setSelectedConvId] = useState<number | null>(null);
 
     useEffect(() => {
+        if (isLoading) return;
         if (!token) return;
         const fetchConversations = async () => {
             try {
-                setIsLoading(true);
+                setIsLoadingMessage(true);
                 const allConvResponse = await AxiosInstance.get(ApiEndpoints.message.getAllConversation());
                 setConversationList(allConvResponse.data ?? []);
             } catch (error) {
                 showAlert(`Une erreur est survenue: ${error}`, 'error')
             } finally {
-                setIsLoading(false);
+                setIsLoadingMessage(false);
             }
         }
         fetchConversations();
@@ -45,7 +46,7 @@ export default function MessagesPage(){
                 <div className={`${selectedConvId ? "md:w-1/3 w-full max-h-[160px] md:max-h-none " : "w-full md:w-1/3"}
                        border-r border-white/5 overflow-y-auto`}>
 
-                    {isLoading ? (
+                    {isLoadingMessage ? (
                         <div className="flex items-center justify-center h-full text-zinc-400">
                             Chargement...
                         </div>

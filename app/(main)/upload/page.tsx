@@ -9,7 +9,7 @@ import {ApiEndpoints, AxiosInstanceFormData} from "@/lib/endpoints";
 export default function UploadPage(){
 
     const { showAlert } = useAlert();
-    const { user } = useContext(AuthContext) || {};
+    const { user, isLoading } = useContext(AuthContext) || {};
     const token = user?.token;
     const navigate = useRouter();
     const [file, setFile] = useState<File | null>(null);
@@ -17,6 +17,7 @@ export default function UploadPage(){
     const [caption, setCaption] = useState<string>("");
 
     useEffect(() => {
+        if (isLoading) return;
         if (!token) {
             setError("Vous devez être connecté pour publier un post.");
             navigate.push("/login");

@@ -1,46 +1,46 @@
 'use client';
 
-import {useContext, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {UserFeedProps} from "@/types/Feed";
 import {useRouter} from "next/navigation";
-import {AuthContext} from "@/components/providers/AuthProvider";
 import {useAlert} from "@/components/providers/AlertContext";
 import {ApiEndpoints, AxiosInstance} from "@/lib/endpoints";
 import {NavPosts} from "@/components/ui/NavPosts";
 
 export default function Explorer(){
 
-    const [error] = useState<string | null>(null);
     const [globalFeed, setGlobalFeed] = useState<UserFeedProps | null>(null);
     const navigate = useRouter();
-    const { user } = useContext(AuthContext) || {};
-    const token = user?.token;
     const { showAlert } = useAlert();
 
     useEffect(() => {
         const fetchExplorerFeed = async () => {
             try {
-                if (!token) {
-                    showAlert("Vous devez vous connecter pour voir le feed global", "info");
-                    navigate.push("/login");
-                    return;
-                }
                 const response = await AxiosInstance.get(ApiEndpoints.post.feedGlobal());
 
                 setGlobalFeed({
                     userFeed: response.data.content
                 });
             } catch (error) {
-                showAlert(`Error lors du chargement de la page d'exploration: ${error}`, "error");
+                showAlert(`Erreur lors du chargement de la page d'exploration: ${error}`, "error");
+                const err = error as { response?: { status: number } };
+                if (err.response) {
+                    const { status } = err.response;
+                    switch (status) {
+                        case 401:
+                            showAlert('Vous devez vous connecter pour voir les commentaires', 'info');
+                            break;
+                        case 500:
+                            showAlert('Une erreur serveur est survenue', 'error');
+                            break;
+                    }
+                }
             }
         };
         fetchExplorerFeed();
     }, []);
 
     return (
-        <>
-            {error && <div className="error-message">{error}</div>}
-
             <div className="px-[20%] flex min-h-screen">
                 <div className="my-6 pl-2 ">
                     <button onClick={() => navigate.back()} className="inline-flex items-center bg-zinc-900 hover:bg-zinc-500 hover:text-zinc-900 rounded-xl px-4 py-2 transition duration-200">
@@ -52,7 +52,5 @@ export default function Explorer(){
                 </div>
                 <NavPosts post={globalFeed?.userFeed || []} />
             </div>
-
-        </>
     );
 }

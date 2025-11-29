@@ -1,15 +1,16 @@
 "use client";
 
-import React, { createContext, useState, useEffect, useContext } from "react";
+import React, {createContext, useContext, useEffect, useState} from "react";
 import axios from "axios";
-import { AuthContextType } from "@/types/Auth";
-import {UserDTO, UserLoginDTO} from "@/types/User";
+import {AuthContextType} from "@/types/Auth";
+import {UserLoginDTO} from "@/types/User";
 import {ApiEndpoints} from "@/lib/endpoints";
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<UserLoginDTO | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const storedToken = localStorage.getItem("token");
@@ -31,6 +32,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
             validateToken(storedToken);
         }
+        setIsLoading(false);
     }, []);
 
     const validateToken = async (token: string) => {
@@ -68,7 +70,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, login, logout, isLoading }}>
             {children}
         </AuthContext.Provider>
     );
