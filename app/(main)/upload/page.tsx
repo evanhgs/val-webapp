@@ -3,27 +3,27 @@
 import {useAlert} from "@/components/providers/AlertContext";
 import React, {useContext, useEffect, useState} from "react";
 import {AuthContext} from "@/components/providers/AuthProvider";
-import {useRouter} from "next/navigation";
+import {usePathname, useRouter} from "next/navigation";
 import {ApiEndpoints, AxiosInstanceFormData} from "@/lib/endpoints";
 
 export default function UploadPage(){
 
     const { showAlert } = useAlert();
-    const { user, isLoading } = useContext(AuthContext) || {};
-    const token = user?.token;
+    const { isAuthenticated, isLoading } = useContext(AuthContext) || {};
     const navigate = useRouter();
+    const pathname = usePathname();
     const [file, setFile] = useState<File | null>(null);
     const [error, setError] = useState<string>("");
     const [caption, setCaption] = useState<string>("");
 
     useEffect(() => {
         if (isLoading) return;
-        if (!token) {
+        if (!isAuthenticated) {
             setError("Vous devez être connecté pour publier un post.");
-            navigate.push("/login");
+            navigate.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
             return;
         }
-    }, [token, navigate])
+    }, [isAuthenticated, isLoading, navigate, pathname])
 
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];

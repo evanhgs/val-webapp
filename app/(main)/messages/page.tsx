@@ -7,19 +7,25 @@ import {Conversation} from "@/types/Message";
 import {ApiEndpoints, AxiosInstance} from "@/lib/endpoints";
 import Chats from "@/components/ui/Chats";
 import {Conversations} from "@/components/ui/Conversations";
+import {usePathname, useRouter} from "next/navigation";
 
 export default function MessagesPage(){
 
-    const { user, isLoading } = useContext(AuthContext) || {};
-    const token = user?.token;
+    const { isAuthenticated, isLoading } = useContext(AuthContext) || {};
     const { showAlert } = useAlert();
+    const router = useRouter();
+    const pathname = usePathname();
     const [isLoadingMessage, setIsLoadingMessage] = useState(false);
     const [conversationList, setConversationList] = useState<Conversation[]>();
     const [selectedConvId, setSelectedConvId] = useState<number | null>(null);
 
     useEffect(() => {
         if (isLoading) return;
-        if (!token) return;
+        if (!isAuthenticated) {
+            showAlert("Vous devez être connecté pour voir vos messages.", 'info');
+            router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+            return;
+        }
         const fetchConversations = async () => {
             try {
                 setIsLoadingMessage(true);
@@ -32,7 +38,7 @@ export default function MessagesPage(){
             }
         }
         fetchConversations();
-    }, [token]);
+    }, [isAuthenticated, isLoading, pathname, router]);
 
     return (
         <div className="max-w-5xl mx-auto px-4 min-h-screen">
@@ -72,4 +78,3 @@ export default function MessagesPage(){
         </div>
     );
 };
-

@@ -9,10 +9,6 @@ export interface UserDTO {
   created_at: string;
 }
 
-export interface UserLoginDTO extends UserDTO {
-    token: string
-}
-
 export interface UserLightDTO {
     id: number;
     username: string;

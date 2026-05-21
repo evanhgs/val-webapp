@@ -71,9 +71,9 @@ export default function Chats({ convId }: { convId: number }) {
             );
 
             setNewMessage("");
-            showAlert("Message envoyé !", "success");
+            //showAlert("Message envoyé !", "success");
         } catch (err) {
-            showAlert(`${err}`, "error");
+            showAlert(`Erreur système: ${err}.Message non envoyé`, "error");
         }
     };
 

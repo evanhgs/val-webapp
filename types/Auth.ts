@@ -1,8 +1,10 @@
-import {UserLoginDTO} from "@/types/User";
+import {UserDTO} from "@/types/User";
 
 export interface AuthContextType {
-    user: UserLoginDTO | null;
-    login: (token: string, id: number, profilePicture: string, username: string) => void;
+    user: UserDTO | null;
+    login: (token: string) => Promise<void>;
     logout: () => void;
-    isLoading?: boolean;
+    refreshUser: () => Promise<void>;
+    isAuthenticated: boolean;
+    isLoading: boolean;
 }

@@ -1,7 +1,6 @@
 'use client';
 
-import React, {useContext, useState} from 'react';
-import {AuthContext} from "@/components/providers/AuthProvider";
+import React, {useState} from 'react';
 import {ApiEndpoints, AxiosInstance} from "@/lib/endpoints";
 import PhoneCarousel from "@/components/ui/Carousel";
 import {useRouter} from 'next/navigation';
@@ -13,7 +12,6 @@ export default function RegisterForm(){
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const { login } = useContext(AuthContext) || {};
     const router = useRouter();
     const { showAlert } = useAlert();
     const [loading, setLoading] = useState(false);
@@ -48,19 +46,9 @@ export default function RegisterForm(){
 
         try {
             setLoading(true);
-            const response = await AxiosInstance.post(ApiEndpoints.auth.register(), { username, email, password });
-            if (login) {
-                login(
-                    response.data.token,
-                    response.data.username,
-                    response.data.profile_picture,
-                    response.data.id
-                );
-                showAlert('Inscription réussie', 'success');
-                router.push("/login");
-            } else {
-                showAlert('Vous n\'êtes pas choisi par la sélection naturelle', 'error');
-            }
+            await AxiosInstance.post(ApiEndpoints.auth.register(), { username, email, password });
+            showAlert('Inscription réussie, vous pouvez maintenant vous connecter', 'success');
+            router.push("/login");
         } catch (error) {
             handleRegisterError(error as AxiosError);
         } finally {

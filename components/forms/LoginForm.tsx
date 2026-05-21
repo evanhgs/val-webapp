@@ -36,14 +36,10 @@ export default function LoginForm() {
                 password,
             });
             if (login) {
-                login(
-                    response.data.token,
-                    response.data.user_id,
-                    response.data.profile_picture,
-                    response.data.username
-                );
+                await login(response.data.token);
                 showAlert("Connexion réussie", "success");
-                router.push("/");
+                const redirect = new URLSearchParams(window.location.search).get("redirect");
+                router.push(redirect?.startsWith("/") ? redirect : "/");
             } else {
                 showAlert("Erreur interne, impossible de se connecter, essayez plus tard", "error");
             }

@@ -1,76 +1,76 @@
 "use client";
 
-import React, {createContext, useContext, useEffect, useState} from "react";
-import axios from "axios";
+import React, {createContext, useCallback, useContext, useEffect, useState} from "react";
 import {AuthContextType} from "@/types/Auth";
-import {UserLoginDTO} from "@/types/User";
-import {ApiEndpoints} from "@/lib/endpoints";
+import {UserDTO} from "@/types/User";
+import {ApiEndpoints, AxiosInstance, clearStoredToken, getStoredToken, setStoredToken} from "@/lib/endpoints";
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [user, setUser] = useState<UserLoginDTO | null>(null);
+    const [user, setUser] = useState<UserDTO | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const isAuthenticated = Boolean(user);
 
-    useEffect(() => {
-        const storedToken = localStorage.getItem("token");
-        const storedUsername = localStorage.getItem("username");
-        const storedProfilePicture = localStorage.getItem("profilePicture");
-        const storedId = localStorage.getItem("id");
-        const storedCreatedAt = localStorage.getItem("createdAt");
-
-
-        if (storedToken && storedUsername && storedProfilePicture && storedId) {
-            const idNumber = Number(storedId);
-            setUser({
-                id: idNumber,
-                username: storedUsername,
-                profile_picture: storedProfilePicture,
-                created_at: storedCreatedAt ?? new Date().toISOString(),
-                token: storedToken,
-            });
-
-            validateToken(storedToken);
-        }
-        setIsLoading(false);
+    const logout = useCallback(() => {
+        clearStoredToken();
+        setUser(null);
     }, []);
 
-    const validateToken = async (token: string) => {
-        try {
-            const { data } = await axios.post(ApiEndpoints.auth.authToken(), { token });
-            if (!data.valid) logout();
-        } catch (err) {
-            console.error("Token validation failed", err);
-            logout();
+    const refreshUser = useCallback(async () => {
+        const token = getStoredToken();
+
+        if (!token) {
+            setUser(null);
+            return;
         }
-    };
 
-    const login = (token: string, id: number, profilePicture: string, username: string) => {
-        localStorage.setItem("token", token);
-        localStorage.setItem("username", username);
-        localStorage.setItem("profilePicture", profilePicture);
-        localStorage.setItem("id", String(id));
-        localStorage.setItem("createdAt", new Date().toISOString());
+        try {
+            const { data } = await AxiosInstance.get(ApiEndpoints.user.currentUserProfile());
 
-        setUser({
-            id,
-            username,
-            profile_picture: profilePicture,
-            created_at: new Date().toISOString(),
-            token: token,
-        });
+            setUser({
+                id: data.id,
+                username: data.username,
+                email: data.email,
+                bio: data.bio || "",
+                website: data.website || "",
+                gender: data.gender,
+                profile_picture: data.profile_picture || "default.jpg",
+                created_at: data.created_at || "",
+            });
+        } catch (err) {
+            logout();
+            throw err;
+        }
+    }, [logout]);
 
-        document.cookie = `token=${token}; path=/;`; // cookie for middleware
-    };
+    useEffect(() => {
+        refreshUser()
+            .catch(() => undefined)
+            .finally(() => setIsLoading(false));
+    }, [refreshUser]);
 
-    const logout = () => {
-        localStorage.clear();
-        setUser(null);
-        document.cookie = `token=; path=/; max-age=0`; // supprime le cookie
+    useEffect(() => {
+        const handleUnauthorized = () => {
+            setUser(null);
+        };
+
+        window.addEventListener("auth:unauthorized", handleUnauthorized);
+        return () => window.removeEventListener("auth:unauthorized", handleUnauthorized);
+    }, []);
+
+    const login = async (token: string) => {
+        setStoredToken(token);
+        try {
+            await refreshUser();
+        } catch (err) {
+            logout();
+            throw err;
+        }
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+        <AuthContext.Provider value={{ user, login, logout, refreshUser, isAuthenticated, isLoading }}>
             {children}
         </AuthContext.Provider>
     );

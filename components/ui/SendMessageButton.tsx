@@ -19,7 +19,7 @@ export default function SendMessageButton({userId}: {userId: number}) {
             await AxiosInstance.post(ApiEndpoints.message.sendMessage(userId), { content: messageToSend });
             showAlert(`${messageToSend} envoyé !`, "success");
         } catch (err) {
-            showAlert(`${err}`, "error");
+            showAlert(`Erreur système: ${err}.Message non envoyé`, "error");
         } finally {
             setIsLoading(false);
             navigate.push('/messages');

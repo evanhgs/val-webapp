@@ -11,8 +11,7 @@ export default function FollowButton({ username }: { username: string }) {
     // fetch les abonnés de l'utilisateur ciblé et en déduire si afficher "follow"/"followed"
     // quand le bouton est cliqué la reqete par et change l'état en direct
     const { showAlert } = useAlert();
-    const { user } = useContext(AuthContext) || {};
-    const token = user?.token;
+    const { user, isAuthenticated } = useContext(AuthContext) || {};
     const [isFollowed, setIsFollowed] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -41,7 +40,7 @@ export default function FollowButton({ username }: { username: string }) {
     // action de follow
     const followUser = async (e: React.MouseEvent) => {
         e.stopPropagation(); // évite la redirection sur le profil
-        if (!token) {
+        if (!isAuthenticated) {
             showAlert("Vous devez être connecté pour suivre un utilisateur", "error");
             return;
         }
@@ -64,7 +63,7 @@ export default function FollowButton({ username }: { username: string }) {
     // action d'unfollow
     const unFollowUser = async (e: React.MouseEvent) => {
         e.stopPropagation();
-        if (!token) {
+        if (!isAuthenticated) {
             showAlert("Vous devez être connecté pour ne plus suivre un utilisateur", "error");
             return;
         }

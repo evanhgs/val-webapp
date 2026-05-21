@@ -1,4 +1,5 @@
 import axios from "axios";
+import type {InternalAxiosRequestConfig} from "axios";
 import versionData from '@/version.json';
 
 export const API_BASE_URL: string = process.env.NEXT_PUBLIC_API_URL ?? '';
@@ -10,6 +11,39 @@ export const REACT_APP_GIT_VERSION: string = versionData.version;
 // console.log(API_BASE_URL)
 
 const url = (path: string) => `${API_BASE_URL}${path}`
+export const getStoredToken = () => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem('token');
+};
+
+export const setStoredToken = (token: string) => {
+    if (typeof window === "undefined") return;
+    localStorage.setItem("token", token);
+    localStorage.removeItem("id");
+    localStorage.removeItem("username");
+    localStorage.removeItem("profilePicture");
+    localStorage.removeItem("createdAt");
+};
+
+export const clearStoredToken = () => {
+    if (typeof window === "undefined") return;
+    localStorage.removeItem("token");
+    localStorage.removeItem("id");
+    localStorage.removeItem("username");
+    localStorage.removeItem("profilePicture");
+    localStorage.removeItem("createdAt");
+};
+
+const withBearerToken = (config: InternalAxiosRequestConfig) => {
+    const token = getStoredToken();
+    const requestUrl = config.url ?? "";
+    const isAuthRequest = requestUrl.endsWith("/auth/login") || requestUrl.endsWith("/auth/register");
+
+    if (token && !isAuthRequest) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+};
 
 // setup axios pour le headers
 export const AxiosInstance = axios.create({
@@ -19,27 +53,29 @@ export const AxiosInstance = axios.create({
 });
 
 export const AxiosInstanceFormData = axios.create({
-    headers: {
-        'Content-Type': 'multipart/form-data'
-    }
+    headers: {}
 })
 
 // récupère le token à chaque requete
-AxiosInstance.interceptors.request.use(config => {
-    const token = localStorage.getItem('token');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-} );
+AxiosInstance.interceptors.request.use(withBearerToken);
+AxiosInstanceFormData.interceptors.request.use(withBearerToken);
 
-AxiosInstanceFormData.interceptors.request.use(config => {
-    const token = localStorage.getItem('token');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+const onUnauthorized = (error: unknown) => {
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
+        const requestUrl = error.config?.url ?? "";
+        const isAuthRequest = requestUrl.endsWith("/auth/login") || requestUrl.endsWith("/auth/register");
+
+        if (!isAuthRequest && typeof window !== "undefined") {
+            clearStoredToken();
+            window.dispatchEvent(new Event("auth:unauthorized"));
+        }
     }
-    return config;
-} );
+
+    return Promise.reject(error);
+};
+
+AxiosInstance.interceptors.response.use(response => response, onUnauthorized);
+AxiosInstanceFormData.interceptors.response.use(response => response, onUnauthorized);
 
 export const ApiEndpoints = {
     follow: {

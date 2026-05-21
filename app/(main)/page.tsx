@@ -5,28 +5,28 @@ import {useContext, useEffect, useState} from "react";
 import {useAlert} from "@/components/providers/AlertContext";
 import {UserDTO} from "@/types/User";
 import {UserFeedProps} from "@/types/Feed";
-import {useRouter} from "next/navigation";
+import {usePathname, useRouter} from "next/navigation";
 import {ApiEndpoints, AxiosInstance} from "@/lib/endpoints";
 import {Stories} from "@/components/ui/Stories";
 import {Feed} from "@/components/ui/Feed";
 import {Suggestions} from "@/components/ui/Suggestions";
 
 export default function Home() {
-    const { user, isLoading } = useContext(AuthContext) || {};
-    const token = user?.token;
+    const { isLoading, isAuthenticated } = useContext(AuthContext) || {};
     const [userData, setUserData] = useState<UserDTO | null>(null);
     const [userFeed, setUserFeed] = useState<UserFeedProps | null>(null);
     const { showAlert } = useAlert();
     const router = useRouter();
+    const pathname = usePathname();
 
     useEffect(() => {
 
         const fetchProfile = async () => {
             try {
                 if (isLoading) return;
-                if (!token) {
+                if (!isAuthenticated) {
                     showAlert("Vous devez être connecté pour voir votre profil.", 'info');
-                    router.push("/login");
+                    router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
                     return;
                 }
                 // récupération du profil de l'utilisateur connecté
@@ -45,7 +45,7 @@ export default function Home() {
                 });
                 setUserFeed({
                     userFeed: responseFeed.data.content,
-                    currentUsername: userData?.username
+                    currentUsername: response.data.username
                 });
 
             } catch (error) {
@@ -53,7 +53,7 @@ export default function Home() {
             }
         };
         fetchProfile();
-    }, [token, router]);
+    }, [isAuthenticated, isLoading, pathname, router]);
 
     return (
         <div className="flex flex-col w-full items-center min-h-screen bg-gradient-to-b from-zinc-900 via-zinc-900 to-zinc-800">

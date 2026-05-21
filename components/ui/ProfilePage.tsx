@@ -1,7 +1,7 @@
 'use client';
 
 import {useContext, useEffect, useState} from "react";
-import {useRouter} from "next/navigation";
+import {usePathname, useRouter} from "next/navigation";
 import {AuthContext} from "@/components/providers/AuthProvider";
 import {useAlert} from "@/components/providers/AlertContext";
 import {UserDTO} from "@/types/User";
@@ -22,9 +22,9 @@ interface ProfilePageProps {
 }
 
 export default function ProfilePage({ targetUsername }: ProfilePageProps) {
-    const { user, isLoading } = useContext(AuthContext) || {};
-    const token = user?.token;
+    const { user, isAuthenticated, isLoading } = useContext(AuthContext) || {};
     const router = useRouter();
+    const pathname = usePathname();
     const { showAlert } = useAlert();
 
     const [userData, setUserData] = useState<UserDTO | null>(null);
@@ -47,8 +47,9 @@ export default function ProfilePage({ targetUsername }: ProfilePageProps) {
     useEffect(() => {
         const fetchProfile = async () => {
             if (isLoading) return;
-            if (!token) {
+            if (!isAuthenticated) {
                 showAlert('Vous devez être connecté pour vous suivre ce profil', 'info');
+                router.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
                 return;
             }
 
@@ -79,11 +80,11 @@ export default function ProfilePage({ targetUsername }: ProfilePageProps) {
         };
 
         fetchProfile();
-    }, [token, resolvedUsername, isOwnProfile, router]);
+    }, [isAuthenticated, isLoading, pathname, resolvedUsername, isOwnProfile, router]);
 
     // Récupération des followers/followed/posts
     useEffect(() => {
-        if (!token || !userData?.username) return;
+        if (!isAuthenticated || !userData?.username) return;
 
         const fetchProfileData = async () => {
             try {
@@ -119,7 +120,7 @@ export default function ProfilePage({ targetUsername }: ProfilePageProps) {
         };
 
         fetchProfileData();
-    }, [token, userData?.username]);
+    }, [isAuthenticated, userData?.username]);
 
     if (!userData) {
         return (

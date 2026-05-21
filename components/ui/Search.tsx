@@ -2,8 +2,7 @@
 
 import {useState} from "react";
 import {FollowUser} from "@/types/Follow";
-import axios from "axios";
-import {ApiEndpoints} from "@/lib/endpoints";
+import {ApiEndpoints, AxiosInstance} from "@/lib/endpoints";
 import OutsideClick from "@/components/ui/OutsideClick";
 import {SearchProps} from "@/types/searchProps";
 import {FollowersModal} from "@/components/ui/FollowersModal";
@@ -22,7 +21,7 @@ export default function Search({ setIsSearch, isCompact }: SearchProps) {
 
         setIsLoading(true);
         try {
-            const response = await axios.get(ApiEndpoints.user.search(input));
+            const response = await AxiosInstance.get(ApiEndpoints.user.search(input));
             setSearchResult({
                 users: response.data.users.length > 0
                     ? response.data.users
